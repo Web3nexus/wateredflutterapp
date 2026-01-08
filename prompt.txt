@@ -1,0 +1,240 @@
+PROJECT: WATERED
+Type: Mobile App (Flutter)
+Architecture: Feature-first + Clean Architecture
+Backend: Laravel API (/api/v1)
+Execution Mode: STRICT / PHASED / STOP BETWEEN FEATURES
+
+🚨 GLOBAL EXECUTION RULES (NON-NEGOTIABLE)
+❌ Do NOT proceed without finishing a phase
+✅ Flutter project already exists
+✅ API base URL exists
+✅ State management = Riverpod
+✅ HTTP = Dio
+✅ Tokens stored securely
+✅ STOP after each feature
+
+===============================
+🔹 PRE-PHASE — FLUTTER DEPENDENCIES (RUN ONCE)
+===============================
+Install ONLY these packages. No others.
+flutter pub add dio
+flutter pub add flutter_secure_storage
+flutter pub add flutter_riverpod
+flutter pub add riverpod_annotation
+flutter pub add freezed_annotation
+flutter pub add json_annotation
+flutter pub add intl
+
+DEV DEPENDENCIES
+flutter pub add --dev build_runner
+flutter pub add --dev freezed
+flutter pub add --dev json_serializable
+flutter pub add --dev riverpod_generator
+
+
+
+=================================================
+🔹 FEATURE 1 — GLOBAL CONFIG & APP BOOTSTRAP
+=================================================
+GOAL
+Consume global settings & prepare app foundation.
+IMPLEMENT
+Core
+API client (Dio wrapper)
+API error handling
+BaseResponse model
+Network failure mapping
+Config
+Fetch /settings
+Store:
+colors
+default language
+supported languages
+maintenance flag
+State
+GlobalSettingsProvider
+AppBootProvider (loads config before app start)
+
+=================================================
+🔹 FEATURE 2 — TRADITIONS & TEXT CONTENT (READ ONLY)
+=================================================
+GOAL
+Bible/Quran-style structured reading.
+MODELS
+Tradition
+Category
+TextCollection
+Chapter
+Entry
+EntryTranslation
+API
+Get traditions
+Get collections
+Get chapters
+Get entries
+Language filtering
+STATE
+TraditionProvider
+CollectionProvider
+ChapterProvider
+EntryProvider
+LOGIC
+Read-only consumption
+Pagination support
+Bookmark hooks (future safe)
+
+
+=================================================
+🔹 FEATURE 3 — VIDEO TEACHING FEED
+=================================================
+GOAL
+Vertical swipe teaching feed (non-social).
+MODELS
+VideoTeaching
+API
+Paginated feed endpoint
+LOGIC
+Feed pagination
+Preload next item
+Auto-play trigger logic
+Save video bookmark
+
+
+=================================================
+🔹 FEATURE 4 — AUDIO TEACHING SYSTEM
+=================================================
+GOAL
+Audio playback logic.
+MODELS
+AudioTeaching
+API
+Audio list
+Stream URL
+LOGIC
+Play / pause
+Resume playback
+Background-safe structure
+Bookmark audio
+
+=================================================
+🔹 FEATURE 5 — USER AUTH (MOBILE USERS)
+=================================================
+GOAL
+Enable authenticated features.
+MODELS
+User
+AuthToken
+API
+Register
+Login
+Logout
+Refresh token
+LOGIC
+Secure token storage
+Auto attach token to requests
+Auth state provider
+Logout cleanup
+
+
+=================================================
+🔹 FEATURE 6 — USER LIBRARY & BOOKMARKS
+=================================================
+GOAL
+Saved content system.
+MODELS
+Bookmark (polymorphic ref)
+API
+Add bookmark
+Remove bookmark
+List bookmarks
+LOGIC
+Sync bookmarks
+Local optimistic updates
+Unified library provider
+🛑 STOP AFTER FEATURE 6.
+
+=================================================
+🔹 FEATURE 7 — COMMERCE (SACRED OBJECTS)
+=================================================
+GOAL
+Product browsing & checkout logic.
+MODELS
+Product
+CartItem
+Order
+API
+Product list
+Create order
+Order history
+LOGIC
+Cart state
+Quantity updates
+Checkout request
+Order confirmation handling
+
+
+=================================================
+🔹 FEATURE 8 — TEMPLE DISCOVERY
+=================================================
+GOAL
+Location-based discovery logic.
+MODELS
+Temple
+TempleHours
+API
+Temple list
+Temple details
+LOGIC
+Map-ready data structures
+Distance calculation hooks
+Linked teachings fetch
+
+
+=================================================
+🔹 FEATURE 9 — CONSULTATION & BOOKINGS
+=================================================
+GOAL
+Spiritual consultation booking.
+MODELS
+ConsultationType
+Booking
+API
+List consultation types
+Create booking
+Booking status
+LOGIC
+Booking flow state
+Availability handling
+Booking history provider
+
+
+=================================================
+🔹 FEATURE 10 — SEARCH & DAILY WISDOM
+=================================================
+GOAL
+Discovery & engagement.
+MODELS
+SearchResult
+DailyWisdom
+API
+Unified search
+Daily wisdom endpoint
+LOGIC
+Debounced search
+Multi-type result parsing
+Daily wisdom cache (24h)
+
+
+=================================================
+🔹 FEATURE 11 — LANDING SYNC (READ ONLY)
+=================================================
+GOAL
+Public content exposure logic.
+IMPLEMENT
+Fetch featured content
+SEO-safe models
+Shareable content payloads
+
+
+✅ NEXT OPTIONS
+
