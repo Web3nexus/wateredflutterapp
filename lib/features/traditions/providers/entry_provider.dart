@@ -45,7 +45,7 @@ class EntryList extends _$EntryList {
       }
 
       final response = await apiClient.get(
-        '/chapters/$chapterId/entries',
+        'chapters/$chapterId/entries',
         queryParameters: queryParams,
       );
 
@@ -83,7 +83,7 @@ Future<Entry> entry(EntryRef ref, int id, {String? languageCode}) async {
     }
 
     final response = await apiClient.get(
-      '/entries/$id',
+      'entries/$id',
       queryParameters: queryParams.isNotEmpty ? queryParams : null,
     );
 

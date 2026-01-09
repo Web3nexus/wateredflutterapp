@@ -10,6 +10,8 @@ class Video with _$Video {
     required String title,
     String? description,
     required String youtubeUrl,
+    String? storageUrl,
+    @Default('youtube') String videoType, // 'youtube' or 'file'
     String? thumbnailUrl,
     String? duration,
     required DateTime publishedAt,

@@ -45,7 +45,7 @@ class CollectionList extends _$CollectionList {
       }
 
       final response = await apiClient.get(
-        '/traditions/$traditionId/collections',
+        'traditions/$traditionId/collections',
         queryParameters: queryParams,
       );
 
@@ -94,7 +94,7 @@ class CollectionList extends _$CollectionList {
 Future<TextCollection> collection(CollectionRef ref, int id) async {
   try {
     final apiClient = ref.read(apiClientProvider);
-    final response = await apiClient.get('/collections/$id');
+    final response = await apiClient.get('collections/$id');
 
     if (response.statusCode == 200 && response.data != null) {
       return TextCollection.fromJson(response.data as Map<String, dynamic>);

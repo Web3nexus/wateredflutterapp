@@ -5,11 +5,7 @@ import 'package:wateredflutterapp/features/config/models/global_settings.dart';
 
 part 'global_settings_provider.g.dart';
 
-/// Provider for API client
-@riverpod
-ApiClient apiClient(ApiClientRef ref) {
-  return ApiClient();
-}
+
 
 /// Provider for global settings
 @riverpod
@@ -23,7 +19,7 @@ class GlobalSettingsNotifier extends _$GlobalSettingsNotifier {
   Future<GlobalSettings> fetchSettings() async {
     try {
       final apiClient = ref.read(apiClientProvider);
-      final response = await apiClient.get('/settings');
+      final response = await apiClient.get('settings');
 
       if (response.statusCode == 200 && response.data != null) {
         return GlobalSettings.fromJson(response.data as Map<String, dynamic>);

@@ -3,13 +3,20 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+/// Provider for API Client
+final apiClientProvider = Provider<ApiClient>((ref) {
+  return ApiClient();
+});
+
 /// API client wrapper for Dio with automatic token attachment and base configuration
 class ApiClient {
   late final Dio _dio;
   final FlutterSecureStorage _secureStorage;
   
   // Updated to use Laravel Herd domain for simulator access
-  static const String baseUrl = 'http://wateredbackend.test/api/v1';
+  static const String baseUrl = 'http://wateredbackend.test/api/v1/';
   static const String tokenKey = 'auth_token';
 
   ApiClient({FlutterSecureStorage? secureStorage})

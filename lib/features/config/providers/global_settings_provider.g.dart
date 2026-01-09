@@ -6,25 +6,6 @@ part of 'global_settings_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$apiClientHash() => r'830b3339c24d952121db45e5d7278545d0d2fbfd';
-
-/// Provider for API client
-///
-/// Copied from [apiClient].
-@ProviderFor(apiClient)
-final apiClientProvider = AutoDisposeProvider<ApiClient>.internal(
-  apiClient,
-  name: r'apiClientProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$apiClientHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef ApiClientRef = AutoDisposeProviderRef<ApiClient>;
 String _$globalSettingsNotifierHash() =>
     r'2dfb2326f79018ed52c37e520962f6f47b62ef00';
 

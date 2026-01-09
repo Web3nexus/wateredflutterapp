@@ -25,6 +25,9 @@ mixin _$Video {
   String get title => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   String get youtubeUrl => throw _privateConstructorUsedError;
+  String? get storageUrl => throw _privateConstructorUsedError;
+  String get videoType =>
+      throw _privateConstructorUsedError; // 'youtube' or 'file'
   String? get thumbnailUrl => throw _privateConstructorUsedError;
   String? get duration => throw _privateConstructorUsedError;
   DateTime get publishedAt => throw _privateConstructorUsedError;
@@ -52,6 +55,8 @@ abstract class $VideoCopyWith<$Res> {
     String title,
     String? description,
     String youtubeUrl,
+    String? storageUrl,
+    String videoType,
     String? thumbnailUrl,
     String? duration,
     DateTime publishedAt,
@@ -81,6 +86,8 @@ class _$VideoCopyWithImpl<$Res, $Val extends Video>
     Object? title = null,
     Object? description = freezed,
     Object? youtubeUrl = null,
+    Object? storageUrl = freezed,
+    Object? videoType = null,
     Object? thumbnailUrl = freezed,
     Object? duration = freezed,
     Object? publishedAt = null,
@@ -106,6 +113,14 @@ class _$VideoCopyWithImpl<$Res, $Val extends Video>
             youtubeUrl: null == youtubeUrl
                 ? _value.youtubeUrl
                 : youtubeUrl // ignore: cast_nullable_to_non_nullable
+                      as String,
+            storageUrl: freezed == storageUrl
+                ? _value.storageUrl
+                : storageUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            videoType: null == videoType
+                ? _value.videoType
+                : videoType // ignore: cast_nullable_to_non_nullable
                       as String,
             thumbnailUrl: freezed == thumbnailUrl
                 ? _value.thumbnailUrl
@@ -154,6 +169,8 @@ abstract class _$$VideoImplCopyWith<$Res> implements $VideoCopyWith<$Res> {
     String title,
     String? description,
     String youtubeUrl,
+    String? storageUrl,
+    String videoType,
     String? thumbnailUrl,
     String? duration,
     DateTime publishedAt,
@@ -182,6 +199,8 @@ class __$$VideoImplCopyWithImpl<$Res>
     Object? title = null,
     Object? description = freezed,
     Object? youtubeUrl = null,
+    Object? storageUrl = freezed,
+    Object? videoType = null,
     Object? thumbnailUrl = freezed,
     Object? duration = freezed,
     Object? publishedAt = null,
@@ -207,6 +226,14 @@ class __$$VideoImplCopyWithImpl<$Res>
         youtubeUrl: null == youtubeUrl
             ? _value.youtubeUrl
             : youtubeUrl // ignore: cast_nullable_to_non_nullable
+                  as String,
+        storageUrl: freezed == storageUrl
+            ? _value.storageUrl
+            : storageUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        videoType: null == videoType
+            ? _value.videoType
+            : videoType // ignore: cast_nullable_to_non_nullable
                   as String,
         thumbnailUrl: freezed == thumbnailUrl
             ? _value.thumbnailUrl
@@ -249,6 +276,8 @@ class _$VideoImpl implements _Video {
     required this.title,
     this.description,
     required this.youtubeUrl,
+    this.storageUrl,
+    this.videoType = 'youtube',
     this.thumbnailUrl,
     this.duration,
     required this.publishedAt,
@@ -270,6 +299,12 @@ class _$VideoImpl implements _Video {
   @override
   final String youtubeUrl;
   @override
+  final String? storageUrl;
+  @override
+  @JsonKey()
+  final String videoType;
+  // 'youtube' or 'file'
+  @override
   final String? thumbnailUrl;
   @override
   final String? duration;
@@ -286,7 +321,7 @@ class _$VideoImpl implements _Video {
 
   @override
   String toString() {
-    return 'Video(id: $id, title: $title, description: $description, youtubeUrl: $youtubeUrl, thumbnailUrl: $thumbnailUrl, duration: $duration, publishedAt: $publishedAt, traditionId: $traditionId, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Video(id: $id, title: $title, description: $description, youtubeUrl: $youtubeUrl, storageUrl: $storageUrl, videoType: $videoType, thumbnailUrl: $thumbnailUrl, duration: $duration, publishedAt: $publishedAt, traditionId: $traditionId, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -300,6 +335,10 @@ class _$VideoImpl implements _Video {
                 other.description == description) &&
             (identical(other.youtubeUrl, youtubeUrl) ||
                 other.youtubeUrl == youtubeUrl) &&
+            (identical(other.storageUrl, storageUrl) ||
+                other.storageUrl == storageUrl) &&
+            (identical(other.videoType, videoType) ||
+                other.videoType == videoType) &&
             (identical(other.thumbnailUrl, thumbnailUrl) ||
                 other.thumbnailUrl == thumbnailUrl) &&
             (identical(other.duration, duration) ||
@@ -324,6 +363,8 @@ class _$VideoImpl implements _Video {
     title,
     description,
     youtubeUrl,
+    storageUrl,
+    videoType,
     thumbnailUrl,
     duration,
     publishedAt,
@@ -353,6 +394,8 @@ abstract class _Video implements Video {
     required final String title,
     final String? description,
     required final String youtubeUrl,
+    final String? storageUrl,
+    final String videoType,
     final String? thumbnailUrl,
     final String? duration,
     required final DateTime publishedAt,
@@ -372,6 +415,10 @@ abstract class _Video implements Video {
   String? get description;
   @override
   String get youtubeUrl;
+  @override
+  String? get storageUrl;
+  @override
+  String get videoType; // 'youtube' or 'file'
   @override
   String? get thumbnailUrl;
   @override

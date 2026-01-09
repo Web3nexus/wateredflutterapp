@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wateredflutterapp/features/config/providers/app_boot_provider.dart';
 import 'package:wateredflutterapp/features/config/providers/global_settings_provider.dart';
+import 'package:wateredflutterapp/features/auth/providers/auth_provider.dart';
 import 'package:wateredflutterapp/features/traditions/screens/library_screen.dart';
 import 'package:wateredflutterapp/features/videos/screens/feed_screen.dart';
 import 'package:wateredflutterapp/features/audio/screens/audio_feed_screen.dart';
 import 'package:wateredflutterapp/features/audio/widgets/mini_player.dart';
+import 'package:wateredflutterapp/features/profile/screens/profile_screen.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
 Future<void> main() async {
@@ -86,7 +88,11 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: themeData,
       home: bootState.when(
-        data: (_) => const MainTabsScreen(),
+        data: (_) {
+          // Initialize auth state
+          Future.microtask(() => ref.read(authProvider.notifier).checkAuthStatus());
+          return const MainTabsScreen();
+        },
         loading: () => const SplashScreen(),
         error: (error, stack) => ErrorScreen(error: error.toString()),
       ),
@@ -193,7 +199,7 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
     const LibraryScreen(),
     const AudioFeedScreen(),
     const FeedScreen(),
-    const Center(child: Text('Profile Screen')),
+    const ProfileScreen(),
   ];
 
   @override

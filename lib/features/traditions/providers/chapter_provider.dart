@@ -32,7 +32,7 @@ class ChapterList extends _$ChapterList {
     try {
       final apiClient = ref.read(apiClientProvider);
       final response = await apiClient.get(
-        '/collections/$collectionId/chapters',
+        'collections/$collectionId/chapters',
         queryParameters: {
           'page': page,
           'per_page': perPage,
@@ -66,7 +66,7 @@ class ChapterList extends _$ChapterList {
 Future<Chapter> chapter(ChapterRef ref, int id) async {
   try {
     final apiClient = ref.read(apiClientProvider);
-    final response = await apiClient.get('/chapters/$id');
+    final response = await apiClient.get('chapters/$id');
 
     if (response.statusCode == 200 && response.data != null) {
       return Chapter.fromJson(response.data as Map<String, dynamic>);

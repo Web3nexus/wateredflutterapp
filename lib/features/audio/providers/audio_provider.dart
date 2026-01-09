@@ -46,7 +46,7 @@ class AudioList extends _$AudioList {
       }
 
       final response = await apiClient.get(
-        '/audios',
+        'audios',
         queryParameters: queryParams,
       );
 
@@ -88,7 +88,7 @@ class AudioList extends _$AudioList {
 Future<Audio> audioDetail(AudioDetailRef ref, int id) async {
   try {
     final apiClient = ref.read(apiClientProvider);
-    final response = await apiClient.get('/audios/$id');
+    final response = await apiClient.get('audios/$id');
 
     if (response.statusCode == 200 && response.data != null) {
       return Audio.fromJson(response.data as Map<String, dynamic>);

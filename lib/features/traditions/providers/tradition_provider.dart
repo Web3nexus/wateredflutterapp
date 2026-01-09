@@ -52,7 +52,7 @@ class TraditionList extends _$TraditionList {
     try {
       final apiClient = ref.read(apiClientProvider);
       final response = await apiClient.get(
-        '/traditions',
+        'traditions',
         queryParameters: {
           'page': page,
           'per_page': perPage,
@@ -109,7 +109,7 @@ class TraditionList extends _$TraditionList {
 Future<Tradition> tradition(TraditionRef ref, int id) async {
   try {
     final apiClient = ref.read(apiClientProvider);
-    final response = await apiClient.get('/traditions/$id');
+    final response = await apiClient.get('traditions/$id');
 
     if (response.statusCode == 200 && response.data != null) {
       return Tradition.fromJson(response.data as Map<String, dynamic>);

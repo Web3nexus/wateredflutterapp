@@ -46,7 +46,7 @@ class VideoList extends _$VideoList {
       }
 
       final response = await apiClient.get(
-        '/videos',
+        'videos',
         queryParameters: queryParams,
       );
 
@@ -88,7 +88,7 @@ class VideoList extends _$VideoList {
 Future<Video> villageVideo(VillageVideoRef ref, int id) async {
   try {
     final apiClient = ref.read(apiClientProvider);
-    final response = await apiClient.get('/videos/$id');
+    final response = await apiClient.get('videos/$id');
 
     if (response.statusCode == 200 && response.data != null) {
       return Video.fromJson(response.data as Map<String, dynamic>);
