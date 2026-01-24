@@ -1,18 +1,25 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+class ConsultationType {
+  final int id;
+  final String name;
+  final int durationMinutes;
+  final double price;
+  final String? description;
 
-part 'consultation_type.freezed.dart';
-part 'consultation_type.g.dart';
+  ConsultationType({
+    required this.id,
+    required this.name,
+    required this.durationMinutes,
+    required this.price,
+    this.description,
+  });
 
-@freezed
-class ConsultationType with _$ConsultationType {
-  const factory ConsultationType({
-    required int id,
-    required String name,
-    String? description,
-    @JsonKey(name: 'duration_minutes') required int durationMinutes,
-    required int price, // cents
-    @JsonKey(name: 'image_url') String? imageUrl,
-  }) = _ConsultationType;
-
-  factory ConsultationType.fromJson(Map<String, dynamic> json) => _$ConsultationTypeFromJson(json);
+  factory ConsultationType.fromJson(Map<String, dynamic> json) {
+    return ConsultationType(
+      id: json['id'],
+      name: json['name'],
+      durationMinutes: json['duration_minutes'],
+      price: double.parse(json['price'].toString()),
+      description: json['description'],
+    );
+  }
 }

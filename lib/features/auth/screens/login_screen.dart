@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/auth/providers/auth_provider.dart';
-import 'package:wateredflutterapp/features/auth/screens/register_screen.dart';
+import 'package:Watered/features/auth/providers/auth_provider.dart';
+import 'package:Watered/features/auth/screens/register_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});

@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/core/network/api_client.dart';
-import 'package:wateredflutterapp/features/auth/models/auth_response.dart';
-import 'package:wateredflutterapp/features/auth/models/user.dart';
+import 'package:Watered/core/network/api_client.dart';
+import 'package:Watered/features/auth/models/auth_response.dart';
+import 'package:Watered/features/auth/models/user.dart';
 
 final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService(ref.read(apiClientProvider));

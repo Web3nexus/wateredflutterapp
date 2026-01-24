@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/commerce/models/cart_item.dart';
-import 'package:wateredflutterapp/features/commerce/models/product.dart';
+import 'package:Watered/features/commerce/models/cart_item.dart';
+import 'package:Watered/features/commerce/models/product.dart';
 
 final cartProvider = StateNotifierProvider<CartNotifier, List<CartItem>>((ref) {
   return CartNotifier();

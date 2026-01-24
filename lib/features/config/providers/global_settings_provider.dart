@@ -1,7 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:wateredflutterapp/core/network/api_client.dart';
-import 'package:wateredflutterapp/core/network/api_error_handler.dart';
-import 'package:wateredflutterapp/features/config/models/global_settings.dart';
+import 'package:Watered/core/network/api_client.dart';
+import 'package:Watered/core/network/api_error_handler.dart';
+import 'package:Watered/features/config/models/global_settings.dart';
 
 part 'global_settings_provider.g.dart';
 

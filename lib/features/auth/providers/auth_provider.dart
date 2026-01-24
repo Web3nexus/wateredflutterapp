@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/core/network/api_client.dart';
-import 'package:wateredflutterapp/features/auth/models/user.dart';
-import 'package:wateredflutterapp/features/auth/services/auth_service.dart';
+import 'package:Watered/core/network/api_client.dart';
+import 'package:Watered/features/auth/models/user.dart';
+import 'package:Watered/features/auth/services/auth_service.dart';
 
 // State wrapper
 class AuthState {

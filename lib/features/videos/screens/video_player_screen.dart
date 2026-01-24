@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wateredflutterapp/features/videos/models/video.dart';
+import 'package:Watered/features/videos/models/video.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';

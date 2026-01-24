@@ -1,5 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:wateredflutterapp/features/config/providers/global_settings_provider.dart';
+import 'package:Watered/features/config/providers/global_settings_provider.dart';
 
 part 'app_boot_provider.g.dart';
 

@@ -1,8 +1,11 @@
+```
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/traditions/models/tradition.dart';
-import 'package:wateredflutterapp/features/traditions/providers/tradition_provider.dart';
-import 'package:wateredflutterapp/features/traditions/screens/tradition_detail_screen.dart';
+import 'package:Watered/core/theme/theme_provider.dart';
+import 'package:Watered/features/deities/screens/deities_screen.dart';
+import 'package:Watered/features/traditions/models/tradition.dart';
+import 'package:Watered/features/traditions/providers/tradition_provider.dart';
+import 'package:Watered/features/traditions/screens/tradition_detail_screen.dart';
 
 class LibraryScreen extends ConsumerWidget {
   const LibraryScreen({super.key});
@@ -122,6 +125,21 @@ class _TraditionCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Library Actions
+                      _buildLibraryAction(
+                        context,
+                        'Ancient Spirits',
+                        Icons.auto_awesome,
+                        () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => const DeitiesScreen()),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      _buildLibraryAction(context, 'Bookmarks', Icons.bookmark, () {
+                        // TODO: Navigate to Bookmarks
+                      }),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(

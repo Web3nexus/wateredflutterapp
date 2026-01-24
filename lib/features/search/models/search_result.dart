@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:wateredflutterapp/features/videos/models/video.dart';
-import 'package:wateredflutterapp/features/commerce/models/product.dart';
-import 'package:wateredflutterapp/features/temples/models/temple.dart';
+import 'package:Watered/features/videos/models/video.dart';
+import 'package:Watered/features/commerce/models/product.dart';
+import 'package:Watered/features/temples/models/temple.dart';
 
 part 'search_result.freezed.dart';
 part 'search_result.g.dart';

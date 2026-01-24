@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/core/network/api_client.dart';
-import 'package:wateredflutterapp/features/auth/services/auth_service.dart';
-import 'package:wateredflutterapp/features/library/models/bookmark.dart';
+import 'package:Watered/core/network/api_client.dart';
+import 'package:Watered/features/library/models/bookmark.dart';
 
 final bookmarkServiceProvider = Provider<BookmarkService>((ref) {
   return BookmarkService(ref.read(apiClientProvider));
@@ -25,14 +23,15 @@ class BookmarkService {
   }
 
   Future<void> addBookmark({
-    required String type, // 'App\Models\Video', 'App\Models\Audio' etc, or short names 'video', 'audio'
+    required String
+    type, // 'App\Models\Video', 'App\Models\Audio' etc, or short names 'video', 'audio'
     required int id,
   }) async {
     try {
-      await _client.post('bookmarks', data: {
-        'bookmarkable_type': type,
-        'bookmarkable_id': id,
-      });
+      await _client.post(
+        'bookmarks',
+        data: {'bookmarkable_type': type, 'bookmarkable_id': id},
+      );
     } catch (e) {
       throw 'Failed to bookmark item.';
     }
@@ -45,17 +44,17 @@ class BookmarkService {
       throw 'Failed to remove bookmark.';
     }
   }
-  
+
   // Helper to remove by item specific if we don't have the bookmark ID handy locally
   Future<void> removeBookmarkByItem({
     required String type,
     required int id,
   }) async {
-      try {
-      await _client.delete('bookmarks/item', queryParameters: {
-         'bookmarkable_type': type,
-         'bookmarkable_id': id,
-      });
+    try {
+      await _client.delete(
+        'bookmarks/item',
+        queryParameters: {'bookmarkable_type': type, 'bookmarkable_id': id},
+      );
     } catch (e) {
       throw 'Failed to remove bookmark.';
     }

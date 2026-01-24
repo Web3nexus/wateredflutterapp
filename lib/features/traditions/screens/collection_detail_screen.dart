@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/traditions/models/text_collection.dart';
-import 'package:wateredflutterapp/features/traditions/models/chapter.dart';
-import 'package:wateredflutterapp/features/traditions/providers/chapter_provider.dart';
-import 'package:wateredflutterapp/features/traditions/screens/reading_screen.dart';
+import 'package:Watered/features/traditions/models/text_collection.dart';
+import 'package:Watered/features/traditions/models/chapter.dart';
+import 'package:Watered/features/traditions/providers/chapter_provider.dart';
+import 'package:Watered/features/traditions/screens/reading_screen.dart';
 
 class CollectionDetailScreen extends ConsumerWidget {
   final TextCollection collection;
@@ -11,7 +11,9 @@ class CollectionDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final chaptersState = ref.watch(chapterListProvider(collectionId: collection.id));
+    final chaptersState = ref.watch(
+      chapterListProvider(collectionId: collection.id),
+    );
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -46,7 +48,7 @@ class CollectionDetailScreen extends ConsumerWidget {
           physics: const BouncingScrollPhysics(),
           slivers: [
             const SliverToBoxAdapter(child: SizedBox(height: 120)),
-            
+
             // Collection Header
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -66,7 +68,8 @@ class CollectionDetailScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      collection.description ?? 'Study the sacred chapters of this collection.',
+                      collection.description ??
+                          'Study the sacred chapters of this collection.',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.6),
                         fontSize: 15,
@@ -88,42 +91,42 @@ class CollectionDetailScreen extends ConsumerWidget {
                   : SliverPadding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       sliver: SliverGrid(
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                          childAspectRatio: 1,
-                        ),
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            final chapter = chapters.data[index];
-                            return _ChapterGridItem(
-                              chapter: chapter,
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ReadingScreen(
-                                      chapter: chapter,
-                                      collection: collection,
-                                    ),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              mainAxisSpacing: 16,
+                              crossAxisSpacing: 16,
+                              childAspectRatio: 1,
+                            ),
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final chapter = chapters.data[index];
+                          return _ChapterGridItem(
+                            chapter: chapter,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ReadingScreen(
+                                    chapter: chapter,
+                                    collection: collection,
                                   ),
-                                );
-                              },
-                            );
-                          },
-                          childCount: chapters.data.length,
-                        ),
+                                ),
+                              );
+                            },
+                          );
+                        }, childCount: chapters.data.length),
                       ),
                     ),
               loading: () => const SliverFillRemaining(
-                child: Center(child: CircularProgressIndicator(color: Color(0xFFD4AF37))),
+                child: Center(
+                  child: CircularProgressIndicator(color: Color(0xFFD4AF37)),
+                ),
               ),
               error: (err, stack) => SliverFillRemaining(
                 child: Center(child: Text('Error loading chapters: $err')),
               ),
             ),
-            
+
             const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         ),
@@ -167,7 +170,7 @@ class _ChapterGridItem extends StatelessWidget {
                 color: Color(0xFFD4AF37),
               ),
             ),
-            if (chapter.name != null && chapter.name.isNotEmpty)
+            if (chapter.name.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 4, left: 8, right: 8),
                 child: Text(

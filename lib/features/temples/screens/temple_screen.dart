@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/temples/providers/temple_provider.dart';
-import 'package:wateredflutterapp/features/temples/models/temple.dart';
+import 'package:Watered/features/temples/providers/temple_provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -10,7 +9,9 @@ class TempleScreen extends ConsumerWidget {
   const TempleScreen({super.key});
 
   Future<void> _launchMaps(double lat, double lng) async {
-    final url = Uri.parse('https://www.google.com/maps/search/?api=1&query=$lat,$lng');
+    final url = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=$lat,$lng',
+    );
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     }
@@ -30,7 +31,12 @@ class TempleScreen extends ConsumerWidget {
       body: templesState.when(
         data: (temples) {
           if (temples.isEmpty) {
-            return const Center(child: Text('No temples found.', style: TextStyle(color: Colors.white54)));
+            return const Center(
+              child: Text(
+                'No temples found.',
+                style: TextStyle(color: Colors.white54),
+              ),
+            );
           }
           return ListView.separated(
             padding: const EdgeInsets.all(16),
@@ -43,7 +49,11 @@ class TempleScreen extends ConsumerWidget {
                   color: const Color(0xFF1E293B),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
-                    BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 5)),
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
+                    ),
                   ],
                 ),
                 child: Column(
@@ -51,24 +61,33 @@ class TempleScreen extends ConsumerWidget {
                   children: [
                     // Image
                     ClipRRect(
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(16),
+                      ),
                       child: SizedBox(
                         height: 200,
                         width: double.infinity,
                         child: temple.imageUrl != null
-                          ? CachedNetworkImage(
-                              imageUrl: temple.imageUrl!,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => Shimmer.fromColors(
-                                baseColor: const Color(0xFF1E293B),
-                                highlightColor: const Color(0xFF0F172A),
-                                child: Container(color: Colors.white),
+                            ? CachedNetworkImage(
+                                imageUrl: temple.imageUrl!,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) =>
+                                    Shimmer.fromColors(
+                                      baseColor: const Color(0xFF1E293B),
+                                      highlightColor: const Color(0xFF0F172A),
+                                      child: Container(color: Colors.white),
+                                    ),
+                              )
+                            : Container(
+                                color: Colors.white10,
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.place_outlined,
+                                    size: 50,
+                                    color: Colors.white24,
+                                  ),
+                                ),
                               ),
-                            )
-                          : Container(
-                              color: Colors.white10,
-                              child: const Center(child: Icon(Icons.place_outlined, size: 50, color: Colors.white24)),
-                            ),
                       ),
                     ),
                     Padding(
@@ -88,34 +107,56 @@ class TempleScreen extends ConsumerWidget {
                                   fontFamily: 'Cinzel',
                                 ),
                               ),
-                              if (temple.latitude != null && temple.longitude != null)
+                              if (temple.latitude != null &&
+                                  temple.longitude != null)
                                 IconButton(
-                                  icon: const Icon(Icons.map_outlined, color: Color(0xFFD4AF37)),
-                                  onPressed: () => _launchMaps(temple.latitude!, temple.longitude!),
-                                )
+                                  icon: const Icon(
+                                    Icons.map_outlined,
+                                    color: Color(0xFFD4AF37),
+                                  ),
+                                  onPressed: () => _launchMaps(
+                                    temple.latitude!,
+                                    temple.longitude!,
+                                  ),
+                                ),
                             ],
                           ),
                           if (temple.address != null)
-                             Padding(
-                               padding: const EdgeInsets.only(top: 4.0),
-                               child: Row(
-                                 children: [
-                                   const Icon(Icons.location_on_outlined, size: 16, color: Colors.white54),
-                                   const SizedBox(width: 4),
-                                   Expanded(child: Text(temple.address!, style: const TextStyle(color: Colors.white54, fontSize: 13))),
-                                 ],
-                               ),
-                             ),
-                          if (temple.description != null) 
-                             Padding(
-                               padding: const EdgeInsets.only(top: 12.0),
-                               child: Text(
-                                  temple.description!,
-                                  style: const TextStyle(color: Colors.white70, height: 1.4),
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
-                               ),
-                             ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.location_on_outlined,
+                                    size: 16,
+                                    color: Colors.white54,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Expanded(
+                                    child: Text(
+                                      temple.address!,
+                                      style: const TextStyle(
+                                        color: Colors.white54,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          if (temple.description != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 12.0),
+                              child: Text(
+                                temple.description!,
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  height: 1.4,
+                                ),
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -125,8 +166,12 @@ class TempleScreen extends ConsumerWidget {
             },
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFFD4AF37))),
-        error: (err, stack) => Center(child: Text('Error: $err', style: const TextStyle(color: Colors.red))),
+        loading: () => const Center(
+          child: CircularProgressIndicator(color: Color(0xFFD4AF37)),
+        ),
+        error: (err, stack) => Center(
+          child: Text('Error: $err', style: const TextStyle(color: Colors.red)),
+        ),
       ),
     );
   }

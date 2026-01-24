@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/config/providers/app_boot_provider.dart';
-import 'package:wateredflutterapp/features/config/providers/global_settings_provider.dart';
-import 'package:wateredflutterapp/features/auth/providers/auth_provider.dart';
-import 'package:wateredflutterapp/features/traditions/screens/library_screen.dart';
-import 'package:wateredflutterapp/features/videos/screens/feed_screen.dart';
-import 'package:wateredflutterapp/features/audio/screens/audio_feed_screen.dart';
-import 'package:wateredflutterapp/features/audio/widgets/mini_player.dart';
-import 'package:wateredflutterapp/features/profile/screens/profile_screen.dart';
+import 'package:Watered/features/config/providers/app_boot_provider.dart';
+import 'package:Watered/features/config/providers/global_settings_provider.dart';
+import 'package:Watered/features/auth/providers/auth_provider.dart';
+import 'package:Watered/features/traditions/screens/library_screen.dart';
+import 'package:Watered/features/videos/screens/feed_screen.dart';
+import 'package:Watered/features/audio/screens/audio_feed_screen.dart';
+import 'package:Watered/features/audio/widgets/mini_player.dart';
+import 'package:Watered/features/profile/screens/profile_screen.dart';
+import 'package:Watered/features/community/screens/community_feed_screen.dart'; // Added import
 import 'package:just_audio_background/just_audio_background.dart';
 
 Future<void> main() async {
@@ -26,6 +27,10 @@ Future<void> main() async {
   );
 }
 
+import 'package:Watered/core/theme/theme_provider.dart';
+
+// ... imports ...
+
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
@@ -33,12 +38,60 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final bootState = ref.watch(appBootProvider);
     final settings = ref.watch(globalSettingsNotifierProvider).asData?.value;
+    final themeMode = ref.watch(themeProvider);
 
     // Build theme from dynamic settings
     final primaryColor = _parseColor(settings?.primaryColor, const Color(0xFFD4AF37));
     final secondaryColor = _parseColor(settings?.secondaryColor, const Color(0xFF6C63FF));
 
-    final themeData = ThemeData(
+    final lightTheme = ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: primaryColor,
+        primary: primaryColor,
+        secondary: secondaryColor,
+        surface: Colors.white,
+        brightness: Brightness.light,
+      ),
+      scaffoldBackgroundColor: Colors.white,
+      fontFamily: 'Outfit',
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        titleTextStyle: TextStyle(
+          fontFamily: 'Cinzel',
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Colors.black, // Dark text for light mode
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
+      textTheme: const TextTheme(
+        headlineMedium: TextStyle(
+          fontFamily: 'Cinzel',
+          fontWeight: FontWeight.bold,
+          color: Colors.black, // Dark text
+        ),
+        titleLarge: TextStyle(
+          fontFamily: 'Cinzel',
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1.2,
+          color: Colors.black, 
+        ),
+        bodyMedium: TextStyle(
+          color: Color(0xFF1E293B), // Dark blue-grey for text
+          height: 1.5,
+        ),
+      ),
+      cardTheme: CardThemeData(
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        color: Colors.grey.shade50,
+      ),
+    );
+
+    final darkTheme = ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
         seedColor: primaryColor,
@@ -59,6 +112,7 @@ class MyApp extends ConsumerWidget {
           fontWeight: FontWeight.bold,
           color: Color(0xFFD4AF37),
         ),
+        iconTheme: IconThemeData(color: Color(0xFFD4AF37)),
       ),
       textTheme: const TextTheme(
         headlineMedium: TextStyle(
@@ -70,6 +124,7 @@ class MyApp extends ConsumerWidget {
           fontFamily: 'Cinzel',
           fontWeight: FontWeight.bold,
           letterSpacing: 1.2,
+          color: Color(0xFFD4AF37),
         ),
         bodyMedium: TextStyle(
           color: Color(0xFFE2E8F0),
@@ -86,7 +141,9 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
       title: settings?.siteName ?? 'Watered',
       debugShowCheckedModeBanner: false,
-      theme: themeData,
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: themeMode,
       home: bootState.when(
         data: (_) {
           // Initialize auth state
@@ -199,6 +256,7 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
     const LibraryScreen(),
     const AudioFeedScreen(),
     const FeedScreen(),
+    const CommunityFeedScreen(), // Added Community Screen
     const ProfileScreen(),
   ];
 
@@ -242,6 +300,10 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
             BottomNavigationBarItem(
               icon: Icon(Icons.movie_filter_rounded),
               label: 'Reels',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.people_outline_rounded),
+              label: 'Community',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_rounded),

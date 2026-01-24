@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/core/network/api_client.dart';
-import 'package:wateredflutterapp/features/commerce/models/product.dart';
+import 'package:Watered/core/network/api_client.dart';
+import 'package:Watered/features/commerce/models/product.dart';
 
 final productServiceProvider = Provider<ProductService>((ref) {
   return ProductService(ref.read(apiClientProvider));

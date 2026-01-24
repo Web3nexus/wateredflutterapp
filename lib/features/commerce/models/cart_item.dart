@@ -1,4 +1,4 @@
-import 'package:wateredflutterapp/features/commerce/models/product.dart';
+import 'package:Watered/features/commerce/models/product.dart';
 
 class CartItem {
   final Product product;

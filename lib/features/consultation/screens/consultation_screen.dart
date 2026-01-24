@@ -1,139 +1,171 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/consultation/providers/booking_provider.dart';
-import 'package:wateredflutterapp/features/consultation/models/consultation_type.dart';
-import 'package:wateredflutterapp/features/consultation/screens/booking_form_screen.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:Watered/features/consultation/providers/booking_providers.dart';
+import 'package:Watered/features/consultation/services/booking_service.dart';
+import 'package:intl/intl.dart';
 
-class ConsultationScreen extends ConsumerWidget {
+class ConsultationScreen extends ConsumerStatefulWidget {
   const ConsultationScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final typesState = ref.watch(consultationTypesProvider);
-
-    return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
-      appBar: AppBar(
-        title: const Text('SPIRITUAL CONSULTATION'),
-        backgroundColor: const Color(0xFF0F172A),
-      ),
-      body: typesState.when(
-        data: (types) {
-          if (types.isEmpty) {
-            return const Center(child: Text('No consultation types available.', style: TextStyle(color: Colors.white54)));
-          }
-          return ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: types.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 16),
-            itemBuilder: (context, index) {
-              final type = types[index];
-              return _ConsultationCard(type: type);
-            },
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFFD4AF37))),
-        error: (err, stack) => Center(child: Text('Error: $err', style: const TextStyle(color: Colors.red))),
-      ),
-    );
-  }
+  ConsumerState<ConsultationScreen> createState() => _ConsultationScreenState();
 }
 
-class _ConsultationCard extends StatelessWidget {
-  final ConsultationType type;
-  const _ConsultationCard({required this.type});
+class _ConsultationScreenState extends ConsumerState<ConsultationScreen> {
+  int? _selectedTypeId;
+  DateTime? _selectedDate;
+  TimeOfDay? _selectedTime;
+  bool _isLoading = false;
+  final _notesController = TextEditingController();
+
+  Future<void> _submit() async {
+    if (_selectedTypeId == null || _selectedDate == null || _selectedTime == null) return;
+
+    setState(() => _isLoading = true);
+    try {
+      final startTime = DateTime(
+        _selectedDate!.year,
+        _selectedDate!.month,
+        _selectedDate!.day,
+        _selectedTime!.hour,
+        _selectedTime!.minute,
+      );
+
+      await ref.read(bookingServiceProvider).createBooking(
+            _selectedTypeId!,
+            startTime,
+            _notesController.text,
+          );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+           const SnackBar(content: Text('Booking request sent successfully!')),
+        );
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+           SnackBar(content: Text('Error: $e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 5)),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (type.imageUrl != null)
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-              child: SizedBox(
-                height: 180,
-                width: double.infinity,
-                child: CachedNetworkImage(
-                  imageUrl: type.imageUrl!,
-                  fit: BoxFit.cover,
-                ),
+    final theme = Theme.of(context);
+    final typesAsync = ref.watch(consultationTypesProvider);
+
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(title: const Text('Book Consultation')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Select Consultation Type', style: theme.textTheme.titleMedium),
+            const SizedBox(height: 12),
+            typesAsync.when(
+              data: (types) => Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: types.map((type) {
+                   final isSelected = _selectedTypeId == type.id;
+                   return ChoiceChip(
+                     label: Text('${type.name} - \$${type.price}'),
+                     selected: isSelected,
+                     onSelected: (selected) {
+                       setState(() => _selectedTypeId = selected ? type.id : null);
+                     },
+                     selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                     backgroundColor: theme.cardTheme.color,
+                     labelStyle: TextStyle(
+                       color: isSelected ? theme.colorScheme.primary : theme.textTheme.bodyMedium?.color,
+                     ),
+                   );
+                }).toList(),
+              ),
+              loading: () => const CircularProgressIndicator(),
+              error: (e, s) => Text('Error loading types: $e'),
+            ),
+            const SizedBox(height: 32),
+            
+            Text('Select Date & Time', style: theme.textTheme.titleMedium),
+            const SizedBox(height: 12),
+            ListTile(
+              tileColor: theme.cardTheme.color,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              title: Text(
+                _selectedDate == null 
+                  ? 'Pick Date' 
+                  : DateFormat('MMM d, yyyy').format(_selectedDate!),
+              ),
+              trailing: const Icon(Icons.calendar_today),
+              onTap: () async {
+                 final date = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now().add(const Duration(days: 1)),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime.now().add(const Duration(days: 90)),
+                 );
+                 if (date != null) setState(() => _selectedDate = date);
+              },
+            ),
+            const SizedBox(height: 12),
+             ListTile(
+              tileColor: theme.cardTheme.color,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              title: Text(
+                _selectedTime == null 
+                  ? 'Pick Time' 
+                  : _selectedTime!.format(context),
+              ),
+              trailing: const Icon(Icons.access_time),
+              onTap: () async {
+                 final time = await showTimePicker(
+                    context: context,
+                    initialTime: const TimeOfDay(hour: 10, minute: 0),
+                 );
+                 if (time != null) setState(() => _selectedTime = time);
+              },
+            ),
+            const SizedBox(height: 32),
+
+            Text('Notes', style: theme.textTheme.titleMedium),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _notesController,
+              maxLines: 3,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: theme.cardTheme.color,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                hintText: 'Any specific questions?',
               ),
             ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        type.name,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Cinzel',
-                        ),
-                      ),
-                    ),
-                    Text(
-                      '\$${(type.price / 100).toStringAsFixed(0)}',
-                      style: const TextStyle(
-                        color: Color(0xFFD4AF37),
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+
+            const SizedBox(height: 48),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : _submit,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(Icons.access_time, size: 16, color: Colors.white54),
-                    const SizedBox(width: 4),
-                    Text('${type.durationMinutes} mins', style: const TextStyle(color: Colors.white54, fontSize: 13)),
-                  ],
-                ),
-                if (type.description != null) ...[
-                  const SizedBox(height: 12),
-                  Text(
-                    type.description!,
-                    style: const TextStyle(color: Colors.white70, height: 1.4),
-                  ),
-                ],
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => BookingFormScreen(type: type)),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white.withOpacity(0.1),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    ),
-                    child: const Text('BOOK NOW'),
-                  ),
-                ),
-              ],
+                child: _isLoading 
+                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Text('REQUEST BOOKING'),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

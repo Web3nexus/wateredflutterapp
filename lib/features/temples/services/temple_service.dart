@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/core/network/api_client.dart';
-import 'package:wateredflutterapp/features/temples/models/temple.dart';
+import 'package:Watered/core/network/api_client.dart';
+import 'package:Watered/features/temples/models/temple.dart';
 
 final templeServiceProvider = Provider<TempleService>((ref) {
   return TempleService(ref.read(apiClientProvider));

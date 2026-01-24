@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/audio/providers/current_audio_provider.dart';
-import 'package:wateredflutterapp/features/audio/services/audio_service.dart';
-import 'package:wateredflutterapp/features/audio/widgets/audio_player_bottom_sheet.dart';
+import 'package:Watered/features/audio/providers/current_audio_provider.dart';
+import 'package:Watered/features/audio/services/audio_service.dart';
+import 'package:Watered/features/audio/widgets/audio_player_bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class MiniPlayer extends ConsumerWidget {

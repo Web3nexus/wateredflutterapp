@@ -1,8 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:wateredflutterapp/core/network/api_client.dart';
-import 'package:wateredflutterapp/core/network/api_error_handler.dart';
-import 'package:wateredflutterapp/features/config/providers/global_settings_provider.dart';
-import 'package:wateredflutterapp/features/traditions/models/tradition.dart';
+import 'package:Watered/core/network/api_client.dart';
+import 'package:Watered/core/network/api_error_handler.dart';
+import 'package:Watered/features/traditions/models/tradition.dart';
 
 part 'tradition_provider.g.dart';
 
@@ -11,10 +10,7 @@ class PaginationParams {
   final int page;
   final int perPage;
 
-  const PaginationParams({
-    this.page = 1,
-    this.perPage = 20,
-  });
+  const PaginationParams({this.page = 1, this.perPage = 20});
 }
 
 /// Paginated response wrapper
@@ -53,10 +49,7 @@ class TraditionList extends _$TraditionList {
       final apiClient = ref.read(apiClientProvider);
       final response = await apiClient.get(
         'traditions',
-        queryParameters: {
-          'page': page,
-          'per_page': perPage,
-        },
+        queryParameters: {'page': page, 'per_page': perPage},
       );
 
       if (response.statusCode == 200 && response.data != null) {
@@ -87,10 +80,7 @@ class TraditionList extends _$TraditionList {
       // In a real app, you'd append to existing data
       // For now, just load the next page
       state = AsyncValue.data(
-        await fetchTraditions(
-          page: current.currentPage + 1,
-          perPage: 20,
-        ),
+        await fetchTraditions(page: current.currentPage + 1, perPage: 20),
       );
     }
   }
@@ -98,9 +88,7 @@ class TraditionList extends _$TraditionList {
   /// Refresh traditions
   Future<void> refresh() async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(
-      () => fetchTraditions(page: 1, perPage: 20),
-    );
+    state = await AsyncValue.guard(() => fetchTraditions(page: 1, perPage: 20));
   }
 }
 

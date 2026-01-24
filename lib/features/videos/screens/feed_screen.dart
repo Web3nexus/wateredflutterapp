@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/videos/providers/video_provider.dart';
-import 'package:wateredflutterapp/features/videos/models/video.dart';
-import 'package:wateredflutterapp/features/videos/widgets/video_player_widget.dart';
+import 'package:Watered/features/videos/providers/video_provider.dart';
+import 'package:Watered/features/videos/models/video.dart';
+import 'package:Watered/features/videos/widgets/video_player_widget.dart';
 
 class FeedScreen extends ConsumerStatefulWidget {
   const FeedScreen({super.key});
@@ -88,11 +88,16 @@ class _VideoReelItem extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFD4AF37).withOpacity(0.2),
                   borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.5)),
+                  border: Border.all(
+                    color: const Color(0xFFD4AF37).withOpacity(0.5),
+                  ),
                 ),
                 child: const Text(
                   'REEL TEACHING',
@@ -139,9 +144,15 @@ class _VideoReelItem extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _ActionButton(icon: Icons.favorite_border_rounded, label: 'Liking'),
+              _ActionButton(
+                icon: Icons.favorite_border_rounded,
+                label: 'Liking',
+              ),
               const SizedBox(height: 20),
-              _ActionButton(icon: Icons.chat_bubble_outline_rounded, label: 'Discuss'),
+              _ActionButton(
+                icon: Icons.chat_bubble_outline_rounded,
+                label: 'Discuss',
+              ),
               const SizedBox(height: 20),
               _ActionButton(icon: Icons.share_rounded, label: 'Spread'),
               const SizedBox(height: 20),
@@ -209,9 +220,16 @@ class _EmptyFeed extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.video_collection_rounded, size: 64, color: Colors.blueGrey),
-          const SizedBox(height: 16),
-          const Text('No reels available yet.', style: TextStyle(color: Colors.white54)),
+          Icon(
+            Icons.video_collection_rounded,
+            size: 64,
+            color: Colors.blueGrey,
+          ),
+          SizedBox(height: 16),
+          Text(
+            'No reels available yet.',
+            style: TextStyle(color: Colors.white54),
+          ),
         ],
       ),
     );
@@ -230,7 +248,11 @@ class _ErrorView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 48),
+            const Icon(
+              Icons.error_outline_rounded,
+              color: Colors.redAccent,
+              size: 48,
+            ),
             const SizedBox(height: 16),
             Text(
               'Reels unavailable: $error',

@@ -1,9 +1,8 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:wateredflutterapp/core/network/api_client.dart';
-import 'package:wateredflutterapp/core/network/api_error_handler.dart';
-import 'package:wateredflutterapp/features/config/providers/global_settings_provider.dart';
-import 'package:wateredflutterapp/features/traditions/models/text_collection.dart';
-import 'package:wateredflutterapp/features/traditions/providers/tradition_provider.dart';
+import 'package:Watered/core/network/api_client.dart';
+import 'package:Watered/core/network/api_error_handler.dart';
+import 'package:Watered/features/traditions/models/text_collection.dart';
+import 'package:Watered/features/traditions/providers/tradition_provider.dart';
 
 part 'collection_provider.g.dart';
 
@@ -53,8 +52,9 @@ class CollectionList extends _$CollectionList {
         final data = response.data as Map<String, dynamic>;
         final collectionsData = data['data'] as List;
         final collections = collectionsData
-            .map((json) =>
-                TextCollection.fromJson(json as Map<String, dynamic>))
+            .map(
+              (json) => TextCollection.fromJson(json as Map<String, dynamic>),
+            )
             .toList();
 
         return PaginatedResponse(
@@ -65,7 +65,9 @@ class CollectionList extends _$CollectionList {
         );
       } else {
         throw ServerException(
-            'Failed to load collections', response.statusCode);
+          'Failed to load collections',
+          response.statusCode,
+        );
       }
     } catch (e) {
       throw ApiErrorHandler.handleError(e);

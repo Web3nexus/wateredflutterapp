@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/temples/models/temple.dart';
-import 'package:wateredflutterapp/features/temples/services/temple_service.dart';
+import 'package:Watered/features/temples/models/temple.dart';
+import 'package:Watered/features/temples/services/temple_service.dart';
 
 final templeListProvider = FutureProvider.autoDispose<List<Temple>>((ref) async {
   final service = ref.watch(templeServiceProvider);

@@ -1,0 +1,25 @@
+class Ritual {
+  final int id;
+  final String title;
+  final String? description;
+  final String? content;
+  final List<String>? mediaUrls;
+
+  Ritual({
+    required this.id,
+    required this.title,
+    this.description,
+    this.content,
+    this.mediaUrls,
+  });
+
+  factory Ritual.fromJson(Map<String, dynamic> json) {
+    return Ritual(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      content: json['content'],
+      mediaUrls: json['media_urls'] != null ? List<String>.from(json['media_urls']) : null,
+    );
+  }
+}

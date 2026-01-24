@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/library/providers/bookmark_provider.dart';
-import 'package:wateredflutterapp/features/library/models/bookmark.dart';
+import 'package:Watered/features/library/providers/bookmark_provider.dart';
+import 'package:Watered/features/library/models/bookmark.dart';
 import 'package:shimmer/shimmer.dart';
 
 class UserLibraryScreen extends ConsumerStatefulWidget {

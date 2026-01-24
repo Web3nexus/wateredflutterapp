@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:wateredflutterapp/features/consultation/models/consultation_type.dart';
+import 'package:Watered/features/consultation/models/consultation_type.dart';
 
 part 'booking.freezed.dart';
 part 'booking.g.dart';

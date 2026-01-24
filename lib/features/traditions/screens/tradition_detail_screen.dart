@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/traditions/models/tradition.dart';
-import 'package:wateredflutterapp/features/traditions/models/text_collection.dart';
-import 'package:wateredflutterapp/features/traditions/providers/collection_provider.dart';
-import 'package:wateredflutterapp/features/traditions/screens/collection_detail_screen.dart';
+import 'package:Watered/features/traditions/models/tradition.dart';
+import 'package:Watered/features/traditions/models/text_collection.dart';
+import 'package:Watered/features/traditions/providers/collection_provider.dart';
+import 'package:Watered/features/traditions/screens/collection_detail_screen.dart';
 
 class TraditionDetailScreen extends ConsumerWidget {
   final Tradition tradition;

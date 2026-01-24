@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:wateredflutterapp/features/auth/models/user.dart';
+import 'package:Watered/features/auth/models/user.dart';
 
 part 'auth_response.freezed.dart';
 part 'auth_response.g.dart';

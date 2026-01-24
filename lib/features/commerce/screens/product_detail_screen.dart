@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/commerce/models/product.dart';
-import 'package:wateredflutterapp/features/commerce/providers/cart_provider.dart';
-import 'package:wateredflutterapp/features/commerce/screens/cart_screen.dart';
+import 'package:Watered/features/commerce/models/product.dart';
+import 'package:Watered/features/commerce/providers/cart_provider.dart';
+import 'package:Watered/features/commerce/screens/cart_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ProductDetailScreen extends ConsumerWidget {

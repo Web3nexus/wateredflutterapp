@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/audio/models/audio.dart';
-import 'package:wateredflutterapp/features/audio/providers/audio_provider.dart';
+import 'package:Watered/features/audio/models/audio.dart';
+import 'package:Watered/features/audio/providers/audio_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:wateredflutterapp/features/audio/services/audio_service.dart';
-import 'package:wateredflutterapp/features/config/providers/global_settings_provider.dart';
-import 'package:wateredflutterapp/features/audio/providers/current_audio_provider.dart';
-import 'package:wateredflutterapp/features/audio/widgets/audio_player_bottom_sheet.dart';
+import 'package:Watered/features/audio/services/audio_service.dart';
+import 'package:Watered/features/audio/providers/current_audio_provider.dart';
+import 'package:Watered/features/audio/widgets/audio_player_bottom_sheet.dart';
 
 class AudioFeedScreen extends ConsumerWidget {
   const AudioFeedScreen({super.key});
@@ -17,16 +16,17 @@ class AudioFeedScreen extends ConsumerWidget {
     final audioState = ref.watch(audioListProvider());
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('AUDIO TEACHINGS'),
-      ),
+      appBar: AppBar(title: const Text('AUDIO TEACHINGS')),
       body: RefreshIndicator(
         onRefresh: () => ref.read(audioListProvider().notifier).refresh(),
         child: audioState.when(
           data: (audios) => audios.data.isEmpty
               ? const _EmptyAudioFeed()
               : ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   itemCount: audios.data.length,
                   itemBuilder: (context, index) {
                     return _AudioCard(audio: audios.data[index]);
@@ -58,7 +58,7 @@ class _AudioCard extends ConsumerWidget {
           ref.read(currentAudioProvider.notifier).state = audio;
           await ref.read(audioServiceProvider).loadAudio(audio);
           await ref.read(audioServiceProvider).play();
-          
+
           if (context.mounted) {
             showModalBottomSheet(
               context: context,
@@ -82,13 +82,17 @@ class _AudioCard extends ConsumerWidget {
                         width: 80,
                         height: 80,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(color: Colors.white10),
+                        placeholder: (context, url) =>
+                            Container(color: Colors.white10),
                       )
                     : Container(
                         width: 80,
                         height: 80,
                         color: const Color(0xFFD4AF37).withOpacity(0.1),
-                        child: const Icon(Icons.music_note_rounded, color: Color(0xFFD4AF37)),
+                        child: const Icon(
+                          Icons.music_note_rounded,
+                          color: Color(0xFFD4AF37),
+                        ),
                       ),
               ),
               const SizedBox(width: 16),
@@ -120,11 +124,18 @@ class _AudioCard extends ConsumerWidget {
                     Row(
                       children: [
                         if (audio.duration != null) ...[
-                          Icon(Icons.timer_outlined, size: 12, color: const Color(0xFFD4AF37).withOpacity(0.7)),
+                          Icon(
+                            Icons.timer_outlined,
+                            size: 12,
+                            color: const Color(0xFFD4AF37).withOpacity(0.7),
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             audio.duration!,
-                            style: TextStyle(fontSize: 11, color: const Color(0xFFD4AF37).withOpacity(0.7)),
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: const Color(0xFFD4AF37).withOpacity(0.7),
+                            ),
                           ),
                         ],
                       ],
@@ -140,7 +151,11 @@ class _AudioCard extends ConsumerWidget {
                   color: const Color(0xFFD4AF37).withOpacity(0.15),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.play_arrow_rounded, color: Color(0xFFD4AF37), size: 28),
+                child: const Icon(
+                  Icons.play_arrow_rounded,
+                  color: Color(0xFFD4AF37),
+                  size: 28,
+                ),
               ),
             ],
           ),
@@ -183,9 +198,16 @@ class _EmptyAudioFeed extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.mic_none_rounded, size: 64, color: Colors.blueGrey.shade700),
+          Icon(
+            Icons.mic_none_rounded,
+            size: 64,
+            color: Colors.blueGrey.shade700,
+          ),
           const SizedBox(height: 16),
-          const Text('The sound of silence... no audios yet.', style: TextStyle(color: Colors.blueGrey)),
+          const Text(
+            'The sound of silence... no audios yet.',
+            style: TextStyle(color: Colors.blueGrey),
+          ),
         ],
       ),
     );

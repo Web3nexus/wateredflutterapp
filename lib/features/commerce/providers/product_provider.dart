@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/commerce/models/product.dart';
-import 'package:wateredflutterapp/features/commerce/services/product_service.dart';
+import 'package:Watered/features/commerce/models/product.dart';
+import 'package:Watered/features/commerce/services/product_service.dart';
 
 final productListProvider = FutureProvider.autoDispose<List<Product>>((ref) async {
   final service = ref.watch(productServiceProvider);

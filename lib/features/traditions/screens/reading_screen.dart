@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/traditions/models/chapter.dart';
-import 'package:wateredflutterapp/features/traditions/models/text_collection.dart';
-import 'package:wateredflutterapp/features/traditions/models/entry.dart';
-import 'package:wateredflutterapp/features/traditions/providers/entry_provider.dart';
+import 'package:Watered/features/traditions/models/chapter.dart';
+import 'package:Watered/features/traditions/models/text_collection.dart';
+import 'package:Watered/features/traditions/models/entry.dart';
+import 'package:Watered/features/traditions/providers/entry_provider.dart';
 
 class ReadingScreen extends ConsumerWidget {
   final Chapter chapter;

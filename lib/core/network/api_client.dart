@@ -16,7 +16,9 @@ class ApiClient {
   final FlutterSecureStorage _secureStorage;
   
   // Updated to use Laravel Herd domain for simulator access
-  static const String baseUrl = 'http://wateredbackend.test/api/v1/';
+  // Updated to use Live Production URL
+  static const String baseUrl = 'https://cryptogateshub.com';
+  // static const String baseUrl = 'https://wateredbackend.test'; // Local fallback
   static const String tokenKey = 'auth_token';
 
   ApiClient({FlutterSecureStorage? secureStorage})
@@ -68,7 +70,11 @@ class ApiClient {
           print('❌ ERROR: ${error.requestOptions.method} ${error.requestOptions.path}');
           print('❌ Status: ${error.response?.statusCode}');
           print('❌ Message: ${error.message}');
-          print('❌ Data: ${error.response?.data}');
+          if (error.response?.data != null) {
+            print('❌ Data: ${error.response?.data}');
+          }
+          // Log headers for debugging 403s (often related to missing/wrong headers)
+          print('❌ Headers: ${error.response?.headers}');
           print('❌ Full Error: ${error.error}');
           return handler.next(error);
         },

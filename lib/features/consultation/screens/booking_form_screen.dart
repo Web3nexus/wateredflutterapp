@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/consultation/models/consultation_type.dart';
-import 'package:wateredflutterapp/features/consultation/services/booking_service.dart';
+import 'package:Watered/features/consultation/models/consultation_type.dart';
+import 'package:Watered/features/consultation/services/booking_service.dart';
 import 'package:intl/intl.dart';
 
 class BookingFormScreen extends ConsumerStatefulWidget {

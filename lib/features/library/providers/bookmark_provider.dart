@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/library/models/bookmark.dart';
-import 'package:wateredflutterapp/features/library/services/bookmark_service.dart';
+import 'package:Watered/features/library/models/bookmark.dart';
+import 'package:Watered/features/library/services/bookmark_service.dart';
 
 final bookmarkListProvider = StateNotifierProvider.autoDispose<BookmarkListNotifier, AsyncValue<List<Bookmark>>>((ref) {
   final service = ref.watch(bookmarkServiceProvider);

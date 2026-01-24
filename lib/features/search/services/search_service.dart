@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/core/network/api_client.dart';
-import 'package:wateredflutterapp/features/search/models/daily_wisdom.dart';
-import 'package:wateredflutterapp/features/search/models/search_result.dart';
+import 'package:Watered/core/network/api_client.dart';
+import 'package:Watered/features/search/models/daily_wisdom.dart';
+import 'package:Watered/features/search/models/search_result.dart';
 
 final searchServiceProvider = Provider<SearchService>((ref) {
   return SearchService(ref.read(apiClientProvider));

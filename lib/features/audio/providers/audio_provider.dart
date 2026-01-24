@@ -1,9 +1,8 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:wateredflutterapp/core/network/api_client.dart';
-import 'package:wateredflutterapp/core/network/api_error_handler.dart';
-import 'package:wateredflutterapp/features/traditions/providers/tradition_provider.dart';
-import 'package:wateredflutterapp/features/config/providers/global_settings_provider.dart';
-import 'package:wateredflutterapp/features/audio/models/audio.dart';
+import 'package:Watered/core/network/api_client.dart';
+import 'package:Watered/core/network/api_error_handler.dart';
+import 'package:Watered/features/traditions/providers/tradition_provider.dart';
+import 'package:Watered/features/audio/models/audio.dart';
 
 part 'audio_provider.g.dart';
 
@@ -64,7 +63,10 @@ class AudioList extends _$AudioList {
           total: data['total'] ?? audios.length,
         );
       } else {
-        throw ServerException('Failed to load audio teachings', response.statusCode);
+        throw ServerException(
+          'Failed to load audio teachings',
+          response.statusCode,
+        );
       }
     } catch (e) {
       throw ApiErrorHandler.handleError(e);

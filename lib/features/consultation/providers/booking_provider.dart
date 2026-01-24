@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/consultation/models/consultation_type.dart';
-import 'package:wateredflutterapp/features/consultation/models/booking.dart';
-import 'package:wateredflutterapp/features/consultation/services/booking_service.dart';
+import 'package:Watered/features/consultation/models/consultation_type.dart';
+import 'package:Watered/features/consultation/models/booking.dart';
+import 'package:Watered/features/consultation/services/booking_service.dart';
 
 final consultationTypesProvider = FutureProvider.autoDispose<List<ConsultationType>>((ref) async {
   final service = ref.watch(bookingServiceProvider);

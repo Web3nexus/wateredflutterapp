@@ -1,9 +1,8 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:wateredflutterapp/core/network/api_client.dart';
-import 'package:wateredflutterapp/core/network/api_error_handler.dart';
-import 'package:wateredflutterapp/features/config/providers/global_settings_provider.dart';
-import 'package:wateredflutterapp/features/traditions/models/chapter.dart';
-import 'package:wateredflutterapp/features/traditions/providers/tradition_provider.dart';
+import 'package:Watered/core/network/api_client.dart';
+import 'package:Watered/core/network/api_error_handler.dart';
+import 'package:Watered/features/traditions/models/chapter.dart';
+import 'package:Watered/features/traditions/providers/tradition_provider.dart';
 
 part 'chapter_provider.g.dart';
 
@@ -33,10 +32,7 @@ class ChapterList extends _$ChapterList {
       final apiClient = ref.read(apiClientProvider);
       final response = await apiClient.get(
         'collections/$collectionId/chapters',
-        queryParameters: {
-          'page': page,
-          'per_page': perPage,
-        },
+        queryParameters: {'page': page, 'per_page': perPage},
       );
 
       if (response.statusCode == 200 && response.data != null) {

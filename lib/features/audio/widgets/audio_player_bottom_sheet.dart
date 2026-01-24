@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wateredflutterapp/features/audio/models/audio.dart';
-import 'package:wateredflutterapp/features/audio/services/audio_service.dart';
+import 'package:Watered/features/audio/models/audio.dart';
+import 'package:Watered/features/audio/services/audio_service.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
