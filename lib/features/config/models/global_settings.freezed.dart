@@ -21,13 +21,33 @@ GlobalSettings _$GlobalSettingsFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$GlobalSettings {
+  @JsonKey(name: 'primary_color')
   String get primaryColor => throw _privateConstructorUsedError;
+  @JsonKey(name: 'secondary_color')
   String get secondaryColor => throw _privateConstructorUsedError;
+  @JsonKey(name: 'default_language')
   String get defaultLanguage => throw _privateConstructorUsedError;
+  @JsonKey(name: 'supported_languages')
   List<String> get supportedLanguages => throw _privateConstructorUsedError;
+  @JsonKey(name: 'maintenance_mode')
   bool get maintenanceMode => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_ads_enabled')
+  bool get isAdsEnabled => throw _privateConstructorUsedError;
+  @JsonKey(name: 'ad_unit_id_android')
+  String? get adUnitIdAndroid => throw _privateConstructorUsedError;
+  @JsonKey(name: 'ad_unit_id_ios')
+  String? get adUnitIdIos => throw _privateConstructorUsedError;
+  @JsonKey(name: 'ads_screens')
+  List<String>? get adsScreens => throw _privateConstructorUsedError;
+  @JsonKey(name: 'notification_sound_path')
+  String? get notificationSoundPath => throw _privateConstructorUsedError;
+  @JsonKey(name: 'alarm_sound_path')
+  String? get alarmSoundPath => throw _privateConstructorUsedError;
+  @JsonKey(name: 'site_name')
   String? get siteName => throw _privateConstructorUsedError;
+  @JsonKey(name: 'site_description')
   String? get siteDescription => throw _privateConstructorUsedError;
+  @JsonKey(name: 'logo_path')
   String? get logoPath => throw _privateConstructorUsedError;
 
   /// Serializes this GlobalSettings to a JSON map.
@@ -48,14 +68,20 @@ abstract class $GlobalSettingsCopyWith<$Res> {
   ) = _$GlobalSettingsCopyWithImpl<$Res, GlobalSettings>;
   @useResult
   $Res call({
-    String primaryColor,
-    String secondaryColor,
-    String defaultLanguage,
-    List<String> supportedLanguages,
-    bool maintenanceMode,
-    String? siteName,
-    String? siteDescription,
-    String? logoPath,
+    @JsonKey(name: 'primary_color') String primaryColor,
+    @JsonKey(name: 'secondary_color') String secondaryColor,
+    @JsonKey(name: 'default_language') String defaultLanguage,
+    @JsonKey(name: 'supported_languages') List<String> supportedLanguages,
+    @JsonKey(name: 'maintenance_mode') bool maintenanceMode,
+    @JsonKey(name: 'is_ads_enabled') bool isAdsEnabled,
+    @JsonKey(name: 'ad_unit_id_android') String? adUnitIdAndroid,
+    @JsonKey(name: 'ad_unit_id_ios') String? adUnitIdIos,
+    @JsonKey(name: 'ads_screens') List<String>? adsScreens,
+    @JsonKey(name: 'notification_sound_path') String? notificationSoundPath,
+    @JsonKey(name: 'alarm_sound_path') String? alarmSoundPath,
+    @JsonKey(name: 'site_name') String? siteName,
+    @JsonKey(name: 'site_description') String? siteDescription,
+    @JsonKey(name: 'logo_path') String? logoPath,
   });
 }
 
@@ -79,6 +105,12 @@ class _$GlobalSettingsCopyWithImpl<$Res, $Val extends GlobalSettings>
     Object? defaultLanguage = null,
     Object? supportedLanguages = null,
     Object? maintenanceMode = null,
+    Object? isAdsEnabled = null,
+    Object? adUnitIdAndroid = freezed,
+    Object? adUnitIdIos = freezed,
+    Object? adsScreens = freezed,
+    Object? notificationSoundPath = freezed,
+    Object? alarmSoundPath = freezed,
     Object? siteName = freezed,
     Object? siteDescription = freezed,
     Object? logoPath = freezed,
@@ -105,6 +137,30 @@ class _$GlobalSettingsCopyWithImpl<$Res, $Val extends GlobalSettings>
                 ? _value.maintenanceMode
                 : maintenanceMode // ignore: cast_nullable_to_non_nullable
                       as bool,
+            isAdsEnabled: null == isAdsEnabled
+                ? _value.isAdsEnabled
+                : isAdsEnabled // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            adUnitIdAndroid: freezed == adUnitIdAndroid
+                ? _value.adUnitIdAndroid
+                : adUnitIdAndroid // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            adUnitIdIos: freezed == adUnitIdIos
+                ? _value.adUnitIdIos
+                : adUnitIdIos // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            adsScreens: freezed == adsScreens
+                ? _value.adsScreens
+                : adsScreens // ignore: cast_nullable_to_non_nullable
+                      as List<String>?,
+            notificationSoundPath: freezed == notificationSoundPath
+                ? _value.notificationSoundPath
+                : notificationSoundPath // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            alarmSoundPath: freezed == alarmSoundPath
+                ? _value.alarmSoundPath
+                : alarmSoundPath // ignore: cast_nullable_to_non_nullable
+                      as String?,
             siteName: freezed == siteName
                 ? _value.siteName
                 : siteName // ignore: cast_nullable_to_non_nullable
@@ -133,14 +189,20 @@ abstract class _$$GlobalSettingsImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    String primaryColor,
-    String secondaryColor,
-    String defaultLanguage,
-    List<String> supportedLanguages,
-    bool maintenanceMode,
-    String? siteName,
-    String? siteDescription,
-    String? logoPath,
+    @JsonKey(name: 'primary_color') String primaryColor,
+    @JsonKey(name: 'secondary_color') String secondaryColor,
+    @JsonKey(name: 'default_language') String defaultLanguage,
+    @JsonKey(name: 'supported_languages') List<String> supportedLanguages,
+    @JsonKey(name: 'maintenance_mode') bool maintenanceMode,
+    @JsonKey(name: 'is_ads_enabled') bool isAdsEnabled,
+    @JsonKey(name: 'ad_unit_id_android') String? adUnitIdAndroid,
+    @JsonKey(name: 'ad_unit_id_ios') String? adUnitIdIos,
+    @JsonKey(name: 'ads_screens') List<String>? adsScreens,
+    @JsonKey(name: 'notification_sound_path') String? notificationSoundPath,
+    @JsonKey(name: 'alarm_sound_path') String? alarmSoundPath,
+    @JsonKey(name: 'site_name') String? siteName,
+    @JsonKey(name: 'site_description') String? siteDescription,
+    @JsonKey(name: 'logo_path') String? logoPath,
   });
 }
 
@@ -163,6 +225,12 @@ class __$$GlobalSettingsImplCopyWithImpl<$Res>
     Object? defaultLanguage = null,
     Object? supportedLanguages = null,
     Object? maintenanceMode = null,
+    Object? isAdsEnabled = null,
+    Object? adUnitIdAndroid = freezed,
+    Object? adUnitIdIos = freezed,
+    Object? adsScreens = freezed,
+    Object? notificationSoundPath = freezed,
+    Object? alarmSoundPath = freezed,
     Object? siteName = freezed,
     Object? siteDescription = freezed,
     Object? logoPath = freezed,
@@ -189,6 +257,30 @@ class __$$GlobalSettingsImplCopyWithImpl<$Res>
             ? _value.maintenanceMode
             : maintenanceMode // ignore: cast_nullable_to_non_nullable
                   as bool,
+        isAdsEnabled: null == isAdsEnabled
+            ? _value.isAdsEnabled
+            : isAdsEnabled // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        adUnitIdAndroid: freezed == adUnitIdAndroid
+            ? _value.adUnitIdAndroid
+            : adUnitIdAndroid // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        adUnitIdIos: freezed == adUnitIdIos
+            ? _value.adUnitIdIos
+            : adUnitIdIos // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        adsScreens: freezed == adsScreens
+            ? _value._adsScreens
+            : adsScreens // ignore: cast_nullable_to_non_nullable
+                  as List<String>?,
+        notificationSoundPath: freezed == notificationSoundPath
+            ? _value.notificationSoundPath
+            : notificationSoundPath // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        alarmSoundPath: freezed == alarmSoundPath
+            ? _value.alarmSoundPath
+            : alarmSoundPath // ignore: cast_nullable_to_non_nullable
+                  as String?,
         siteName: freezed == siteName
             ? _value.siteName
             : siteName // ignore: cast_nullable_to_non_nullable
@@ -210,27 +302,39 @@ class __$$GlobalSettingsImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$GlobalSettingsImpl implements _GlobalSettings {
   const _$GlobalSettingsImpl({
-    required this.primaryColor,
-    required this.secondaryColor,
-    required this.defaultLanguage,
-    required final List<String> supportedLanguages,
-    required this.maintenanceMode,
-    this.siteName,
-    this.siteDescription,
-    this.logoPath,
-  }) : _supportedLanguages = supportedLanguages;
+    @JsonKey(name: 'primary_color') required this.primaryColor,
+    @JsonKey(name: 'secondary_color') required this.secondaryColor,
+    @JsonKey(name: 'default_language') required this.defaultLanguage,
+    @JsonKey(name: 'supported_languages')
+    final List<String> supportedLanguages = const [],
+    @JsonKey(name: 'maintenance_mode') this.maintenanceMode = false,
+    @JsonKey(name: 'is_ads_enabled') this.isAdsEnabled = false,
+    @JsonKey(name: 'ad_unit_id_android') this.adUnitIdAndroid,
+    @JsonKey(name: 'ad_unit_id_ios') this.adUnitIdIos,
+    @JsonKey(name: 'ads_screens') final List<String>? adsScreens,
+    @JsonKey(name: 'notification_sound_path') this.notificationSoundPath,
+    @JsonKey(name: 'alarm_sound_path') this.alarmSoundPath,
+    @JsonKey(name: 'site_name') this.siteName,
+    @JsonKey(name: 'site_description') this.siteDescription,
+    @JsonKey(name: 'logo_path') this.logoPath,
+  }) : _supportedLanguages = supportedLanguages,
+       _adsScreens = adsScreens;
 
   factory _$GlobalSettingsImpl.fromJson(Map<String, dynamic> json) =>
       _$$GlobalSettingsImplFromJson(json);
 
   @override
+  @JsonKey(name: 'primary_color')
   final String primaryColor;
   @override
+  @JsonKey(name: 'secondary_color')
   final String secondaryColor;
   @override
+  @JsonKey(name: 'default_language')
   final String defaultLanguage;
   final List<String> _supportedLanguages;
   @override
+  @JsonKey(name: 'supported_languages')
   List<String> get supportedLanguages {
     if (_supportedLanguages is EqualUnmodifiableListView)
       return _supportedLanguages;
@@ -239,17 +343,47 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
   }
 
   @override
+  @JsonKey(name: 'maintenance_mode')
   final bool maintenanceMode;
   @override
+  @JsonKey(name: 'is_ads_enabled')
+  final bool isAdsEnabled;
+  @override
+  @JsonKey(name: 'ad_unit_id_android')
+  final String? adUnitIdAndroid;
+  @override
+  @JsonKey(name: 'ad_unit_id_ios')
+  final String? adUnitIdIos;
+  final List<String>? _adsScreens;
+  @override
+  @JsonKey(name: 'ads_screens')
+  List<String>? get adsScreens {
+    final value = _adsScreens;
+    if (value == null) return null;
+    if (_adsScreens is EqualUnmodifiableListView) return _adsScreens;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  @JsonKey(name: 'notification_sound_path')
+  final String? notificationSoundPath;
+  @override
+  @JsonKey(name: 'alarm_sound_path')
+  final String? alarmSoundPath;
+  @override
+  @JsonKey(name: 'site_name')
   final String? siteName;
   @override
+  @JsonKey(name: 'site_description')
   final String? siteDescription;
   @override
+  @JsonKey(name: 'logo_path')
   final String? logoPath;
 
   @override
   String toString() {
-    return 'GlobalSettings(primaryColor: $primaryColor, secondaryColor: $secondaryColor, defaultLanguage: $defaultLanguage, supportedLanguages: $supportedLanguages, maintenanceMode: $maintenanceMode, siteName: $siteName, siteDescription: $siteDescription, logoPath: $logoPath)';
+    return 'GlobalSettings(primaryColor: $primaryColor, secondaryColor: $secondaryColor, defaultLanguage: $defaultLanguage, supportedLanguages: $supportedLanguages, maintenanceMode: $maintenanceMode, isAdsEnabled: $isAdsEnabled, adUnitIdAndroid: $adUnitIdAndroid, adUnitIdIos: $adUnitIdIos, adsScreens: $adsScreens, notificationSoundPath: $notificationSoundPath, alarmSoundPath: $alarmSoundPath, siteName: $siteName, siteDescription: $siteDescription, logoPath: $logoPath)';
   }
 
   @override
@@ -269,6 +403,20 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
             ) &&
             (identical(other.maintenanceMode, maintenanceMode) ||
                 other.maintenanceMode == maintenanceMode) &&
+            (identical(other.isAdsEnabled, isAdsEnabled) ||
+                other.isAdsEnabled == isAdsEnabled) &&
+            (identical(other.adUnitIdAndroid, adUnitIdAndroid) ||
+                other.adUnitIdAndroid == adUnitIdAndroid) &&
+            (identical(other.adUnitIdIos, adUnitIdIos) ||
+                other.adUnitIdIos == adUnitIdIos) &&
+            const DeepCollectionEquality().equals(
+              other._adsScreens,
+              _adsScreens,
+            ) &&
+            (identical(other.notificationSoundPath, notificationSoundPath) ||
+                other.notificationSoundPath == notificationSoundPath) &&
+            (identical(other.alarmSoundPath, alarmSoundPath) ||
+                other.alarmSoundPath == alarmSoundPath) &&
             (identical(other.siteName, siteName) ||
                 other.siteName == siteName) &&
             (identical(other.siteDescription, siteDescription) ||
@@ -286,6 +434,12 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
     defaultLanguage,
     const DeepCollectionEquality().hash(_supportedLanguages),
     maintenanceMode,
+    isAdsEnabled,
+    adUnitIdAndroid,
+    adUnitIdIos,
+    const DeepCollectionEquality().hash(_adsScreens),
+    notificationSoundPath,
+    alarmSoundPath,
     siteName,
     siteDescription,
     logoPath,
@@ -310,34 +464,67 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
 
 abstract class _GlobalSettings implements GlobalSettings {
   const factory _GlobalSettings({
-    required final String primaryColor,
-    required final String secondaryColor,
-    required final String defaultLanguage,
-    required final List<String> supportedLanguages,
-    required final bool maintenanceMode,
-    final String? siteName,
-    final String? siteDescription,
-    final String? logoPath,
+    @JsonKey(name: 'primary_color') required final String primaryColor,
+    @JsonKey(name: 'secondary_color') required final String secondaryColor,
+    @JsonKey(name: 'default_language') required final String defaultLanguage,
+    @JsonKey(name: 'supported_languages') final List<String> supportedLanguages,
+    @JsonKey(name: 'maintenance_mode') final bool maintenanceMode,
+    @JsonKey(name: 'is_ads_enabled') final bool isAdsEnabled,
+    @JsonKey(name: 'ad_unit_id_android') final String? adUnitIdAndroid,
+    @JsonKey(name: 'ad_unit_id_ios') final String? adUnitIdIos,
+    @JsonKey(name: 'ads_screens') final List<String>? adsScreens,
+    @JsonKey(name: 'notification_sound_path')
+    final String? notificationSoundPath,
+    @JsonKey(name: 'alarm_sound_path') final String? alarmSoundPath,
+    @JsonKey(name: 'site_name') final String? siteName,
+    @JsonKey(name: 'site_description') final String? siteDescription,
+    @JsonKey(name: 'logo_path') final String? logoPath,
   }) = _$GlobalSettingsImpl;
 
   factory _GlobalSettings.fromJson(Map<String, dynamic> json) =
       _$GlobalSettingsImpl.fromJson;
 
   @override
+  @JsonKey(name: 'primary_color')
   String get primaryColor;
   @override
+  @JsonKey(name: 'secondary_color')
   String get secondaryColor;
   @override
+  @JsonKey(name: 'default_language')
   String get defaultLanguage;
   @override
+  @JsonKey(name: 'supported_languages')
   List<String> get supportedLanguages;
   @override
+  @JsonKey(name: 'maintenance_mode')
   bool get maintenanceMode;
   @override
+  @JsonKey(name: 'is_ads_enabled')
+  bool get isAdsEnabled;
+  @override
+  @JsonKey(name: 'ad_unit_id_android')
+  String? get adUnitIdAndroid;
+  @override
+  @JsonKey(name: 'ad_unit_id_ios')
+  String? get adUnitIdIos;
+  @override
+  @JsonKey(name: 'ads_screens')
+  List<String>? get adsScreens;
+  @override
+  @JsonKey(name: 'notification_sound_path')
+  String? get notificationSoundPath;
+  @override
+  @JsonKey(name: 'alarm_sound_path')
+  String? get alarmSoundPath;
+  @override
+  @JsonKey(name: 'site_name')
   String? get siteName;
   @override
+  @JsonKey(name: 'site_description')
   String? get siteDescription;
   @override
+  @JsonKey(name: 'logo_path')
   String? get logoPath;
 
   /// Create a copy of GlobalSettings

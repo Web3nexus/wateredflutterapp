@@ -26,6 +26,8 @@ mixin _$User {
   String get email => throw _privateConstructorUsedError;
   @JsonKey(name: 'profile_photo_url')
   String? get profilePhotoUrl => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_premium')
+  bool get isPremium => throw _privateConstructorUsedError;
   DateTime? get emailVerifiedAt => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
   DateTime? get updatedAt => throw _privateConstructorUsedError;
@@ -49,6 +51,7 @@ abstract class $UserCopyWith<$Res> {
     String name,
     String email,
     @JsonKey(name: 'profile_photo_url') String? profilePhotoUrl,
+    @JsonKey(name: 'is_premium') bool isPremium,
     DateTime? emailVerifiedAt,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -74,6 +77,7 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? name = null,
     Object? email = null,
     Object? profilePhotoUrl = freezed,
+    Object? isPremium = null,
     Object? emailVerifiedAt = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
@@ -96,6 +100,10 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
                 ? _value.profilePhotoUrl
                 : profilePhotoUrl // ignore: cast_nullable_to_non_nullable
                       as String?,
+            isPremium: null == isPremium
+                ? _value.isPremium
+                : isPremium // ignore: cast_nullable_to_non_nullable
+                      as bool,
             emailVerifiedAt: freezed == emailVerifiedAt
                 ? _value.emailVerifiedAt
                 : emailVerifiedAt // ignore: cast_nullable_to_non_nullable
@@ -127,6 +135,7 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
     String name,
     String email,
     @JsonKey(name: 'profile_photo_url') String? profilePhotoUrl,
+    @JsonKey(name: 'is_premium') bool isPremium,
     DateTime? emailVerifiedAt,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -149,6 +158,7 @@ class __$$UserImplCopyWithImpl<$Res>
     Object? name = null,
     Object? email = null,
     Object? profilePhotoUrl = freezed,
+    Object? isPremium = null,
     Object? emailVerifiedAt = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
@@ -171,6 +181,10 @@ class __$$UserImplCopyWithImpl<$Res>
             ? _value.profilePhotoUrl
             : profilePhotoUrl // ignore: cast_nullable_to_non_nullable
                   as String?,
+        isPremium: null == isPremium
+            ? _value.isPremium
+            : isPremium // ignore: cast_nullable_to_non_nullable
+                  as bool,
         emailVerifiedAt: freezed == emailVerifiedAt
             ? _value.emailVerifiedAt
             : emailVerifiedAt // ignore: cast_nullable_to_non_nullable
@@ -196,6 +210,7 @@ class _$UserImpl implements _User {
     required this.name,
     required this.email,
     @JsonKey(name: 'profile_photo_url') this.profilePhotoUrl,
+    @JsonKey(name: 'is_premium') this.isPremium = false,
     this.emailVerifiedAt,
     this.createdAt,
     this.updatedAt,
@@ -214,6 +229,9 @@ class _$UserImpl implements _User {
   @JsonKey(name: 'profile_photo_url')
   final String? profilePhotoUrl;
   @override
+  @JsonKey(name: 'is_premium')
+  final bool isPremium;
+  @override
   final DateTime? emailVerifiedAt;
   @override
   final DateTime? createdAt;
@@ -222,7 +240,7 @@ class _$UserImpl implements _User {
 
   @override
   String toString() {
-    return 'User(id: $id, name: $name, email: $email, profilePhotoUrl: $profilePhotoUrl, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'User(id: $id, name: $name, email: $email, profilePhotoUrl: $profilePhotoUrl, isPremium: $isPremium, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -235,6 +253,8 @@ class _$UserImpl implements _User {
             (identical(other.email, email) || other.email == email) &&
             (identical(other.profilePhotoUrl, profilePhotoUrl) ||
                 other.profilePhotoUrl == profilePhotoUrl) &&
+            (identical(other.isPremium, isPremium) ||
+                other.isPremium == isPremium) &&
             (identical(other.emailVerifiedAt, emailVerifiedAt) ||
                 other.emailVerifiedAt == emailVerifiedAt) &&
             (identical(other.createdAt, createdAt) ||
@@ -251,6 +271,7 @@ class _$UserImpl implements _User {
     name,
     email,
     profilePhotoUrl,
+    isPremium,
     emailVerifiedAt,
     createdAt,
     updatedAt,
@@ -276,6 +297,7 @@ abstract class _User implements User {
     required final String name,
     required final String email,
     @JsonKey(name: 'profile_photo_url') final String? profilePhotoUrl,
+    @JsonKey(name: 'is_premium') final bool isPremium,
     final DateTime? emailVerifiedAt,
     final DateTime? createdAt,
     final DateTime? updatedAt,
@@ -292,6 +314,9 @@ abstract class _User implements User {
   @override
   @JsonKey(name: 'profile_photo_url')
   String? get profilePhotoUrl;
+  @override
+  @JsonKey(name: 'is_premium')
+  bool get isPremium;
   @override
   DateTime? get emailVerifiedAt;
   @override

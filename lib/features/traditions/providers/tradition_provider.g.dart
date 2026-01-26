@@ -6,7 +6,7 @@ part of 'tradition_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$traditionHash() => r'a67d0be5685604f1092386bd770f69f83a811aa6';
+String _$traditionHash() => r'e42fd4eab5255d7451c7d48b8f476c7af3411137';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -156,7 +156,7 @@ class _TraditionProviderElement
   int get id => (origin as TraditionProvider).id;
 }
 
-String _$traditionListHash() => r'8ffe2fd213966aaad138c7a658ae040b7a6bdcfa';
+String _$traditionListHash() => r'fba2f758d2006aee6b76f1b0053c17d4e50c0764';
 
 abstract class _$TraditionList
     extends BuildlessAutoDisposeAsyncNotifier<PaginatedResponse<Tradition>> {

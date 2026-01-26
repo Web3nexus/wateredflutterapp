@@ -17,8 +17,8 @@ class ApiClient {
   
   // Updated to use Laravel Herd domain for simulator access
   // Updated to use Live Production URL
-  static const String baseUrl = 'https://cryptogateshub.com';
-  // static const String baseUrl = 'https://wateredbackend.test'; // Local fallback
+  static const String baseUrl = 'https://cryptogateshub.com/api/v1/';
+  //static const String baseUrl = 'https://wateredbackend.test/api'; // Local fallback
   static const String tokenKey = 'auth_token';
 
   ApiClient({FlutterSecureStorage? secureStorage})

@@ -18,7 +18,7 @@ class ReminderService {
     return data.map((e) => Reminder.fromJson(e)).toList();
   }
 
-  Future<void> saveReminder(String title, TimeOfDay time, List<String> days) async {
+  Future<void> saveReminder(String title, TimeOfDay time, List<String> days, {String? soundPath}) async {
     final timeStr = '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}:00';
     
     await _client.post('reminders', data: {
@@ -26,12 +26,14 @@ class ReminderService {
       'time': timeStr,
       'days': days,
       'is_active': true,
+      'sound_path': soundPath,
     });
   }
   
-  Future<void> updateReminder(int id, bool isActive) async {
+  Future<void> updateReminder(int id, {bool? isActive, String? soundPath}) async {
        await _client.put('reminders/$id', data: {
-      'is_active': isActive,
+      if (isActive != null) 'is_active': isActive,
+      if (soundPath != null) 'sound_path': soundPath,
     });
   }
 

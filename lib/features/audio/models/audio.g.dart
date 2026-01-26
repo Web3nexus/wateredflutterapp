@@ -19,6 +19,7 @@ _$AudioImpl _$$AudioImplFromJson(Map<String, dynamic> json) => _$AudioImpl(
       : DateTime.parse(json['publishedAt'] as String),
   traditionId: (json['traditionId'] as num).toInt(),
   isActive: json['isActive'] as bool,
+  isLiked: json['is_liked'] as bool? ?? false,
   createdAt: json['createdAt'] == null
       ? null
       : DateTime.parse(json['createdAt'] as String),
@@ -39,6 +40,7 @@ Map<String, dynamic> _$$AudioImplToJson(_$AudioImpl instance) =>
       'publishedAt': instance.publishedAt?.toIso8601String(),
       'traditionId': instance.traditionId,
       'isActive': instance.isActive,
+      'is_liked': instance.isLiked,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
     };

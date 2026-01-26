@@ -14,6 +14,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -30,7 +31,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           );
 
       if (success && mounted) {
-        Navigator.of(context).pop(); // Or navigate to home
+        // RootGate will handle the transition automatically
       } else {
         // Error handling is managed by the provider/state listener mostly,
         // but we can show snackbar here if needed:
@@ -61,10 +62,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Icon(
-                      Icons.water_drop_rounded,
-                      size: 80,
-                      color: Color(0xFFD4AF37),
+                    Center(
+                      child: Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(32),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFFD4AF37).withOpacity(0.2),
+                              blurRadius: 20,
+                              spreadRadius: 5,
+                            ),
+                          ],
+                        ),
+                        child: Image.asset(
+                          'assets/icon/splashicon.png',
+                          height: 80,
+                          width: 80,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 32),
                     const Text(
@@ -104,7 +121,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       controller: _passwordController,
                       label: 'Password',
                       icon: Icons.lock_outline,
-                      obscureText: true,
+                      obscureText: _obscurePassword,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                          color: const Color(0xFFD4AF37),
+                        ),
+                        onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Please enter your password';
                         return null;
@@ -136,6 +160,52 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 letterSpacing: 1,
                               ),
                             ),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Expanded(child: Divider(color: Colors.white.withOpacity(0.1))),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            'OR',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.3),
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Expanded(child: Divider(color: Colors.white.withOpacity(0.1))),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildSocialButton(
+                            onPressed: authState.isLoading ? null : () async {
+                              final success = await ref.read(authProvider.notifier).signInWithGoogle();
+                              if (success && mounted) Navigator.of(context).pop();
+                            },
+                            icon: Icons.g_mobiledata,
+                            label: 'Google',
+                            color: Colors.white.withOpacity(0.05),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _buildSocialButton(
+                            onPressed: authState.isLoading ? null : () async {
+                              final success = await ref.read(authProvider.notifier).signInWithApple();
+                              if (success && mounted) Navigator.of(context).pop();
+                            },
+                            icon: Icons.apple,
+                            label: 'Apple',
+                            color: Colors.white.withOpacity(0.05),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 24),
                     TextButton(
@@ -175,6 +245,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     required String label,
     required IconData icon,
     bool obscureText = false,
+    Widget? suffixIcon,
     TextInputType? keyboardType,
     String? Function(String?)? validator,
   }) {
@@ -188,6 +259,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         labelText: label,
         labelStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
         prefixIcon: Icon(icon, color: const Color(0xFFD4AF37)),
+        suffixIcon: suffixIcon,
         filled: true,
         fillColor: Colors.white.withOpacity(0.05),
         border: OutlineInputBorder(
@@ -205,6 +277,35 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: TextStyle(color: Colors.redAccent).color != null ? BorderSide(color: Colors.redAccent) : BorderSide.none,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSocialButton({
+    required VoidCallback? onPressed,
+    required IconData icon,
+    required String label,
+    required Color color,
+  }) {
+    return OutlinedButton.icon(
+      onPressed: onPressed,
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        side: BorderSide(color: Colors.white.withOpacity(0.1)),
+        backgroundColor: color,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      icon: Icon(icon, color: Colors.white, size: 24),
+      label: Text(
+        label,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          fontFamily: 'Outfit',
         ),
       ),
     );

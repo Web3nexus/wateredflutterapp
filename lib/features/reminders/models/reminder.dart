@@ -6,6 +6,7 @@ class Reminder {
   final TimeOfDay time;
   final List<String> days;
   final bool isActive;
+  final String? soundPath;
 
   Reminder({
     this.id,
@@ -13,6 +14,7 @@ class Reminder {
     required this.time,
     this.days = const [],
     this.isActive = true,
+    this.soundPath,
   });
 
   factory Reminder.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class Reminder {
       time: time,
       days: json['days'] != null ? List<String>.from(json['days']) : [],
       isActive: json['is_active'] ?? true,
+      soundPath: json['sound_path'],
     );
   }
 }

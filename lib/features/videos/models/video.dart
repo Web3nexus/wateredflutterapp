@@ -17,6 +17,7 @@ class Video with _$Video {
     required DateTime publishedAt,
     required int traditionId,
     required bool isActive,
+    @JsonKey(name: 'is_liked') @Default(false) bool isLiked,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) = _Video;

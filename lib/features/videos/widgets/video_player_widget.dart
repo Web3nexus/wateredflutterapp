@@ -48,35 +48,54 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
   }
 
   Future<void> _initializePlayer() async {
-    if (widget.video.videoType == 'youtube') {
-      final videoId = YoutubePlayer.convertUrlToId(widget.video.youtubeUrl);
-      if (videoId != null) {
-        _youtubeController = YoutubePlayerController(
-          initialVideoId: videoId,
-          flags: const YoutubePlayerFlags(
+    try {
+      if (widget.video.videoType == 'youtube') {
+        final videoId = YoutubePlayer.convertUrlToId(widget.video.youtubeUrl);
+        if (videoId != null) {
+          _youtubeController = YoutubePlayerController(
+            initialVideoId: videoId,
+            flags: const YoutubePlayerFlags(
+              autoPlay: false,
+              mute: false,
+              disableDragSeek: true,
+              loop: true,
+              forceHD: true,
+            ),
+          );
+        }
+      } else {
+        // Generic video (Bunny.net, S3, etc)
+        if (widget.video.storageUrl != null) {
+          _videoController = VideoPlayerController.networkUrl(
+            Uri.parse(widget.video.storageUrl!),
+          );
+          await _videoController!.initialize();
+          
+          _videoController!.addListener(() {
+            if (_videoController!.value.hasError) {
+              print('Video Player Error: ${_videoController!.value.errorDescription}');
+            }
+          });
+
+          _chewieController = ChewieController(
+            videoPlayerController: _videoController!,
             autoPlay: false,
-            mute: false,
-            disableDragSeek: true,
-            loop: true,
-            forceHD: true,
-          ),
-        );
+            looping: true,
+            showControls: false,
+            aspectRatio: _videoController!.value.aspectRatio,
+            errorBuilder: (context, errorMessage) {
+              return Center(
+                child: Text(
+                  errorMessage,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              );
+            },
+          );
+        }
       }
-    } else {
-      // Generic video (Bunny.net, S3, etc)
-      if (widget.video.storageUrl != null) {
-        _videoController = VideoPlayerController.networkUrl(
-          Uri.parse(widget.video.storageUrl!),
-        );
-        await _videoController!.initialize();
-        _chewieController = ChewieController(
-          videoPlayerController: _videoController!,
-          autoPlay: false,
-          looping: true,
-          showControls: false, // TikTok style usually has minimal controls
-          aspectRatio: _videoController!.value.aspectRatio,
-        );
-      }
+    } catch (e) {
+      print('Error initializing video player: $e');
     }
 
     if (mounted) {

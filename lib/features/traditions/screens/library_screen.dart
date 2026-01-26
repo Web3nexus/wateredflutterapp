@@ -1,4 +1,3 @@
-```
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/core/theme/theme_provider.dart';
@@ -6,6 +5,11 @@ import 'package:Watered/features/deities/screens/deities_screen.dart';
 import 'package:Watered/features/traditions/models/tradition.dart';
 import 'package:Watered/features/traditions/providers/tradition_provider.dart';
 import 'package:Watered/features/traditions/screens/tradition_detail_screen.dart';
+import 'package:Watered/features/calendar/screens/calendar_home_screen.dart';
+import 'package:Watered/features/subscription/screens/subscription_screen.dart';
+import 'package:Watered/features/auth/providers/auth_provider.dart';
+import 'package:Watered/core/widgets/notification_bell.dart';
+import 'package:Watered/core/services/ad_service.dart';
 
 class LibraryScreen extends ConsumerWidget {
   const LibraryScreen({super.key});
@@ -18,6 +22,23 @@ class LibraryScreen extends ConsumerWidget {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: const Text('SACRED LIBRARY'),
+        leading: const NotificationBell(),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.calendar_today_rounded, color: Color(0xFFD4AF37)),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const CalendarHomeScreen()),
+              );
+            },
+          ),
+          if (!(ref.watch(authProvider).user?.isPremium ?? false))
+            TextButton(
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SubscriptionScreen())),
+              child: const Text('GET PLUS+', style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold, fontSize: 12)),
+            ),
+          const SizedBox(width: 8),
+        ],
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -33,22 +54,29 @@ class LibraryScreen extends ConsumerWidget {
       ),
       body: RefreshIndicator(
         onRefresh: () => ref.read(traditionListProvider().notifier).refresh(),
-        child: traditionsState.when(
-          data: (traditions) => traditions.data.isEmpty
-              ? const _EmptyLibrary()
-              : ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(16, 120, 16, 100),
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  itemCount: traditions.data.length,
-                  itemBuilder: (context, index) {
-                    final tradition = traditions.data[index];
-                    return _TraditionCard(tradition: tradition);
-                  },
+        child: Column(
+          children: [
+            const AdBanner(screenKey: 'library'),
+            Expanded(
+              child: traditionsState.when(
+                data: (traditions) => traditions.data.isEmpty
+                    ? const _EmptyLibrary()
+                    : ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(16, 120, 16, 100),
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount: traditions.data.length,
+                        itemBuilder: (context, index) {
+                          final tradition = traditions.data[index];
+                          return _TraditionCard(tradition: tradition);
+                        },
+                      ),
+                loading: () => const Center(
+                  child: CircularProgressIndicator(color: Color(0xFFD4AF37)),
                 ),
-          loading: () => const Center(
-            child: CircularProgressIndicator(color: Color(0xFFD4AF37)),
-          ),
-          error: (err, stack) => _ErrorView(error: err.toString()),
+                error: (err, stack) => _ErrorView(error: err.toString()),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -116,6 +144,18 @@ class _TraditionCard extends StatelessWidget {
               ),
 
               // Content
+              Positioned.fill(
+                child: Opacity(
+                  opacity: 0.05,
+                  child: Center(
+                    child: Image.asset(
+                      'assets/icon/splashicon.png',
+                      width: 120,
+                      height: 120,
+                    ),
+                  ),
+                ),
+              ),
               Positioned(
                 bottom: 0,
                 left: 0,
@@ -125,21 +165,26 @@ class _TraditionCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Library Actions
-                      _buildLibraryAction(
-                        context,
-                        'Ancient Spirits',
-                        Icons.auto_awesome,
-                        () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => const DeitiesScreen()),
-                          );
-                        },
+                      // Library Actions Side-by-Side
+                      Row(
+                        children: [
+                          _buildLibraryAction(
+                            context,
+                            'Spirits',
+                            Icons.auto_awesome,
+                            () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(builder: (context) => const DeitiesScreen()),
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 12),
+                          _buildLibraryAction(context, 'Saved', Icons.bookmark, () {
+                            // TODO: Navigate to Bookmarks
+                          }),
+                        ],
                       ),
-                      const SizedBox(height: 16),
-                      _buildLibraryAction(context, 'Bookmarks', Icons.bookmark, () {
-                        // TODO: Navigate to Bookmarks
-                      }),
+                      const SizedBox(height: 20),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
@@ -221,6 +266,40 @@ class _TraditionCard extends StatelessWidget {
         ),
       ),
       child: Icon(Icons.temple_hindu_rounded, size: 60, color: Colors.white.withOpacity(0.1)),
+    );
+  }
+
+  Widget _buildLibraryAction(
+    BuildContext context,
+    String label,
+    IconData icon,
+    VoidCallback onTap,
+  ) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.white.withOpacity(0.1)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: Colors.white, size: 16),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

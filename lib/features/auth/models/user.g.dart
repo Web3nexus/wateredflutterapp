@@ -11,6 +11,7 @@ _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
   name: json['name'] as String,
   email: json['email'] as String,
   profilePhotoUrl: json['profile_photo_url'] as String?,
+  isPremium: json['is_premium'] as bool? ?? false,
   emailVerifiedAt: json['emailVerifiedAt'] == null
       ? null
       : DateTime.parse(json['emailVerifiedAt'] as String),
@@ -28,6 +29,7 @@ Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
       'name': instance.name,
       'email': instance.email,
       'profile_photo_url': instance.profilePhotoUrl,
+      'is_premium': instance.isPremium,
       'emailVerifiedAt': instance.emailVerifiedAt?.toIso8601String(),
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),

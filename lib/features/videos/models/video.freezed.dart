@@ -33,6 +33,8 @@ mixin _$Video {
   DateTime get publishedAt => throw _privateConstructorUsedError;
   int get traditionId => throw _privateConstructorUsedError;
   bool get isActive => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_liked')
+  bool get isLiked => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
@@ -62,6 +64,7 @@ abstract class $VideoCopyWith<$Res> {
     DateTime publishedAt,
     int traditionId,
     bool isActive,
+    @JsonKey(name: 'is_liked') bool isLiked,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -93,6 +96,7 @@ class _$VideoCopyWithImpl<$Res, $Val extends Video>
     Object? publishedAt = null,
     Object? traditionId = null,
     Object? isActive = null,
+    Object? isLiked = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -142,6 +146,10 @@ class _$VideoCopyWithImpl<$Res, $Val extends Video>
                 ? _value.isActive
                 : isActive // ignore: cast_nullable_to_non_nullable
                       as bool,
+            isLiked: null == isLiked
+                ? _value.isLiked
+                : isLiked // ignore: cast_nullable_to_non_nullable
+                      as bool,
             createdAt: freezed == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
@@ -176,6 +184,7 @@ abstract class _$$VideoImplCopyWith<$Res> implements $VideoCopyWith<$Res> {
     DateTime publishedAt,
     int traditionId,
     bool isActive,
+    @JsonKey(name: 'is_liked') bool isLiked,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -206,6 +215,7 @@ class __$$VideoImplCopyWithImpl<$Res>
     Object? publishedAt = null,
     Object? traditionId = null,
     Object? isActive = null,
+    Object? isLiked = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -255,6 +265,10 @@ class __$$VideoImplCopyWithImpl<$Res>
             ? _value.isActive
             : isActive // ignore: cast_nullable_to_non_nullable
                   as bool,
+        isLiked: null == isLiked
+            ? _value.isLiked
+            : isLiked // ignore: cast_nullable_to_non_nullable
+                  as bool,
         createdAt: freezed == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
@@ -283,6 +297,7 @@ class _$VideoImpl implements _Video {
     required this.publishedAt,
     required this.traditionId,
     required this.isActive,
+    @JsonKey(name: 'is_liked') this.isLiked = false,
     this.createdAt,
     this.updatedAt,
   });
@@ -315,13 +330,16 @@ class _$VideoImpl implements _Video {
   @override
   final bool isActive;
   @override
+  @JsonKey(name: 'is_liked')
+  final bool isLiked;
+  @override
   final DateTime? createdAt;
   @override
   final DateTime? updatedAt;
 
   @override
   String toString() {
-    return 'Video(id: $id, title: $title, description: $description, youtubeUrl: $youtubeUrl, storageUrl: $storageUrl, videoType: $videoType, thumbnailUrl: $thumbnailUrl, duration: $duration, publishedAt: $publishedAt, traditionId: $traditionId, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Video(id: $id, title: $title, description: $description, youtubeUrl: $youtubeUrl, storageUrl: $storageUrl, videoType: $videoType, thumbnailUrl: $thumbnailUrl, duration: $duration, publishedAt: $publishedAt, traditionId: $traditionId, isActive: $isActive, isLiked: $isLiked, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -349,6 +367,7 @@ class _$VideoImpl implements _Video {
                 other.traditionId == traditionId) &&
             (identical(other.isActive, isActive) ||
                 other.isActive == isActive) &&
+            (identical(other.isLiked, isLiked) || other.isLiked == isLiked) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -370,6 +389,7 @@ class _$VideoImpl implements _Video {
     publishedAt,
     traditionId,
     isActive,
+    isLiked,
     createdAt,
     updatedAt,
   );
@@ -401,6 +421,7 @@ abstract class _Video implements Video {
     required final DateTime publishedAt,
     required final int traditionId,
     required final bool isActive,
+    @JsonKey(name: 'is_liked') final bool isLiked,
     final DateTime? createdAt,
     final DateTime? updatedAt,
   }) = _$VideoImpl;
@@ -429,6 +450,9 @@ abstract class _Video implements Video {
   int get traditionId;
   @override
   bool get isActive;
+  @override
+  @JsonKey(name: 'is_liked')
+  bool get isLiked;
   @override
   DateTime? get createdAt;
   @override

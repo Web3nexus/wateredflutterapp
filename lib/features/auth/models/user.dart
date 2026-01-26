@@ -10,6 +10,7 @@ class User with _$User {
     required String name,
     required String email,
     @JsonKey(name: 'profile_photo_url') String? profilePhotoUrl,
+    @JsonKey(name: 'is_premium') @Default(false) bool isPremium,
     DateTime? emailVerifiedAt,
     DateTime? createdAt,
     DateTime? updatedAt,

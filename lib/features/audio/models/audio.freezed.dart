@@ -24,14 +24,24 @@ mixin _$Audio {
   int get id => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
+  @JsonKey(name: 'audioUrl')
   String get audioUrl => throw _privateConstructorUsedError;
+  @JsonKey(name: 'thumbnailUrl')
   String? get thumbnailUrl => throw _privateConstructorUsedError;
+  @JsonKey(name: 'duration')
   String? get duration => throw _privateConstructorUsedError;
   String? get author => throw _privateConstructorUsedError;
+  @JsonKey(name: 'publishedAt')
   DateTime? get publishedAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'traditionId')
   int get traditionId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'isActive')
   bool get isActive => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_liked')
+  bool get isLiked => throw _privateConstructorUsedError;
+  @JsonKey(name: 'createdAt')
   DateTime? get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'updatedAt')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this Audio to a JSON map.
@@ -52,15 +62,16 @@ abstract class $AudioCopyWith<$Res> {
     int id,
     String title,
     String? description,
-    String audioUrl,
-    String? thumbnailUrl,
-    String? duration,
+    @JsonKey(name: 'audioUrl') String audioUrl,
+    @JsonKey(name: 'thumbnailUrl') String? thumbnailUrl,
+    @JsonKey(name: 'duration') String? duration,
     String? author,
-    DateTime? publishedAt,
-    int traditionId,
-    bool isActive,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'publishedAt') DateTime? publishedAt,
+    @JsonKey(name: 'traditionId') int traditionId,
+    @JsonKey(name: 'isActive') bool isActive,
+    @JsonKey(name: 'is_liked') bool isLiked,
+    @JsonKey(name: 'createdAt') DateTime? createdAt,
+    @JsonKey(name: 'updatedAt') DateTime? updatedAt,
   });
 }
 
@@ -89,6 +100,7 @@ class _$AudioCopyWithImpl<$Res, $Val extends Audio>
     Object? publishedAt = freezed,
     Object? traditionId = null,
     Object? isActive = null,
+    Object? isLiked = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -134,6 +146,10 @@ class _$AudioCopyWithImpl<$Res, $Val extends Audio>
                 ? _value.isActive
                 : isActive // ignore: cast_nullable_to_non_nullable
                       as bool,
+            isLiked: null == isLiked
+                ? _value.isLiked
+                : isLiked // ignore: cast_nullable_to_non_nullable
+                      as bool,
             createdAt: freezed == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
@@ -160,15 +176,16 @@ abstract class _$$AudioImplCopyWith<$Res> implements $AudioCopyWith<$Res> {
     int id,
     String title,
     String? description,
-    String audioUrl,
-    String? thumbnailUrl,
-    String? duration,
+    @JsonKey(name: 'audioUrl') String audioUrl,
+    @JsonKey(name: 'thumbnailUrl') String? thumbnailUrl,
+    @JsonKey(name: 'duration') String? duration,
     String? author,
-    DateTime? publishedAt,
-    int traditionId,
-    bool isActive,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'publishedAt') DateTime? publishedAt,
+    @JsonKey(name: 'traditionId') int traditionId,
+    @JsonKey(name: 'isActive') bool isActive,
+    @JsonKey(name: 'is_liked') bool isLiked,
+    @JsonKey(name: 'createdAt') DateTime? createdAt,
+    @JsonKey(name: 'updatedAt') DateTime? updatedAt,
   });
 }
 
@@ -196,6 +213,7 @@ class __$$AudioImplCopyWithImpl<$Res>
     Object? publishedAt = freezed,
     Object? traditionId = null,
     Object? isActive = null,
+    Object? isLiked = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -241,6 +259,10 @@ class __$$AudioImplCopyWithImpl<$Res>
             ? _value.isActive
             : isActive // ignore: cast_nullable_to_non_nullable
                   as bool,
+        isLiked: null == isLiked
+            ? _value.isLiked
+            : isLiked // ignore: cast_nullable_to_non_nullable
+                  as bool,
         createdAt: freezed == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
@@ -261,15 +283,16 @@ class _$AudioImpl implements _Audio {
     required this.id,
     required this.title,
     this.description,
-    required this.audioUrl,
-    this.thumbnailUrl,
-    this.duration,
+    @JsonKey(name: 'audioUrl') required this.audioUrl,
+    @JsonKey(name: 'thumbnailUrl') this.thumbnailUrl,
+    @JsonKey(name: 'duration') this.duration,
     this.author,
-    this.publishedAt,
-    required this.traditionId,
-    required this.isActive,
-    this.createdAt,
-    this.updatedAt,
+    @JsonKey(name: 'publishedAt') this.publishedAt,
+    @JsonKey(name: 'traditionId') required this.traditionId,
+    @JsonKey(name: 'isActive') required this.isActive,
+    @JsonKey(name: 'is_liked') this.isLiked = false,
+    @JsonKey(name: 'createdAt') this.createdAt,
+    @JsonKey(name: 'updatedAt') this.updatedAt,
   });
 
   factory _$AudioImpl.fromJson(Map<String, dynamic> json) =>
@@ -282,27 +305,38 @@ class _$AudioImpl implements _Audio {
   @override
   final String? description;
   @override
+  @JsonKey(name: 'audioUrl')
   final String audioUrl;
   @override
+  @JsonKey(name: 'thumbnailUrl')
   final String? thumbnailUrl;
   @override
+  @JsonKey(name: 'duration')
   final String? duration;
   @override
   final String? author;
   @override
+  @JsonKey(name: 'publishedAt')
   final DateTime? publishedAt;
   @override
+  @JsonKey(name: 'traditionId')
   final int traditionId;
   @override
+  @JsonKey(name: 'isActive')
   final bool isActive;
   @override
+  @JsonKey(name: 'is_liked')
+  final bool isLiked;
+  @override
+  @JsonKey(name: 'createdAt')
   final DateTime? createdAt;
   @override
+  @JsonKey(name: 'updatedAt')
   final DateTime? updatedAt;
 
   @override
   String toString() {
-    return 'Audio(id: $id, title: $title, description: $description, audioUrl: $audioUrl, thumbnailUrl: $thumbnailUrl, duration: $duration, author: $author, publishedAt: $publishedAt, traditionId: $traditionId, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Audio(id: $id, title: $title, description: $description, audioUrl: $audioUrl, thumbnailUrl: $thumbnailUrl, duration: $duration, author: $author, publishedAt: $publishedAt, traditionId: $traditionId, isActive: $isActive, isLiked: $isLiked, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -327,6 +361,7 @@ class _$AudioImpl implements _Audio {
                 other.traditionId == traditionId) &&
             (identical(other.isActive, isActive) ||
                 other.isActive == isActive) &&
+            (identical(other.isLiked, isLiked) || other.isLiked == isLiked) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -347,6 +382,7 @@ class _$AudioImpl implements _Audio {
     publishedAt,
     traditionId,
     isActive,
+    isLiked,
     createdAt,
     updatedAt,
   );
@@ -370,15 +406,16 @@ abstract class _Audio implements Audio {
     required final int id,
     required final String title,
     final String? description,
-    required final String audioUrl,
-    final String? thumbnailUrl,
-    final String? duration,
+    @JsonKey(name: 'audioUrl') required final String audioUrl,
+    @JsonKey(name: 'thumbnailUrl') final String? thumbnailUrl,
+    @JsonKey(name: 'duration') final String? duration,
     final String? author,
-    final DateTime? publishedAt,
-    required final int traditionId,
-    required final bool isActive,
-    final DateTime? createdAt,
-    final DateTime? updatedAt,
+    @JsonKey(name: 'publishedAt') final DateTime? publishedAt,
+    @JsonKey(name: 'traditionId') required final int traditionId,
+    @JsonKey(name: 'isActive') required final bool isActive,
+    @JsonKey(name: 'is_liked') final bool isLiked,
+    @JsonKey(name: 'createdAt') final DateTime? createdAt,
+    @JsonKey(name: 'updatedAt') final DateTime? updatedAt,
   }) = _$AudioImpl;
 
   factory _Audio.fromJson(Map<String, dynamic> json) = _$AudioImpl.fromJson;
@@ -390,22 +427,33 @@ abstract class _Audio implements Audio {
   @override
   String? get description;
   @override
+  @JsonKey(name: 'audioUrl')
   String get audioUrl;
   @override
+  @JsonKey(name: 'thumbnailUrl')
   String? get thumbnailUrl;
   @override
+  @JsonKey(name: 'duration')
   String? get duration;
   @override
   String? get author;
   @override
+  @JsonKey(name: 'publishedAt')
   DateTime? get publishedAt;
   @override
+  @JsonKey(name: 'traditionId')
   int get traditionId;
   @override
+  @JsonKey(name: 'isActive')
   bool get isActive;
   @override
+  @JsonKey(name: 'is_liked')
+  bool get isLiked;
+  @override
+  @JsonKey(name: 'createdAt')
   DateTime? get createdAt;
   @override
+  @JsonKey(name: 'updatedAt')
   DateTime? get updatedAt;
 
   /// Create a copy of Audio

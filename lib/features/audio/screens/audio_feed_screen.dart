@@ -7,6 +7,12 @@ import 'package:shimmer/shimmer.dart';
 import 'package:Watered/features/audio/services/audio_service.dart';
 import 'package:Watered/features/audio/providers/current_audio_provider.dart';
 import 'package:Watered/features/audio/widgets/audio_player_bottom_sheet.dart';
+import 'package:Watered/core/services/interaction_service.dart';
+import 'package:Watered/core/widgets/comment_bottom_sheet.dart';
+import 'package:Watered/features/auth/providers/auth_provider.dart';
+import 'package:Watered/features/auth/screens/login_screen.dart';
+import 'package:Watered/core/services/ad_service.dart';
+import 'package:Watered/features/subscription/screens/subscription_screen.dart';
 
 class AudioFeedScreen extends ConsumerWidget {
   const AudioFeedScreen({super.key});
@@ -14,26 +20,41 @@ class AudioFeedScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final audioState = ref.watch(audioListProvider());
+    final isPremium = ref.watch(authProvider).user?.isPremium ?? false;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('AUDIO TEACHINGS')),
+      appBar: AppBar(
+        title: const Text('AUDIO TEACHINGS'),
+        actions: [
+          if (!isPremium)
+            TextButton(
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SubscriptionScreen())),
+              child: const Text('GET PLUS+', style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold, fontSize: 12)),
+            ),
+          const SizedBox(width: 8),
+        ],
+      ),
       body: RefreshIndicator(
         onRefresh: () => ref.read(audioListProvider().notifier).refresh(),
-        child: audioState.when(
-          data: (audios) => audios.data.isEmpty
-              ? const _EmptyAudioFeed()
-              : ListView.builder(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  itemCount: audios.data.length,
-                  itemBuilder: (context, index) {
-                    return _AudioCard(audio: audios.data[index]);
-                  },
-                ),
-          loading: () => const _AudioFeedLoading(),
-          error: (err, stack) => Center(child: Text('Wisdom delayed: $err')),
+        child: Column(
+          children: [
+            const AdBanner(screenKey: 'audio'),
+            Expanded(
+              child: audioState.when(
+                data: (audios) => audios.data.isEmpty
+                    ? const _EmptyAudioFeed()
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        itemCount: audios.data.length,
+                        itemBuilder: (context, index) {
+                          return _AudioCard(audio: audios.data[index]);
+                        },
+                      ),
+                loading: () => const _AudioFeedLoading(),
+                error: (err, stack) => Center(child: Text('Wisdom delayed: $err')),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -73,7 +94,6 @@ class _AudioCard extends ConsumerWidget {
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              // Artwork
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: audio.thumbnailUrl != null
@@ -82,21 +102,16 @@ class _AudioCard extends ConsumerWidget {
                         width: 80,
                         height: 80,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) =>
-                            Container(color: Colors.white10),
+                        placeholder: (context, url) => Container(color: Colors.white10),
                       )
                     : Container(
                         width: 80,
                         height: 80,
                         color: const Color(0xFFD4AF37).withOpacity(0.1),
-                        child: const Icon(
-                          Icons.music_note_rounded,
-                          color: Color(0xFFD4AF37),
-                        ),
+                        child: const Icon(Icons.music_note_rounded, color: Color(0xFFD4AF37)),
                       ),
               ),
               const SizedBox(width: 16),
-              // Details
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,57 +120,52 @@ class _AudioCard extends ConsumerWidget {
                       audio.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Outfit',
-                      ),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       audio.author ?? 'Watered Scholar',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.white.withOpacity(0.5),
-                        letterSpacing: 0.5,
-                      ),
+                      style: TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.5), letterSpacing: 0.5),
                     ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
                         if (audio.duration != null) ...[
-                          Icon(
-                            Icons.timer_outlined,
-                            size: 12,
-                            color: const Color(0xFFD4AF37).withOpacity(0.7),
-                          ),
+                          Icon(Icons.timer_outlined, size: 12, color: const Color(0xFFD4AF37).withOpacity(0.7)),
                           const SizedBox(width: 4),
-                          Text(
-                            audio.duration!,
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: const Color(0xFFD4AF37).withOpacity(0.7),
-                            ),
-                          ),
+                          Text(audio.duration!, style: TextStyle(fontSize: 11, color: const Color(0xFFD4AF37).withOpacity(0.7))),
                         ],
+                        const Spacer(),
+                        InkWell(
+                          onTap: () async {
+                             if (!ref.read(authProvider).isAuthenticated) {
+                               Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LoginScreen()));
+                               return;
+                             }
+                             await ref.read(interactionServiceProvider).toggleLike('audio', audio.id);
+                             ref.refresh(audioListProvider());
+                          },
+                          child: Icon(
+                            audio.isLiked ?? false ? Icons.favorite : Icons.favorite_border_rounded,
+                            size: 16,
+                            color: audio.isLiked ?? false ? Colors.redAccent : Colors.white38,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        InkWell(
+                          onTap: () => CommentBottomSheet.show(context, 'audio', audio.id),
+                          child: const Icon(Icons.chat_bubble_outline_rounded, size: 16, color: Colors.white38),
+                        ),
                       ],
                     ),
                   ],
                 ),
               ),
-              // Play Icon
               Container(
                 width: 40,
                 height: 40,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD4AF37).withOpacity(0.15),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.play_arrow_rounded,
-                  color: Color(0xFFD4AF37),
-                  size: 28,
-                ),
+                decoration: BoxDecoration(color: const Color(0xFFD4AF37).withOpacity(0.15), shape: BoxShape.circle),
+                child: const Icon(Icons.play_arrow_rounded, color: Color(0xFFD4AF37), size: 28),
               ),
             ],
           ),
@@ -167,7 +177,6 @@ class _AudioCard extends ConsumerWidget {
 
 class _AudioFeedLoading extends StatelessWidget {
   const _AudioFeedLoading();
-
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -179,10 +188,7 @@ class _AudioFeedLoading extends StatelessWidget {
         child: Container(
           margin: const EdgeInsets.only(bottom: 16),
           height: 104,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
-          ),
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
         ),
       ),
     );
@@ -191,23 +197,15 @@ class _AudioFeedLoading extends StatelessWidget {
 
 class _EmptyAudioFeed extends StatelessWidget {
   const _EmptyAudioFeed();
-
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.mic_none_rounded,
-            size: 64,
-            color: Colors.blueGrey.shade700,
-          ),
+          Icon(Icons.mic_none_rounded, size: 64, color: Colors.blueGrey.shade700),
           const SizedBox(height: 16),
-          const Text(
-            'The sound of silence... no audios yet.',
-            style: TextStyle(color: Colors.blueGrey),
-          ),
+          const Text('The sound of silence... no audios yet.', style: TextStyle(color: Colors.blueGrey)),
         ],
       ),
     );

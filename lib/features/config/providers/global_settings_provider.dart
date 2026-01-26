@@ -22,7 +22,9 @@ class GlobalSettingsNotifier extends _$GlobalSettingsNotifier {
       final response = await apiClient.get('settings');
 
       if (response.statusCode == 200 && response.data != null) {
-        return GlobalSettings.fromJson(response.data as Map<String, dynamic>);
+        final data = response.data as Map<String, dynamic>;
+        final settingsData = data['settings'] as Map<String, dynamic>;
+        return GlobalSettings.fromJson(settingsData);
       } else {
         throw ServerException('Failed to load settings', response.statusCode);
       }

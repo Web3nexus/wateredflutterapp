@@ -8,28 +8,52 @@ import 'package:Watered/features/videos/screens/feed_screen.dart';
 import 'package:Watered/features/audio/screens/audio_feed_screen.dart';
 import 'package:Watered/features/audio/widgets/mini_player.dart';
 import 'package:Watered/features/profile/screens/profile_screen.dart';
-import 'package:Watered/features/community/screens/community_feed_screen.dart'; // Added import
+import 'package:Watered/features/community/screens/community_feed_screen.dart';
+import 'package:Watered/features/auth/screens/login_screen.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:Watered/core/theme/theme_provider.dart';
+import 'package:Watered/core/widgets/premium_gate.dart';
+import 'package:Watered/features/subscription/screens/subscription_screen.dart';
+import 'package:Watered/core/services/ad_service.dart';
+import 'package:Watered/core/services/notification_service.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
-    androidNotificationChannelName: 'Audio playback',
-    androidNotificationOngoing: true,
-  );
+  // 1. Initialize Firebase first
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    print('Firebase initialization error: $e');
+  }
+
+  // 2. Initialize other services
+  final container = ProviderContainer();
+  try {
+    await JustAudioBackground.init(
+      androidNotificationChannelId: 'com.example.wateredflutterapp.channel.audio',
+      androidNotificationChannelName: 'Watered Audio',
+      androidNotificationOngoing: true,
+    );
+    
+    // Initialize Ads
+    await container.read(adServiceProvider).initialize();
+    // Initialize Notifications
+    await container.read(notificationServiceProvider).initialize();
+  } catch (e, stack) {
+    print('Error during service initialization: $e');
+    print(stack);
+  }
 
   runApp(
-    const ProviderScope(
-      child: MyApp(),
+    UncontrolledProviderScope(
+      container: container,
+      child: const MyApp(),
     ),
   );
 }
 
-import 'package:Watered/core/theme/theme_provider.dart';
-
-// ... imports ...
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
@@ -47,13 +71,13 @@ class MyApp extends ConsumerWidget {
     final lightTheme = ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryColor,
-        primary: primaryColor,
-        secondary: secondaryColor,
-        surface: Colors.white,
+        seedColor: const Color(0xFF4A5D4E), // Sage Green
+        primary: const Color(0xFF4A5D4E),
+        secondary: const Color(0xFF8A9A5B), // Earthy Olive
+        surface: const Color(0xFFF8F5F2), // Cream
         brightness: Brightness.light,
       ),
-      scaffoldBackgroundColor: Colors.white,
+      scaffoldBackgroundColor: const Color(0xFFF8F5F2),
       fontFamily: 'Outfit',
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
@@ -63,31 +87,31 @@ class MyApp extends ConsumerWidget {
           fontFamily: 'Cinzel',
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: Colors.black, // Dark text for light mode
+          color: Color(0xFF2D3436), // Deep Slate
         ),
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: Color(0xFF2D3436)),
       ),
       textTheme: const TextTheme(
         headlineMedium: TextStyle(
           fontFamily: 'Cinzel',
           fontWeight: FontWeight.bold,
-          color: Colors.black, // Dark text
+          color: Color(0xFF2D3436),
         ),
         titleLarge: TextStyle(
           fontFamily: 'Cinzel',
           fontWeight: FontWeight.bold,
           letterSpacing: 1.2,
-          color: Colors.black, 
+          color: Color(0xFF2D3436),
         ),
         bodyMedium: TextStyle(
-          color: Color(0xFF1E293B), // Dark blue-grey for text
+          color: Color(0xFF4B5563),
           height: 1.5,
         ),
       ),
       cardTheme: CardThemeData(
-        elevation: 2,
+        elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        color: Colors.grey.shade50,
+        color: Colors.white,
       ),
     );
 
@@ -144,15 +168,7 @@ class MyApp extends ConsumerWidget {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: themeMode,
-      home: bootState.when(
-        data: (_) {
-          // Initialize auth state
-          Future.microtask(() => ref.read(authProvider.notifier).checkAuthStatus());
-          return const MainTabsScreen();
-        },
-        loading: () => const SplashScreen(),
-        error: (error, stack) => ErrorScreen(error: error.toString()),
-      ),
+      home: const RootGate(),
     );
   }
 
@@ -167,73 +183,141 @@ class MyApp extends ConsumerWidget {
   }
 }
 
-class SplashScreen extends StatelessWidget {
+class RootGate extends ConsumerStatefulWidget {
+  const RootGate({super.key});
+
+  @override
+  ConsumerState<RootGate> createState() => _RootGateState();
+}
+
+class _RootGateState extends ConsumerState<RootGate> {
+  @override
+  void initState() {
+    super.initState();
+    // Initialize auth status once on boot
+    print('🚀 Initializing Auth Status...');
+    Future.microtask(() => ref.read(authProvider.notifier).checkAuthStatus());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bootState = ref.watch(appBootProvider);
+    final authState = ref.watch(authProvider);
+
+    // 1. Show Splash while booting or checking auth
+    if (bootState.isLoading || authState.isLoading) {
+      return const SplashScreen();
+    }
+
+    // 2. Show Error Screen if boot failed
+    return bootState.when(
+      data: (status) {
+        if (status == BootStatus.maintenance) {
+          return const Scaffold(body: Center(child: Text('Under Maintenance')));
+        }
+        
+        // Allow everyone into MainTabsScreen
+        return const MainTabsScreen();
+      },
+      loading: () => const SplashScreen(),
+      error: (error, stack) => ErrorScreen(error: error.toString()),
+    );
+  }
+}
+
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+    
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
+    );
+    
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+    );
+    
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Logo with Glow
-              Container(
-                width: 140,
-                height: 140,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFFD4AF37).withOpacity(0.2),
-                      blurRadius: 30,
-                      spreadRadius: 10,
-                    ),
-                  ],
-                  border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.5), width: 1.5),
+      backgroundColor: Colors.white,
+      body: Center(
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: ScaleTransition(
+            scale: _scaleAnimation,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Logo with background support for visibility
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Image.asset(
+                    'assets/icon/splashicon.png',
+                    width: 140,
+                    height: 140,
+                  ),
                 ),
-                child: const Center(
-                  child: Icon(Icons.water_drop_rounded, size: 70, color: Color(0xFFD4AF37)),
+                const SizedBox(height: 32),
+                const Text(
+                  'WATERED',
+                  style: TextStyle(
+                    fontFamily: 'Cinzel',
+                    fontSize: 32,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 8,
+                    color: Color(0xFF1E293B),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 32),
-              const Text(
-                'WATERED',
-                style: TextStyle(
-                  fontFamily: 'Cinzel',
-                  fontSize: 28,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 8,
-                  color: Color(0xFFD4AF37),
+                const SizedBox(height: 8),
+                Text(
+                  'ANCIENT AFRICAN SPIRITUALITY',
+                  style: TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 13,
+                    letterSpacing: 2,
+                    color: const Color(0xFF1E293B).withOpacity(0.6),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'SACRED KNOWLEDGE',
-                style: TextStyle(
-                  fontFamily: 'Outfit',
-                  fontSize: 12,
-                  letterSpacing: 2,
-                  color: const Color(0xFFD4AF37).withOpacity(0.6),
+                const SizedBox(height: 60),
+                const SizedBox(
+                  width: 40,
+                  child: LinearProgressIndicator(
+                    color: Color(0xFFD4AF37),
+                    backgroundColor: Color(0xFFE5E7EB),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 60),
-              const SizedBox(
-                width: 40,
-                child: LinearProgressIndicator(
-                  color: Color(0xFFD4AF37),
-                  backgroundColor: Colors.transparent,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -253,11 +337,20 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    const LibraryScreen(),
-    const AudioFeedScreen(),
+    const PremiumGate(
+      message: 'Explore our complete collection of ancient texts and wisdom.',
+      child: LibraryScreen(),
+    ),
+    const PremiumGate(
+      message: 'Listen to insightful teachings and ancient oral traditions.',
+      child: AudioFeedScreen(),
+    ),
     const FeedScreen(),
-    const CommunityFeedScreen(), // Added Community Screen
-    const ProfileScreen(),
+    const PremiumGate(
+      message: 'Join our sacred community of seekers and practitioners.',
+      child: CommunityFeedScreen(),
+    ),
+    const ProfileGate(), // Use Gate for Profile
   ];
 
   @override
@@ -355,4 +448,15 @@ class ErrorScreen extends StatelessWidget {
     );
   }
 }
+class ProfileGate extends ConsumerWidget {
+  const ProfileGate({super.key});
 
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isAuthenticated = ref.watch(authProvider).isAuthenticated;
+    if (isAuthenticated) {
+      return ProfileScreen();
+    }
+    return LoginScreen();
+  }
+}

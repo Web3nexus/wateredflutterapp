@@ -53,8 +53,6 @@ abstract class $BookingCopyWith<$Res> {
     String? notes,
     @JsonKey(name: 'consultation_type') ConsultationType? consultationType,
   });
-
-  $ConsultationTypeCopyWith<$Res>? get consultationType;
 }
 
 /// @nodoc
@@ -109,20 +107,6 @@ class _$BookingCopyWithImpl<$Res, $Val extends Booking>
           as $Val,
     );
   }
-
-  /// Create a copy of Booking
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $ConsultationTypeCopyWith<$Res>? get consultationType {
-    if (_value.consultationType == null) {
-      return null;
-    }
-
-    return $ConsultationTypeCopyWith<$Res>(_value.consultationType!, (value) {
-      return _then(_value.copyWith(consultationType: value) as $Val);
-    });
-  }
 }
 
 /// @nodoc
@@ -141,9 +125,6 @@ abstract class _$$BookingImplCopyWith<$Res> implements $BookingCopyWith<$Res> {
     String? notes,
     @JsonKey(name: 'consultation_type') ConsultationType? consultationType,
   });
-
-  @override
-  $ConsultationTypeCopyWith<$Res>? get consultationType;
 }
 
 /// @nodoc

@@ -6,7 +6,7 @@ part of 'entry_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$entryHash() => r'4822278513cf01dc83a2d85011f6dc6e04e724e1';
+String _$entryHash() => r'46e396dd14a1c33d9767ab5f4fb55ff5c06841ac';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -165,7 +165,7 @@ class _EntryProviderElement extends AutoDisposeFutureProviderElement<Entry>
   String? get languageCode => (origin as EntryProvider).languageCode;
 }
 
-String _$entryListHash() => r'a5ff3952897b08c5bff7b6793962d224cda9c246';
+String _$entryListHash() => r'a15ed2f27ae22f93d6843e47519b239d5a0c60c8';
 
 abstract class _$EntryList
     extends BuildlessAutoDisposeAsyncNotifier<PaginatedResponse<Entry>> {

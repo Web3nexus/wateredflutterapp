@@ -22,4 +22,13 @@ class ConsultationType {
       description: json['description'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'duration_minutes': durationMinutes,
+        'price': price,
+        'description': description,
+      };
 }
+

@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/community/models/post.dart';
 import 'package:Watered/features/community/providers/community_providers.dart';
+import 'package:Watered/core/services/interaction_service.dart';
+import 'package:Watered/core/widgets/comment_bottom_sheet.dart';
+import 'package:Watered/features/auth/providers/auth_provider.dart';
+import 'package:Watered/features/auth/screens/login_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -91,17 +95,20 @@ class PostCard extends ConsumerWidget {
                 icon: post.isLiked ? Icons.favorite : Icons.favorite_border,
                 label: '${post.likesCount}',
                 color: post.isLiked ? Colors.redAccent : null,
-                onTap: () {
-                    ref.read(communityControllerProvider.notifier).toggleLike(post.id);
+                onTap: () async {
+                   if (!ref.read(authProvider).isAuthenticated) {
+                     Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LoginScreen()));
+                     return;
+                   }
+                   await ref.read(interactionServiceProvider).toggleLike('post', post.id);
+                   ref.refresh(postsProvider);
                 },
               ),
               const SizedBox(width: 24),
               _ActionButton(
                 icon: Icons.chat_bubble_outline,
                 label: '${post.commentsCount}',
-                onTap: () {
-                  // TODO: Navigate to details
-                },
+                onTap: () => CommentBottomSheet.show(context, 'post', post.id),
               ),
               const Spacer(),
               _ActionButton(

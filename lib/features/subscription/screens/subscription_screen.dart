@@ -73,10 +73,25 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                const SizedBox(height: 20),
+                const Icon(Icons.auto_awesome_rounded, size: 64, color: Color(0xFFD4AF37)),
+                const SizedBox(height: 16),
+                const Text(
+                  'WATERED PLUS+',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontFamily: 'Cinzel', fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 4, color: Color(0xFFD4AF37)),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Unlock the full depth of African spirituality.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white60, fontSize: 14),
+                ),
+                const SizedBox(height: 48),
                 _PlanCard(
                   title: 'Monthly Plan',
                   price: '\$9.99 / month',
-                  features: const ['Unlimited Incantations', 'Access to Rituals', 'Priority Booking'],
+                  features: const ['Complete Sacred Library', 'Daily Audio Teachings', 'Community Access', 'Unlimited Rituals'],
                   onTap: () => _subscribe('monthly_premium'),
                   isLoading: _isLoading,
                 ),
@@ -84,15 +99,26 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 _PlanCard(
                   title: 'Yearly Plan',
                   price: '\$99.99 / year',
-                  features: const ['All Monthly Features', '2 Months Free', 'Badge on Profile'],
+                  features: const ['Everything in Monthly', '2 Months Free', 'Exclusive Yearly Content', 'Priority Support'],
                   isBestValue: true,
                   onTap: () => _subscribe('yearly_premium'),
                   isLoading: _isLoading,
                 ),
                 const SizedBox(height: 32),
+                ElevatedButton(
+                  onPressed: _isLoading ? null : () => _subscribe('free_trial'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white10,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: Color(0xFFD4AF37), width: 1)),
+                  ),
+                  child: const Text('START 7-DAY FREE TRIAL', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1)),
+                ),
+                const SizedBox(height: 24),
                 TextButton(
                     onPressed: _isLoading ? null : () {},
-                    child: Text('Restore Purchases', style: TextStyle(color: theme.textTheme.bodySmall?.color))
+                    child: Text('Restore Purchases', style: TextStyle(color: theme.textTheme.bodySmall?.color?.withOpacity(0.5)))
                 ),
               ],
             ),

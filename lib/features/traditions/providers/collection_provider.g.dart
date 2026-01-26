@@ -6,7 +6,7 @@ part of 'collection_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$collectionHash() => r'219c354e80e5f8c8e34f78bf2872a341b6190773';
+String _$collectionHash() => r'4b74ccda572515ff87f2c3d3c315070ee409ad54';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -158,7 +158,7 @@ class _CollectionProviderElement
   int get id => (origin as CollectionProvider).id;
 }
 
-String _$collectionListHash() => r'3bf9040e5fb68295535352e5490c1eb4a56694b3';
+String _$collectionListHash() => r'bdbbe29418acb52ce81c5b4a92b06306f65229c8';
 
 abstract class _$CollectionList
     extends

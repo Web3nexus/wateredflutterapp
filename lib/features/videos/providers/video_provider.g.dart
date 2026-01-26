@@ -6,7 +6,7 @@ part of 'video_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$villageVideoHash() => r'eed20b37d2f31133970127c01eedfb11cf3ac8d6';
+String _$villageVideoHash() => r'1f94dc8a2a85125a4eacb49ddeb95115ea3dfff0';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -147,7 +147,7 @@ class _VillageVideoProviderElement
   int get id => (origin as VillageVideoProvider).id;
 }
 
-String _$videoListHash() => r'7024abd99945cafa5759cc32e4c0bc2e5dbf6771';
+String _$videoListHash() => r'8e94b6f4c9e074d0b0f91b3a5d899848b6242f1a';
 
 abstract class _$VideoList
     extends BuildlessAutoDisposeAsyncNotifier<PaginatedResponse<Video>> {

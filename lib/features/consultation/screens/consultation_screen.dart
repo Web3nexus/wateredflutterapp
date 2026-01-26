@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/consultation/providers/booking_providers.dart';
 import 'package:Watered/features/consultation/services/booking_service.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ConsultationScreen extends ConsumerStatefulWidget {
   const ConsultationScreen({super.key});
@@ -31,17 +32,28 @@ class _ConsultationScreenState extends ConsumerState<ConsultationScreen> {
         _selectedTime!.minute,
       );
 
-      await ref.read(bookingServiceProvider).createBooking(
-            _selectedTypeId!,
-            startTime,
-            _notesController.text,
-          );
+      final response = await ref.read(bookingServiceProvider).createBooking(
+        _selectedTypeId!,
+        startTime,
+        _notesController.text,
+      );
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-           const SnackBar(content: Text('Booking request sent successfully!')),
-        );
-        Navigator.of(context).pop();
+      final paymentUrl = response['payment_url'];
+
+      if (paymentUrl != null && mounted) {
+        final uri = Uri.parse(paymentUrl);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+          
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Please complete payment in your browser.')),
+            );
+            Navigator.of(context).pop();
+          }
+        } else {
+          throw 'Could not launch payment URL';
+        }
       }
     } catch (e) {
       if (mounted) {

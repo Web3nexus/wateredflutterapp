@@ -17,12 +17,13 @@ class BookingService {
     return data.map((e) => ConsultationType.fromJson(e)).toList();
   }
 
-  Future<void> createBooking(int typeId, DateTime startTime, String? notes) async {
-    await _client.post('bookings', data: {
+  Future<Map<String, dynamic>> createBooking(int typeId, DateTime startTime, String? notes) async {
+    final response = await _client.post('bookings', data: {
       'consultation_type_id': typeId,
       'start_time': startTime.toIso8601String(),
       'notes': notes,
     });
+    return response.data;
   }
 
   // Future: getMyBookings()

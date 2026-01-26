@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:Watered/core/network/api_client.dart';
 import 'package:Watered/features/auth/models/auth_response.dart';
 import 'package:Watered/features/auth/models/user.dart';
@@ -67,6 +69,52 @@ class AuthService {
       // Ignore logout errors
     } finally {
       await _client.clearToken();
+    }
+  }
+
+  Future<AuthResponse> signInWithGoogle() async {
+    try {
+      final googleSignIn = GoogleSignIn();
+      final account = await googleSignIn.signIn();
+      
+      if (account == null) throw 'Sign in cancelled';
+
+      final response = await _client.post('social-login', data: {
+        'email': account.email,
+        'name': account.displayName ?? 'Google User',
+        'provider': 'google',
+        'provider_id': account.id,
+        'device_name': 'flutter_app',
+      });
+
+      return AuthResponse.fromJson(response.data);
+    } catch (e) {
+      throw 'Google sign in failed: $e';
+    }
+  }
+
+  Future<AuthResponse> signInWithApple() async {
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      final response = await _client.post('social-login', data: {
+        'email': credential.email ?? '', // Apple might not provide email on subsequent logins
+        'name': '${credential.givenName ?? ''} ${credential.familyName ?? ''}'.trim() == '' 
+            ? 'Apple User' 
+            : '${credential.givenName ?? ''} ${credential.familyName ?? ''}',
+        'provider': 'apple',
+        'provider_id': credential.userIdentifier,
+        'device_name': 'flutter_app',
+      });
+
+      return AuthResponse.fromJson(response.data);
+    } catch (e) {
+      throw 'Apple sign in failed: $e';
     }
   }
 

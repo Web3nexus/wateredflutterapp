@@ -6,7 +6,7 @@ part of 'chapter_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$chapterHash() => r'b12f1755c233d5044d76da94f70d116549b8b6d6';
+String _$chapterHash() => r'd666d54b56ef9b96f045061b0ba2ee54b7261f61';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -155,7 +155,7 @@ class _ChapterProviderElement extends AutoDisposeFutureProviderElement<Chapter>
   int get id => (origin as ChapterProvider).id;
 }
 
-String _$chapterListHash() => r'f7880f03a2b1baf72ec458fd89fe1dbfceb2e6d2';
+String _$chapterListHash() => r'bfed61c2de4d2468369d13f788d9809d02cac87e';
 
 abstract class _$ChapterList
     extends BuildlessAutoDisposeAsyncNotifier<PaginatedResponse<Chapter>> {
