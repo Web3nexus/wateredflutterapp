@@ -25,7 +25,7 @@ class CommunityFeedScreen extends ConsumerWidget {
           if (!isPremium)
             TextButton(
               onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SubscriptionScreen())),
-              child: const Text('GET PLUS+', style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold, fontSize: 12)),
+              child: Text('GET PLUS+', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 12)),
             ),
           const SizedBox(width: 8),
         ],
@@ -59,7 +59,21 @@ class CommunityFeedScreen extends ConsumerWidget {
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stack) => Center(
-                  child: Text('Error loading posts: $error'),
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.wifi_off_rounded, color: Colors.grey, size: 48),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Connection timeout. Please check your internet and try again.',
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),

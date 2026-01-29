@@ -62,7 +62,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             hintText: 'Search wisdom, products, videos...',
             hintStyle: TextStyle(color: Colors.white54),
             border: InputBorder.none,
-            prefixIcon: Icon(Icons.search, color: Color(0xFFD4AF37)),
+            prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.primary),
           ),
           autofocus: true,
         ),
@@ -103,7 +103,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 const Text(
                   'DAILY WISDOM',
                   style: TextStyle(
-                    color: Color(0xFFD4AF37),
+                    color: Theme.of(context).colorScheme.primary,
                     letterSpacing: 2,
                     fontWeight: FontWeight.bold,
                   ),
@@ -132,7 +132,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         );
       },
       loading: () => const Center(
-        child: CircularProgressIndicator(color: Color(0xFFD4AF37)),
+        child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
       ),
       error: (_, __) => const SizedBox.shrink(),
     );
@@ -186,7 +186,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   ),
                   trailing: Text(
                     '\$${(p.price / 100).toStringAsFixed(0)}',
-                    style: const TextStyle(color: Color(0xFFD4AF37)),
+                    style: TextStyle(color: Theme.of(context).colorScheme.primary),
                   ),
                   leading: p.imageUrl != null
                       ? CircleAvatar(
@@ -231,7 +231,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         );
       },
       loading: () => const Center(
-        child: CircularProgressIndicator(color: Color(0xFFD4AF37)),
+        child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
       ),
       error: (err, _) => Center(
         child: Text(
@@ -254,7 +254,7 @@ class _SectionHeader extends StatelessWidget {
       child: Text(
         title,
         style: const TextStyle(
-          color: Color(0xFFD4AF37),
+          color: Theme.of(context).colorScheme.primary,
           fontWeight: FontWeight.bold,
           fontSize: 12,
         ),

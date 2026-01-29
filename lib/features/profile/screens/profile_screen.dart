@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/auth/providers/auth_provider.dart';
+import 'package:Watered/features/community/screens/community_feed_screen.dart'; // Added import
 import 'package:Watered/features/auth/screens/login_screen.dart';
 import 'package:Watered/features/library/screens/user_library_screen.dart';
 import 'package:Watered/features/commerce/screens/shop_screen.dart';
@@ -22,8 +23,22 @@ import 'package:Watered/core/services/ad_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class ProfileScreen extends ConsumerWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   Future<void> _pickAndUploadPhoto(BuildContext context, WidgetRef ref) async {
     final picker = ImagePicker();
@@ -45,7 +60,7 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final themeMode = ref.watch(themeProvider);
 
@@ -65,7 +80,7 @@ class ProfileScreen extends ConsumerWidget {
           if (!user.isPremium)
             TextButton(
               onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SubscriptionScreen())),
-              child: const Text('GET PLUS+', style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold, fontSize: 12)),
+              child: Text('GET PLUS+', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 12)),
             ),
           const SizedBox(width: 8),
         ],
@@ -120,7 +135,7 @@ class ProfileScreen extends ConsumerWidget {
                       bottom: 0,
                       child: Container(
                         padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(color: Color(0xFFD4AF37), shape: BoxShape.circle),
+                        decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, shape: BoxShape.circle),
                         child: const Icon(Icons.camera_alt, color: Colors.black, size: 20),
                       ),
                     ),
@@ -138,18 +153,18 @@ class ProfileScreen extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFD4AF37).withOpacity(0.1),
+                    color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.3)),
+                    border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.3)),
                   ),
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.verified_rounded, color: Color(0xFFD4AF37), size: 14),
+                      Icon(Icons.verified_rounded, color: Theme.of(context).colorScheme.primary, size: 14),
                       SizedBox(width: 6),
                       Text(
                         'PREMIUM',
-                        style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold, fontSize: 10, letterSpacing: 1),
+                        style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 10, letterSpacing: 1),
                       ),
                     ],
                   ),
@@ -168,11 +183,20 @@ class ProfileScreen extends ConsumerWidget {
               
               // Search Bar
               TextField(
-                readOnly: true,
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SearchScreen())),
+                controller: _searchController,
+                onChanged: (value) => setState(() => _searchQuery = value.toLowerCase()),
                 decoration: InputDecoration(
-                  hintText: 'Search wisdom, deities, rituals...',
-                  prefixIcon: const Icon(Icons.search, color: Color(0xFFD4AF37)),
+                  hintText: 'Search menu options...',
+                  prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.primary),
+                  suffixIcon: _searchQuery.isNotEmpty 
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, size: 18),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() => _searchQuery = '');
+                        },
+                      )
+                    : null,
                   filled: true,
                   fillColor: theme.cardTheme.color,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
@@ -217,29 +241,10 @@ class ProfileScreen extends ConsumerWidget {
               ),
 
               // Menu Items
-              _buildMenuItem(context, icon: Icons.bookmark_border_rounded, title: 'My Collection', onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UserLibraryScreen()))),
-              const SizedBox(height: 16),
-              _buildMenuItem(context, icon: Icons.diamond_outlined, title: 'Sacred Shop', onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ShopScreen()))),
-              const SizedBox(height: 16),
-              _buildMenuItem(context, icon: Icons.map_outlined, title: 'Temple Discovery', onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TempleScreen()))),
-              const SizedBox(height: 16),
-              _buildMenuItem(context, icon: Icons.event_available_rounded, title: 'Upcoming Events', onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EventsScreen()))),
-              const SizedBox(height: 16),
-              _buildMenuItem(context, icon: Icons.spa_outlined, title: 'Rituals', onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RitualsScreen()))),
-              const SizedBox(height: 16),
-              _buildMenuItem(context, icon: Icons.record_voice_over_outlined, title: 'Incantations', onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const IncantationsScreen()))),
-              const SizedBox(height: 16),
-              _buildMenuItem(context, icon: Icons.calendar_month_outlined, title: 'Book Consultation', onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ConsultationScreen()))),
-              const SizedBox(height: 16),
-              _buildMenuItem(context, icon: Icons.person_outline_rounded, title: 'Edit Profile', onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EditProfileScreen()))),
-              const SizedBox(height: 16),
-              _buildMenuItem(context, icon: Icons.settings_outlined, title: 'Settings', onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SettingsScreen()))),
-              const SizedBox(height: 16),
-              _buildMenuItem(context, icon: Icons.star_border_rounded, title: 'Premium Access', onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SubscriptionScreen()))),
-              const SizedBox(height: 16),
-              _buildMenuItem(context, icon: Icons.alarm_rounded, title: 'Reminders', onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RemindersScreen()))),
-              const SizedBox(height: 16),
-              _buildMenuItem(context, icon: Icons.help_outline_rounded, title: 'Help & Support', onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const HelpSupportScreen()))),
+              ..._getFilteredMenuItems(context).map((item) => Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: item,
+              )),
               
               const SizedBox(height: 32),
               SizedBox(
@@ -262,6 +267,29 @@ class ProfileScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  List<Widget> _getFilteredMenuItems(BuildContext context) {
+    final List<Map<String, dynamic>> items = [
+      {'icon': Icons.people_outline_rounded, 'title': 'Community', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CommunityFeedScreen()))},
+      {'icon': Icons.bookmark_border_rounded, 'title': 'My Collection', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UserLibraryScreen()))},
+      {'icon': Icons.diamond_outlined, 'title': 'Sacred Shop', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ShopScreen()))},
+      {'icon': Icons.map_outlined, 'title': 'Temple Discovery', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TempleScreen()))},
+      {'icon': Icons.event_available_rounded, 'title': 'Upcoming Events', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EventsScreen()))},
+      {'icon': Icons.spa_outlined, 'title': 'Rituals', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RitualsScreen()))},
+      {'icon': Icons.record_voice_over_outlined, 'title': 'Incantations', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const IncantationsScreen()))},
+      {'icon': Icons.calendar_month_outlined, 'title': 'Book Consultation', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ConsultationScreen()))},
+      {'icon': Icons.person_outline_rounded, 'title': 'Edit Profile', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EditProfileScreen()))},
+      {'icon': Icons.settings_outlined, 'title': 'Settings', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SettingsScreen()))},
+      {'icon': Icons.star_border_rounded, 'title': 'Premium Access', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SubscriptionScreen()))},
+      {'icon': Icons.alarm_rounded, 'title': 'Reminders', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RemindersScreen()))},
+      {'icon': Icons.help_outline_rounded, 'title': 'Help & Support', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const HelpSupportScreen()))},
+    ];
+
+    return items
+        .where((item) => item['title'].toString().toLowerCase().contains(_searchQuery))
+        .map((item) => _buildMenuItem(context, icon: item['icon'], title: item['title'], onTap: item['onTap']))
+        .toList();
   }
 
   Widget _buildMenuItem(BuildContext context, {required IconData icon, required String title, required VoidCallback onTap}) {

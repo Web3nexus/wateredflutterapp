@@ -74,12 +74,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 20),
-                const Icon(Icons.auto_awesome_rounded, size: 64, color: Color(0xFFD4AF37)),
+                Icon(Icons.auto_awesome_rounded, size: 64, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(height: 16),
                 const Text(
                   'WATERED PLUS+',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontFamily: 'Cinzel', fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 4, color: Color(0xFFD4AF37)),
+                  style: TextStyle(fontFamily: 'Cinzel', fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 4, color: Theme.of(context).colorScheme.primary),
                 ),
                 const SizedBox(height: 8),
                 const Text(
@@ -111,7 +111,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                     backgroundColor: Colors.white10,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: Color(0xFFD4AF37), width: 1)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 1)),
                   ),
                   child: const Text('START 7-DAY FREE TRIAL', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1)),
                 ),
@@ -156,7 +156,7 @@ class _PlanCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.cardTheme.color,
         borderRadius: BorderRadius.circular(24),
-        border: isBestValue ? Border.all(color: const Color(0xFFD4AF37), width: 2) : null,
+        border: isBestValue ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2) : null,
       ),
       child: Column(
         children: [
@@ -164,7 +164,7 @@ class _PlanCard extends StatelessWidget {
              Container(
                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                decoration: BoxDecoration(
-                   color: const Color(0xFFD4AF37),
+                   color: Theme.of(context).colorScheme.primary,
                    borderRadius: BorderRadius.circular(12),
                ),
                child: const Text('BEST VALUE', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12)),
@@ -173,7 +173,7 @@ class _PlanCard extends StatelessWidget {
           ],
           Text(title, style: theme.textTheme.titleLarge),
           const SizedBox(height: 8),
-          Text(price, style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, color: const Color(0xFFD4AF37))),
+          Text(price, style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary)),
           const SizedBox(height: 24),
           ...features.map((f) => Padding(
             padding: const EdgeInsets.only(bottom: 8.0),

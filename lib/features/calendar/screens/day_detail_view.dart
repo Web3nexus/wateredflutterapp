@@ -41,7 +41,7 @@ class DayDetailView extends StatelessWidget {
                   children: [
                     Text(
                       '${day.month?.displayName} Day ${day.dayNumber}'.toUpperCase(),
-                      style: const TextStyle(color: Color(0xFFD4AF37), fontSize: 12, letterSpacing: 2, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 12, letterSpacing: 2, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -101,18 +101,18 @@ class DayDetailView extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFD4AF37).withOpacity(0.1),
+        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.2)),
+        border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: const Color(0xFFD4AF37), size: 20),
+          Icon(icon, color: Theme.of(context).colorScheme.primary, size: 20),
           const SizedBox(width: 12),
           Text(
             text,
-            style: const TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold, fontSize: 14),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 14),
           ),
         ],
       ),

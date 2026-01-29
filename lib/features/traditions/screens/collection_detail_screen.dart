@@ -5,51 +5,129 @@ import 'package:Watered/features/traditions/models/chapter.dart';
 import 'package:Watered/features/traditions/providers/chapter_provider.dart';
 import 'package:Watered/features/traditions/screens/reading_screen.dart';
 
-class CollectionDetailScreen extends ConsumerWidget {
+class CollectionDetailScreen extends ConsumerStatefulWidget {
   final TextCollection collection;
   const CollectionDetailScreen({super.key, required this.collection});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final chaptersState = ref.watch(
-      chapterListProvider(collectionId: collection.id),
-    );
+  ConsumerState<CollectionDetailScreen> createState() => _CollectionDetailScreenState();
+}
+
+class _CollectionDetailScreenState extends ConsumerState<CollectionDetailScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+  
+  void _onSearch(String query) {
+    // Check for "Jump" command (e.g. 5:12)
+    if (query.contains(':')) {
+       final parts = query.split(':');
+       if (parts.length == 2) {
+         final chapSearch = int.tryParse(parts[0]);
+         final verseSearch = int.tryParse(parts[1]);
+         
+         if (chapSearch != null && verseSearch != null) {
+            _handleQuickJump(chapSearch, verseSearch);
+            return;
+         }
+       }
+    }
+    
+    setState(() {
+      _searchQuery = query;
+    });
+  }
+
+  Future<void> _handleQuickJump(int chapterOrder, int verseOrder) async {
+     // We need to find the chapter matching this order
+     // Since we don't have the full list in state easily without reading the provider,
+     // we'll optimistically try to find it in the current provider state.
+     
+     final chaptersAsync = ref.read(chapterListProvider(collectionId: widget.collection.id));
+     
+     chaptersAsync.whenData((chapters) {
+       final targetChapter = chapters.data.cast<Chapter?>().firstWhere(
+         (c) => c?.order == chapterOrder,
+         orElse: () => null,
+       );
+
+       if (targetChapter != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              fullscreenDialog: true,
+              builder: (context) => ReadingScreen(
+                chapter: targetChapter,
+                collection: widget.collection,
+                initialVerse: verseOrder,
+              ),
+            ),
+          );
+       } else {
+         ScaffoldMessenger.of(context).showSnackBar(
+           SnackBar(content: Text('Chapter $chapterOrder not found.')),
+         );
+       }
+     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final chaptersState = ref.watch(chapterListProvider(collectionId: widget.collection.id));
+    final theme = Theme.of(context);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text(collection.name.toUpperCase()),
+        title: _searchQuery.isEmpty 
+          ? Text(widget.collection.name.toUpperCase(), style: const TextStyle(fontWeight: FontWeight.bold))
+          : TextField(
+              controller: _searchController,
+              onChanged: _onSearch,
+              autofocus: true,
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                hintText: 'Search Chapter or Jump (e.g. 5:12)',
+                hintStyle: TextStyle(color: Colors.white54),
+                border: InputBorder.none,
+              ),
+            ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(_searchQuery.isEmpty ? Icons.search : Icons.close),
+            onPressed: () {
+              setState(() {
+                if (_searchQuery.isNotEmpty) {
+                  _searchQuery = '';
+                  _searchController.clear();
+                } else {
+                  _searchQuery = ' '; // Trigger search mode UI (hacky but works for toggle)
+                  _searchController.clear();
+                }
+              });
+            },
+          ),
+        ],
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                const Color(0xFF0F172A),
-                const Color(0xFF0F172A).withOpacity(0),
-              ],
-            ),
+            color: theme.scaffoldBackgroundColor,
           ),
         ),
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
-          ),
-        ),
+        color: theme.scaffoldBackgroundColor,
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
             const SliverToBoxAdapter(child: SizedBox(height: 120)),
 
-            // Collection Header
+            // Collection Header (Hide in search mode to focus on results)
+            if (_searchQuery.trim().isEmpty)
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               sliver: SliverToBoxAdapter(
@@ -57,18 +135,18 @@ class CollectionDetailScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      collection.name.toUpperCase(),
-                      style: const TextStyle(
+                      widget.collection.name.toUpperCase(),
+                      style: TextStyle(
                         fontFamily: 'Cinzel',
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFFD4AF37),
+                        color: theme.colorScheme.primary,
                         letterSpacing: 1.5,
                       ),
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      collection.description ??
+                      widget.collection.description ??
                           'Study the sacred chapters of this collection.',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.6),
@@ -86,41 +164,49 @@ class CollectionDetailScreen extends ConsumerWidget {
 
             // Chapters Grid/List
             chaptersState.when(
-              data: (chapters) => chapters.data.isEmpty
-                  ? const SliverToBoxAdapter(child: _EmptyChapters())
-                  : SliverPadding(
+              data: (chapters) {
+                // Filter Logic
+                final filtered = _searchQuery.trim().isNotEmpty && !_searchQuery.contains(':')
+                    ? chapters.data.where((c) => c.order.toString().contains(_searchQuery.trim()) || c.name.toLowerCase().contains(_searchQuery.trim().toLowerCase())).toList()
+                    : chapters.data;
+                
+                if (filtered.isEmpty) {
+                   return const SliverToBoxAdapter(child: _EmptyChapters());
+                }
+
+                return SliverPadding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       sliver: SliverGrid(
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              mainAxisSpacing: 16,
-                              crossAxisSpacing: 16,
-                              childAspectRatio: 1,
-                            ),
+                               crossAxisCount: 3,
+                               mainAxisSpacing: 16,
+                               crossAxisSpacing: 16,
+                               childAspectRatio: 1,
+                             ),
                         delegate: SliverChildBuilderDelegate((context, index) {
-                          final chapter = chapters.data[index];
+                          final chapter = filtered[index];
                           return _ChapterGridItem(
                             chapter: chapter,
                             onTap: () {
                               Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ReadingScreen(
-                                    chapter: chapter,
-                                    collection: collection,
+                                  context,
+                                  MaterialPageRoute(
+                                    fullscreenDialog: true,
+                                    builder: (context) => ReadingScreen(
+                                      chapter: chapter,
+                                      collection: widget.collection,
+                                    ),
                                   ),
-                                ),
-                              );
+                                );
                             },
                           );
-                        }, childCount: chapters.data.length),
+                        }, childCount: filtered.length),
                       ),
-                    ),
-              loading: () => const SliverFillRemaining(
-                child: Center(
-                  child: CircularProgressIndicator(color: Color(0xFFD4AF37)),
-                ),
+                    );
+              },
+              loading: () => Center(
+                child: CircularProgressIndicator(color: theme.colorScheme.primary),
               ),
               error: (err, stack) => SliverFillRemaining(
                 child: Center(child: Text('Error loading chapters: $err')),
@@ -164,11 +250,11 @@ class _ChapterGridItem extends StatelessWidget {
           children: [
             Text(
               '${chapter.order}',
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'Cinzel',
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFFD4AF37),
+                color: theme.colorScheme.primary,
               ),
             ),
             if (chapter.name.isNotEmpty)

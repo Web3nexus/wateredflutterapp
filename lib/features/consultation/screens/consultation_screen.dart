@@ -33,9 +33,9 @@ class _ConsultationScreenState extends ConsumerState<ConsultationScreen> {
       );
 
       final response = await ref.read(bookingServiceProvider).createBooking(
-        _selectedTypeId!,
-        startTime,
-        _notesController.text,
+        consultationTypeId: _selectedTypeId!,
+        scheduledAt: startTime,
+        notes: _notesController.text,
       );
 
       final paymentUrl = response['payment_url'];

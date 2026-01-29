@@ -26,7 +26,7 @@ mixin _$DailyWisdom {
   String? get author => throw _privateConstructorUsedError;
   @JsonKey(name: 'background_image_url')
   String? get backgroundImageUrl => throw _privateConstructorUsedError;
-  @JsonKey(name: 'publish_date')
+  @JsonKey(name: 'active_date')
   DateTime get publishDate => throw _privateConstructorUsedError;
 
   /// Serializes this DailyWisdom to a JSON map.
@@ -51,7 +51,7 @@ abstract class $DailyWisdomCopyWith<$Res> {
     String quote,
     String? author,
     @JsonKey(name: 'background_image_url') String? backgroundImageUrl,
-    @JsonKey(name: 'publish_date') DateTime publishDate,
+    @JsonKey(name: 'active_date') DateTime publishDate,
   });
 }
 
@@ -118,7 +118,7 @@ abstract class _$$DailyWisdomImplCopyWith<$Res>
     String quote,
     String? author,
     @JsonKey(name: 'background_image_url') String? backgroundImageUrl,
-    @JsonKey(name: 'publish_date') DateTime publishDate,
+    @JsonKey(name: 'active_date') DateTime publishDate,
   });
 }
 
@@ -177,7 +177,7 @@ class _$DailyWisdomImpl implements _DailyWisdom {
     required this.quote,
     this.author,
     @JsonKey(name: 'background_image_url') this.backgroundImageUrl,
-    @JsonKey(name: 'publish_date') required this.publishDate,
+    @JsonKey(name: 'active_date') required this.publishDate,
   });
 
   factory _$DailyWisdomImpl.fromJson(Map<String, dynamic> json) =>
@@ -193,7 +193,7 @@ class _$DailyWisdomImpl implements _DailyWisdom {
   @JsonKey(name: 'background_image_url')
   final String? backgroundImageUrl;
   @override
-  @JsonKey(name: 'publish_date')
+  @JsonKey(name: 'active_date')
   final DateTime publishDate;
 
   @override
@@ -246,7 +246,7 @@ abstract class _DailyWisdom implements DailyWisdom {
     required final String quote,
     final String? author,
     @JsonKey(name: 'background_image_url') final String? backgroundImageUrl,
-    @JsonKey(name: 'publish_date') required final DateTime publishDate,
+    @JsonKey(name: 'active_date') required final DateTime publishDate,
   }) = _$DailyWisdomImpl;
 
   factory _DailyWisdom.fromJson(Map<String, dynamic> json) =
@@ -262,7 +262,7 @@ abstract class _DailyWisdom implements DailyWisdom {
   @JsonKey(name: 'background_image_url')
   String? get backgroundImageUrl;
   @override
-  @JsonKey(name: 'publish_date')
+  @JsonKey(name: 'active_date')
   DateTime get publishDate;
 
   /// Create a copy of DailyWisdom

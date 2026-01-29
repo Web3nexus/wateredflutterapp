@@ -9,7 +9,9 @@ class Product with _$Product {
     required int id,
     required String name,
     String? description,
-    required int price, // in cents
+    required int price, // default in cents
+    @JsonKey(name: 'price_ngn') double? priceNgn,
+    @JsonKey(name: 'price_usd') double? priceUsd,
     @JsonKey(name: 'image_url') String? imageUrl,
     @JsonKey(name: 'audio_sample_url') String? audioSampleUrl,
     @JsonKey(name: 'is_digital') @Default(false) bool isDigital,

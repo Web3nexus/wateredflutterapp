@@ -24,7 +24,11 @@ mixin _$Product {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
-  int get price => throw _privateConstructorUsedError; // in cents
+  int get price => throw _privateConstructorUsedError; // default in cents
+  @JsonKey(name: 'price_ngn')
+  double? get priceNgn => throw _privateConstructorUsedError;
+  @JsonKey(name: 'price_usd')
+  double? get priceUsd => throw _privateConstructorUsedError;
   @JsonKey(name: 'image_url')
   String? get imageUrl => throw _privateConstructorUsedError;
   @JsonKey(name: 'audio_sample_url')
@@ -53,6 +57,8 @@ abstract class $ProductCopyWith<$Res> {
     String name,
     String? description,
     int price,
+    @JsonKey(name: 'price_ngn') double? priceNgn,
+    @JsonKey(name: 'price_usd') double? priceUsd,
     @JsonKey(name: 'image_url') String? imageUrl,
     @JsonKey(name: 'audio_sample_url') String? audioSampleUrl,
     @JsonKey(name: 'is_digital') bool isDigital,
@@ -79,6 +85,8 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
     Object? name = null,
     Object? description = freezed,
     Object? price = null,
+    Object? priceNgn = freezed,
+    Object? priceUsd = freezed,
     Object? imageUrl = freezed,
     Object? audioSampleUrl = freezed,
     Object? isDigital = null,
@@ -102,6 +110,14 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
                 ? _value.price
                 : price // ignore: cast_nullable_to_non_nullable
                       as int,
+            priceNgn: freezed == priceNgn
+                ? _value.priceNgn
+                : priceNgn // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            priceUsd: freezed == priceUsd
+                ? _value.priceUsd
+                : priceUsd // ignore: cast_nullable_to_non_nullable
+                      as double?,
             imageUrl: freezed == imageUrl
                 ? _value.imageUrl
                 : imageUrl // ignore: cast_nullable_to_non_nullable
@@ -137,6 +153,8 @@ abstract class _$$ProductImplCopyWith<$Res> implements $ProductCopyWith<$Res> {
     String name,
     String? description,
     int price,
+    @JsonKey(name: 'price_ngn') double? priceNgn,
+    @JsonKey(name: 'price_usd') double? priceUsd,
     @JsonKey(name: 'image_url') String? imageUrl,
     @JsonKey(name: 'audio_sample_url') String? audioSampleUrl,
     @JsonKey(name: 'is_digital') bool isDigital,
@@ -162,6 +180,8 @@ class __$$ProductImplCopyWithImpl<$Res>
     Object? name = null,
     Object? description = freezed,
     Object? price = null,
+    Object? priceNgn = freezed,
+    Object? priceUsd = freezed,
     Object? imageUrl = freezed,
     Object? audioSampleUrl = freezed,
     Object? isDigital = null,
@@ -185,6 +205,14 @@ class __$$ProductImplCopyWithImpl<$Res>
             ? _value.price
             : price // ignore: cast_nullable_to_non_nullable
                   as int,
+        priceNgn: freezed == priceNgn
+            ? _value.priceNgn
+            : priceNgn // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        priceUsd: freezed == priceUsd
+            ? _value.priceUsd
+            : priceUsd // ignore: cast_nullable_to_non_nullable
+                  as double?,
         imageUrl: freezed == imageUrl
             ? _value.imageUrl
             : imageUrl // ignore: cast_nullable_to_non_nullable
@@ -214,6 +242,8 @@ class _$ProductImpl implements _Product {
     required this.name,
     this.description,
     required this.price,
+    @JsonKey(name: 'price_ngn') this.priceNgn,
+    @JsonKey(name: 'price_usd') this.priceUsd,
     @JsonKey(name: 'image_url') this.imageUrl,
     @JsonKey(name: 'audio_sample_url') this.audioSampleUrl,
     @JsonKey(name: 'is_digital') this.isDigital = false,
@@ -231,7 +261,13 @@ class _$ProductImpl implements _Product {
   final String? description;
   @override
   final int price;
-  // in cents
+  // default in cents
+  @override
+  @JsonKey(name: 'price_ngn')
+  final double? priceNgn;
+  @override
+  @JsonKey(name: 'price_usd')
+  final double? priceUsd;
   @override
   @JsonKey(name: 'image_url')
   final String? imageUrl;
@@ -247,7 +283,7 @@ class _$ProductImpl implements _Product {
 
   @override
   String toString() {
-    return 'Product(id: $id, name: $name, description: $description, price: $price, imageUrl: $imageUrl, audioSampleUrl: $audioSampleUrl, isDigital: $isDigital, isActive: $isActive)';
+    return 'Product(id: $id, name: $name, description: $description, price: $price, priceNgn: $priceNgn, priceUsd: $priceUsd, imageUrl: $imageUrl, audioSampleUrl: $audioSampleUrl, isDigital: $isDigital, isActive: $isActive)';
   }
 
   @override
@@ -260,6 +296,10 @@ class _$ProductImpl implements _Product {
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.price, price) || other.price == price) &&
+            (identical(other.priceNgn, priceNgn) ||
+                other.priceNgn == priceNgn) &&
+            (identical(other.priceUsd, priceUsd) ||
+                other.priceUsd == priceUsd) &&
             (identical(other.imageUrl, imageUrl) ||
                 other.imageUrl == imageUrl) &&
             (identical(other.audioSampleUrl, audioSampleUrl) ||
@@ -278,6 +318,8 @@ class _$ProductImpl implements _Product {
     name,
     description,
     price,
+    priceNgn,
+    priceUsd,
     imageUrl,
     audioSampleUrl,
     isDigital,
@@ -304,6 +346,8 @@ abstract class _Product implements Product {
     required final String name,
     final String? description,
     required final int price,
+    @JsonKey(name: 'price_ngn') final double? priceNgn,
+    @JsonKey(name: 'price_usd') final double? priceUsd,
     @JsonKey(name: 'image_url') final String? imageUrl,
     @JsonKey(name: 'audio_sample_url') final String? audioSampleUrl,
     @JsonKey(name: 'is_digital') final bool isDigital,
@@ -319,7 +363,13 @@ abstract class _Product implements Product {
   @override
   String? get description;
   @override
-  int get price; // in cents
+  int get price; // default in cents
+  @override
+  @JsonKey(name: 'price_ngn')
+  double? get priceNgn;
+  @override
+  @JsonKey(name: 'price_usd')
+  double? get priceUsd;
   @override
   @JsonKey(name: 'image_url')
   String? get imageUrl;

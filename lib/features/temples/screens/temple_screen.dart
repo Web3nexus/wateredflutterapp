@@ -22,11 +22,13 @@ class TempleScreen extends ConsumerWidget {
     // For now, fetching all temples. Use nearbyTemplesProvider if implemented with Geolocator later.
     final templesState = ref.watch(templeListProvider);
 
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('TEMPLE DISCOVERY'),
-        backgroundColor: const Color(0xFF0F172A),
+        backgroundColor: Colors.transparent,
       ),
       body: templesState.when(
         data: (temples) {
@@ -77,6 +79,16 @@ class TempleScreen extends ConsumerWidget {
                                       highlightColor: const Color(0xFF0F172A),
                                       child: Container(color: Colors.white),
                                     ),
+                                errorWidget: (context, url, error) => Container(
+                                  color: const Color(0xFF1E293B),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.broken_image_rounded,
+                                      size: 50,
+                                      color: Colors.white24,
+                                    ),
+                                  ),
+                                ),
                               )
                             : Container(
                                 color: Colors.white10,
@@ -100,8 +112,8 @@ class TempleScreen extends ConsumerWidget {
                             children: [
                               Text(
                                 temple.name,
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'Cinzel',
@@ -110,9 +122,9 @@ class TempleScreen extends ConsumerWidget {
                               if (temple.latitude != null &&
                                   temple.longitude != null)
                                 IconButton(
-                                  icon: const Icon(
+                                  icon: Icon(
                                     Icons.map_outlined,
-                                    color: Color(0xFFD4AF37),
+                                    color: Theme.of(context).colorScheme.primary,
                                   ),
                                   onPressed: () => _launchMaps(
                                     temple.latitude!,
@@ -135,8 +147,8 @@ class TempleScreen extends ConsumerWidget {
                                   Expanded(
                                     child: Text(
                                       temple.address!,
-                                      style: const TextStyle(
-                                        color: Colors.white54,
+                                      style: TextStyle(
+                                        color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5),
                                         fontSize: 13,
                                       ),
                                     ),
@@ -149,8 +161,8 @@ class TempleScreen extends ConsumerWidget {
                               padding: const EdgeInsets.only(top: 12.0),
                               child: Text(
                                 temple.description!,
-                                style: const TextStyle(
-                                  color: Colors.white70,
+                                style: TextStyle(
+                                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
                                   height: 1.4,
                                 ),
                                 maxLines: 3,
@@ -166,8 +178,8 @@ class TempleScreen extends ConsumerWidget {
             },
           );
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: Color(0xFFD4AF37)),
+        loading: () => Center(
+          child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
         ),
         error: (err, stack) => Center(
           child: Text('Error: $err', style: const TextStyle(color: Colors.red)),

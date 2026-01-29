@@ -46,12 +46,12 @@ class _GuideCard extends StatelessWidget {
         leading: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: (guide.type == 'video' ? Colors.redAccent : const Color(0xFFD4AF37)).withOpacity(0.1),
+            color: (guide.type == 'video' ? Colors.redAccent : Theme.of(context).colorScheme.primary).withOpacity(0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(
             guide.type == 'video' ? Icons.play_circle_fill_rounded : Icons.menu_book_rounded,
-            color: guide.type == 'video' ? Colors.redAccent : const Color(0xFFD4AF37),
+            color: guide.type == 'video' ? Colors.redAccent : Theme.of(context).colorScheme.primary,
           ),
         ),
         title: Text(

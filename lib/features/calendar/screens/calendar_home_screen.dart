@@ -13,17 +13,17 @@ class CalendarHomeScreen extends ConsumerWidget {
     final todayAsync = ref.watch(kemeticTodayProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: CustomScrollView(
         slivers: [
-          _buildAppBar(),
+          _buildAppBar(context),
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: todayAsync.when(
                 data: (data) => _buildTodayContent(context, data),
-                loading: () => const Center(
-                  child: CircularProgressIndicator(color: Color(0xFFD4AF37)),
+                loading: () => Center(
+                  child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
                 ),
                 error: (err, stack) => Center(
                   child: Text('Failed to load calendar: $err',
@@ -41,7 +41,7 @@ class CalendarHomeScreen extends ConsumerWidget {
             MaterialPageRoute(builder: (context) => const CalendarGridView()),
           );
         },
-        backgroundColor: const Color(0xFFD4AF37),
+        backgroundColor: Theme.of(context).colorScheme.primary,
         icon: const Icon(Icons.calendar_month, color: Colors.black),
         label: const Text('FULL CALENDAR', 
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)
@@ -50,11 +50,11 @@ class CalendarHomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAppBar(BuildContext context) {
     return SliverAppBar(
       expandedHeight: 200,
       pinned: true,
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       flexibleSpace: FlexibleSpaceBar(
         title: const Text('THE SACRED CYCLE',
             style: TextStyle(
@@ -73,15 +73,15 @@ class CalendarHomeScreen extends ConsumerWidget {
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.black.withOpacity(0.5),
-                    const Color(0xFF0F172A),
+                    Theme.of(context).scaffoldBackgroundColor,
                   ],
                 ),
               ),
             ),
-            const Center(
+            Center(
               child: Opacity(
                 opacity: 0.1,
-                child: Icon(Icons.wb_sunny_rounded, size: 150, color: Color(0xFFD4AF37)),
+                child: Icon(Icons.wb_sunny_rounded, size: 150, color: Theme.of(context).colorScheme.primary),
               ),
             ),
           ],
@@ -99,37 +99,37 @@ class CalendarHomeScreen extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildDateCard(kemetic),
+        _buildDateCard(context, kemetic),
         const SizedBox(height: 24),
         if (dayDetails != null) ...[
-          _buildSectionHeader('TODAY\'S REFLECTION'),
+          _buildSectionHeader(context, 'TODAY\'S REFLECTION'),
           const SizedBox(height: 12),
-          _buildReflectionCard(dayDetails),
+          _buildReflectionCard(context, dayDetails),
         ],
         const SizedBox(height: 24),
-        _buildSectionHeader('UPCOMING FESTIVALS'),
+        _buildSectionHeader(context, 'UPCOMING FESTIVALS'),
         // Placeholder for upcoming festivals
-        _buildPlaceholderList(),
+        _buildPlaceholderList(context),
       ],
     );
   }
 
-  Widget _buildDateCard(Map<String, dynamic> kemetic) {
+  Widget _buildDateCard(BuildContext context, Map<String, dynamic> kemetic) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.2)),
+        border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.2)),
       ),
       child: Column(
         children: [
           Text(
             '${kemetic['month_name']}'.toUpperCase(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 28,
               fontFamily: 'Cinzel',
-              color: Color(0xFFD4AF37),
+              color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.bold,
               letterSpacing: 4,
             ),
@@ -137,10 +137,10 @@ class CalendarHomeScreen extends ConsumerWidget {
           const SizedBox(height: 8),
           Text(
             'Day ${kemetic['day_number']}',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 48,
               fontWeight: FontWeight.w900,
-              color: Colors.white,
+              color: Theme.of(context).textTheme.headlineMedium?.color,
             ),
           ),
           const SizedBox(height: 8),
@@ -148,24 +148,24 @@ class CalendarHomeScreen extends ConsumerWidget {
              'Year ${kemetic['year'] ?? ''} • ${kemetic['season'] ?? ''}',
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white.withOpacity(0.6),
+              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
               letterSpacing: 1.5,
             ),
           ),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
-            child: Divider(color: Colors.white10),
+            child: Divider(color: Colors.black12),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.access_time, size: 14, color: Colors.white.withOpacity(0.4)),
+              Icon(Icons.access_time, size: 14, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.4)),
               const SizedBox(width: 8),
               Text(
                 'Matches: ${DateFormat('MMMM dd, yyyy').format(DateTime.now())}',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.white.withOpacity(0.4),
+                  color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.4),
                 ),
               ),
             ],
@@ -175,7 +175,7 @@ class CalendarHomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildReflectionCard(CalendarDay day) {
+  Widget _buildReflectionCard(BuildContext context, CalendarDay day) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -187,10 +187,10 @@ class CalendarHomeScreen extends ConsumerWidget {
         children: [
           if (day.customDayName != null)
             Text(day.customDayName!, 
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18, 
                 fontWeight: FontWeight.bold, 
-                color: Color(0xFFD4AF37)
+                color: Theme.of(context).colorScheme.primary
               )
             ),
           const SizedBox(height: 8),
@@ -199,28 +199,58 @@ class CalendarHomeScreen extends ConsumerWidget {
             style: TextStyle(
               fontSize: 15,
               height: 1.6,
-              color: Colors.white.withOpacity(0.8),
+              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.8),
               fontStyle: FontStyle.italic,
             ),
           ),
+          if (day.activities != null && day.activities!.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Text('REQUIRED ACTIVITIES', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+            const SizedBox(height: 8),
+            ...day.activities!.map((a) => Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Row(
+                children: [
+                  const Icon(Icons.check_circle_outline, color: Colors.greenAccent, size: 14),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(a, style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7), fontSize: 13))),
+                ],
+              ),
+            )),
+          ],
+          if (day.restrictions != null && day.restrictions!.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            const Text('RESTRICTIONS / TABOOS', style: TextStyle(color: Colors.redAccent, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+            const SizedBox(height: 8),
+            ...day.restrictions!.map((r) => Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Row(
+                children: [
+                  const Icon(Icons.block_rounded, color: Colors.redAccent, size: 14),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(r, style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7), fontSize: 13))),
+                ],
+              ),
+            )),
+          ],
         ],
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(BuildContext context, String title) {
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.bold,
-        color: Color(0xFFD4AF37),
+        color: Theme.of(context).colorScheme.primary,
         letterSpacing: 2,
       ),
     );
   }
 
-  Widget _buildPlaceholderList() {
+  Widget _buildPlaceholderList(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -240,15 +270,15 @@ class CalendarHomeScreen extends ConsumerWidget {
                 color: Colors.white10,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.star_border, color: Color(0xFFD4AF37)),
+              child: Icon(Icons.star_border, color: Theme.of(context).colorScheme.primary),
             ),
             const SizedBox(width: 16),
             const Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Text('Coming Soon', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-                   Text('Festival details being updated...', style: TextStyle(fontSize: 12, color: Colors.white38)),
+                   Text('Coming Soon', style: TextStyle(fontWeight: FontWeight.bold)),
+                   Text('Festival details being updated...', style: TextStyle(fontSize: 12, color: Colors.grey)),
                 ],
               ),
             ),
@@ -265,17 +295,18 @@ class CalendarHomeScreen extends ConsumerWidget {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFFD4AF37).withOpacity(0.05),
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.05),
             borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.2)),
           ),
-          child: const Row(
+          child: Row(
             children: [
-              Icon(Icons.info_outline, color: Color(0xFFD4AF37), size: 18),
-              SizedBox(width: 12),
-              Expanded(
+              Icon(Icons.info_outline, color: Theme.of(context).colorScheme.primary, size: 18),
+              const SizedBox(width: 12),
+              const Expanded(
                 child: Text(
-                  'The Kemetic calendar consists of 12 months of 30 days, followed by 5 Epagomenal days.',
-                  style: TextStyle(fontSize: 11, color: Colors.white54),
+                  'The Watered Calendar overlays African deities and spiritual meanings onto the standard Gregorian year.',
+                  style: TextStyle(fontSize: 11),
                 ),
               ),
             ],

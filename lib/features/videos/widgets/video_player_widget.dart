@@ -79,15 +79,23 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
 
           _chewieController = ChewieController(
             videoPlayerController: _videoController!,
-            autoPlay: false,
+            autoPlay: widget.shouldPlay,
             looping: true,
             showControls: false,
             aspectRatio: _videoController!.value.aspectRatio,
             errorBuilder: (context, errorMessage) {
               return Center(
-                child: Text(
-                  errorMessage,
-                  style: const TextStyle(color: Colors.white),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error_outline, color: Colors.white, size: 40),
+                    const SizedBox(height: 12),
+                    Text(
+                      errorMessage,
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               );
             },
@@ -109,11 +117,20 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
   }
 
   void _play() {
-    if (!_isInitialized) return;
+    if (!_isInitialized) {
+      print('Video not initialized, skipping play()');
+      return;
+    }
     if (widget.video.videoType == 'youtube') {
       _youtubeController?.play();
     } else {
-      _videoController?.play();
+      if (_videoController != null && !_videoController!.value.isPlaying) {
+        _videoController!.play().then((_) {
+          if (mounted) setState(() {});
+        }).catchError((e) {
+          print('Error playing video: $e');
+        });
+      }
     }
   }
 
@@ -122,7 +139,9 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
     if (widget.video.videoType == 'youtube') {
       _youtubeController?.pause();
     } else {
-      _videoController?.pause();
+      if (_videoController != null && _videoController!.value.isPlaying) {
+        _videoController?.pause();
+      }
     }
   }
 
@@ -137,9 +156,13 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
   @override
   Widget build(BuildContext context) {
     if (!_isInitialized) {
-      return Center(
-        child: CircularProgressIndicator(
-          color: const Color(0xFFD4AF37),
+      return Container(
+        color: Colors.black,
+        child: const Center(
+          child: CircularProgressIndicator(
+            color: Theme.of(context).colorScheme.primary,
+            strokeWidth: 2,
+          ),
         ),
       );
     }
@@ -151,10 +174,10 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
       return YoutubePlayer(
         controller: _youtubeController!,
         showVideoProgressIndicator: true,
-        progressIndicatorColor: const Color(0xFFD4AF37),
+        progressIndicatorColor: Theme.of(context).colorScheme.primary,
         progressColors: const ProgressBarColors(
-          playedColor: Color(0xFFD4AF37),
-          handleColor: Color(0xFFD4AF37),
+          playedColor: Theme.of(context).colorScheme.primary,
+          handleColor: Theme.of(context).colorScheme.primary,
         ),
         bottomActions: const [], // Hide default controls for TikTok feel
       );

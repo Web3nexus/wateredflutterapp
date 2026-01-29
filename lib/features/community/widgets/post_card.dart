@@ -8,16 +8,73 @@ import 'package:Watered/features/auth/providers/auth_provider.dart';
 import 'package:Watered/features/auth/screens/login_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:share_plus/share_plus.dart';
 
-class PostCard extends ConsumerWidget {
+class PostCard extends ConsumerStatefulWidget {
   final Post post;
 
   const PostCard({super.key, required this.post});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends ConsumerState<PostCard> {
+  late bool _isLiked;
+  late int _likesCount;
+  late int _commentsCount;
+
+  @override
+  void initState() {
+    super.initState();
+    _isLiked = widget.post.isLiked;
+    _likesCount = widget.post.likesCount;
+    _commentsCount = widget.post.commentsCount;
+  }
+
+  Future<void> _toggleLike() async {
+    final previousLiked = _isLiked;
+    final previousCount = _likesCount;
+
+    setState(() {
+      _isLiked = !_isLiked;
+      _likesCount += _isLiked ? 1 : -1;
+    });
+
+    try {
+      if (!ref.read(authProvider).isAuthenticated) {
+        // Revert if not auth (though usually we'd redir to login first, done below)
+        setState(() {
+          _isLiked = previousLiked;
+          _likesCount = previousCount;
+        });
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LoginScreen()));
+        return;
+      }
+      
+      await ref.read(interactionServiceProvider).toggleLike('post', widget.post.id);
+      // No need to refresh entire feed if local state is consistent
+    } catch (e) {
+      // Revert on error
+      if (mounted) {
+        setState(() {
+          _isLiked = previousLiked;
+          _likesCount = previousCount;
+        });
+      }
+    }
+  }
+
+  void _onCommentAdded() {
+    setState(() {
+      _commentsCount++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final user = post.user;
+    final user = widget.post.user;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -25,7 +82,7 @@ class PostCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: theme.cardTheme.color,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,7 +118,7 @@ class PostCard extends ConsumerWidget {
                       ),
                     ),
                     Text(
-                      timeago.format(post.createdAt),
+                      timeago.format(widget.post.createdAt),
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.textTheme.bodySmall?.color?.withOpacity(0.5),
                       ),
@@ -78,9 +135,9 @@ class PostCard extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
           // Content
-          if (post.content != null) ...[
+          if (widget.post.content != null) ...[
             Text(
-              post.content!,
+              widget.post.content!,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontSize: 15,
                 height: 1.5,
@@ -92,29 +149,35 @@ class PostCard extends ConsumerWidget {
           Row(
             children: [
               _ActionButton(
-                icon: post.isLiked ? Icons.favorite : Icons.favorite_border,
-                label: '${post.likesCount}',
-                color: post.isLiked ? Colors.redAccent : null,
-                onTap: () async {
-                   if (!ref.read(authProvider).isAuthenticated) {
-                     Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LoginScreen()));
-                     return;
-                   }
-                   await ref.read(interactionServiceProvider).toggleLike('post', post.id);
-                   ref.refresh(postsProvider);
-                },
+                icon: _isLiked ? Icons.favorite : Icons.favorite_border,
+                label: '$_likesCount',
+                color: _isLiked ? Colors.redAccent : null,
+                onTap: _toggleLike,
               ),
               const SizedBox(width: 24),
               _ActionButton(
                 icon: Icons.chat_bubble_outline,
-                label: '${post.commentsCount}',
-                onTap: () => CommentBottomSheet.show(context, 'post', post.id),
+                label: '$_commentsCount',
+                onTap: () => CommentBottomSheet.show(
+                  context, 
+                  'post', 
+                  widget.post.id,
+                  onCommentAdded: _onCommentAdded,
+                ),
               ),
               const Spacer(),
               _ActionButton(
                 icon: Icons.share_outlined,
                 label: '',
-                onTap: () {},
+                onTap: () {
+                  // Track share on backend
+                  ref.read(interactionServiceProvider).sharePost(widget.post.id);
+                  // Share via native share dialog
+                  Share.share(
+                    'Check out this post on Watered: ${widget.post.content ?? "Spiritual wisdom"}',
+                    subject: 'Shared from Watered',
+                  );
+                },
               ),
             ],
           ),

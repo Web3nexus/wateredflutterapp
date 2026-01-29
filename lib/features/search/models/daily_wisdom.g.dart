@@ -12,7 +12,7 @@ _$DailyWisdomImpl _$$DailyWisdomImplFromJson(Map<String, dynamic> json) =>
       quote: json['quote'] as String,
       author: json['author'] as String?,
       backgroundImageUrl: json['background_image_url'] as String?,
-      publishDate: DateTime.parse(json['publish_date'] as String),
+      publishDate: DateTime.parse(json['active_date'] as String),
     );
 
 Map<String, dynamic> _$$DailyWisdomImplToJson(_$DailyWisdomImpl instance) =>
@@ -21,5 +21,5 @@ Map<String, dynamic> _$$DailyWisdomImplToJson(_$DailyWisdomImpl instance) =>
       'quote': instance.quote,
       'author': instance.author,
       'background_image_url': instance.backgroundImageUrl,
-      'publish_date': instance.publishDate.toIso8601String(),
+      'active_date': instance.publishDate.toIso8601String(),
     };

@@ -6,7 +6,8 @@ import 'package:chewie/chewie.dart';
 
 class VideoPlayerScreen extends StatefulWidget {
   final Video video;
-  const VideoPlayerScreen({super.key, required this.video});
+  final bool shouldPlay;
+  const VideoPlayerScreen({super.key, required this.video, this.shouldPlay = false});
 
   @override
   State<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
@@ -27,8 +28,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       final videoId = YoutubePlayer.convertUrlToId(widget.video.youtubeUrl) ?? '';
       _youtubeController = YoutubePlayerController(
         initialVideoId: videoId,
-        flags: const YoutubePlayerFlags(
-          autoPlay: true,
+        flags: YoutubePlayerFlags(
+          autoPlay: widget.shouldPlay,
           mute: false,
         ),
       );
@@ -46,7 +47,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController!,
-      autoPlay: true,
+      autoPlay: widget.shouldPlay,
       looping: false,
       aspectRatio: _videoPlayerController!.value.aspectRatio,
       placeholder: Container(
@@ -83,7 +84,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
             ? YoutubePlayer(
                 controller: _youtubeController!,
                 showVideoProgressIndicator: true,
-                progressIndicatorColor: const Color(0xFFD4AF37),
+                progressIndicatorColor: Theme.of(context).colorScheme.primary,
               )
             : _chewieController != null
                 ? AspectRatio(

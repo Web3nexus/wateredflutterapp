@@ -11,6 +11,8 @@ class CalendarDay {
   final String? celebrationType;
   final bool isSacred;
   final String? uiColor;
+  final List<String>? activities;
+  final List<String>? restrictions;
   final CalendarMonth? month;
 
   CalendarDay({
@@ -24,6 +26,8 @@ class CalendarDay {
     this.celebrationType,
     required this.isSacred,
     this.uiColor,
+    this.activities,
+    this.restrictions,
     this.month,
   });
 
@@ -41,6 +45,8 @@ class CalendarDay {
       celebrationType: json['celebration_type'],
       isSacred: json['is_sacred'] == 1 || json['is_sacred'] == true,
       uiColor: json['ui_color'],
+      activities: json['activities'] != null ? List<String>.from(json['activities']) : null,
+      restrictions: json['restrictions'] != null ? List<String>.from(json['restrictions']) : null,
       month: json['month'] != null ? CalendarMonth.fromJson(json['month']) : null,
     );
   }

@@ -55,8 +55,8 @@ class MiniPlayer extends ConsumerWidget {
                   : Container(
                       width: 40,
                       height: 40,
-                      color: const Color(0xFFD4AF37).withOpacity(0.1),
-                      child: const Icon(Icons.music_note_rounded, color: Color(0xFFD4AF37), size: 20),
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                      child: Icon(Icons.music_note_rounded, color: Theme.of(context).colorScheme.primary, size: 20),
                     ),
             ),
             const SizedBox(width: 12),
@@ -96,7 +96,7 @@ class MiniPlayer extends ConsumerWidget {
                 return IconButton(
                   icon: Icon(
                     isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                    color: const Color(0xFFD4AF37),
+                    color: Theme.of(context).colorScheme.primary,
                     size: 32,
                   ),
                   onPressed: () => isPlaying ? audioService.pause() : audioService.play(),

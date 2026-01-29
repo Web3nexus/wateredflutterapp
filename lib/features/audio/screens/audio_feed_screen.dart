@@ -29,7 +29,7 @@ class AudioFeedScreen extends ConsumerWidget {
           if (!isPremium)
             TextButton(
               onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SubscriptionScreen())),
-              child: const Text('GET PLUS+', style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold, fontSize: 12)),
+              child: Text('GET PLUS+', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 12)),
             ),
           const SizedBox(width: 8),
         ],
@@ -67,12 +67,15 @@ class _AudioCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
+        color: theme.cardTheme.color,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
       ),
       child: InkWell(
         onTap: () async {
@@ -107,8 +110,8 @@ class _AudioCard extends ConsumerWidget {
                     : Container(
                         width: 80,
                         height: 80,
-                        color: const Color(0xFFD4AF37).withOpacity(0.1),
-                        child: const Icon(Icons.music_note_rounded, color: Color(0xFFD4AF37)),
+                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        child: Icon(Icons.music_note_rounded, color: theme.colorScheme.primary),
                       ),
               ),
               const SizedBox(width: 16),
@@ -125,15 +128,15 @@ class _AudioCard extends ConsumerWidget {
                     const SizedBox(height: 4),
                     Text(
                       audio.author ?? 'Watered Scholar',
-                      style: TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.5), letterSpacing: 0.5),
+                      style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13, color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7)),
                     ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
                         if (audio.duration != null) ...[
-                          Icon(Icons.timer_outlined, size: 12, color: const Color(0xFFD4AF37).withOpacity(0.7)),
+                          Icon(Icons.timer_outlined, size: 12, color: theme.colorScheme.primary.withOpacity(0.7)),
                           const SizedBox(width: 4),
-                          Text(audio.duration!, style: TextStyle(fontSize: 11, color: const Color(0xFFD4AF37).withOpacity(0.7))),
+                          Text(audio.duration!, style: TextStyle(fontSize: 11, color: theme.colorScheme.primary.withOpacity(0.7))),
                         ],
                         const Spacer(),
                         InkWell(
@@ -148,13 +151,13 @@ class _AudioCard extends ConsumerWidget {
                           child: Icon(
                             audio.isLiked ?? false ? Icons.favorite : Icons.favorite_border_rounded,
                             size: 16,
-                            color: audio.isLiked ?? false ? Colors.redAccent : Colors.white38,
+                            color: audio.isLiked ?? false ? Colors.redAccent : theme.iconTheme.color?.withOpacity(0.5),
                           ),
                         ),
                         const SizedBox(width: 12),
                         InkWell(
                           onTap: () => CommentBottomSheet.show(context, 'audio', audio.id),
-                          child: const Icon(Icons.chat_bubble_outline_rounded, size: 16, color: Colors.white38),
+                          child: Icon(Icons.chat_bubble_outline_rounded, size: 16, color: theme.iconTheme.color?.withOpacity(0.5)),
                         ),
                       ],
                     ),
@@ -164,8 +167,8 @@ class _AudioCard extends ConsumerWidget {
               Container(
                 width: 40,
                 height: 40,
-                decoration: BoxDecoration(color: const Color(0xFFD4AF37).withOpacity(0.15), shape: BoxShape.circle),
-                child: const Icon(Icons.play_arrow_rounded, color: Color(0xFFD4AF37), size: 28),
+                decoration: BoxDecoration(color: theme.colorScheme.primary.withOpacity(0.15), shape: BoxShape.circle),
+                child: Icon(Icons.play_arrow_rounded, color: theme.colorScheme.primary, size: 28),
               ),
             ],
           ),

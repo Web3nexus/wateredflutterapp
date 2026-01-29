@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/config/providers/app_boot_provider.dart';
 import 'package:Watered/features/config/providers/global_settings_provider.dart';
 import 'package:Watered/features/auth/providers/auth_provider.dart';
+import 'package:Watered/features/home/screens/dashboard_screen.dart';
 import 'package:Watered/features/traditions/screens/library_screen.dart';
 import 'package:Watered/features/videos/screens/feed_screen.dart';
 import 'package:Watered/features/audio/screens/audio_feed_screen.dart';
@@ -10,12 +11,15 @@ import 'package:Watered/features/audio/widgets/mini_player.dart';
 import 'package:Watered/features/profile/screens/profile_screen.dart';
 import 'package:Watered/features/community/screens/community_feed_screen.dart';
 import 'package:Watered/features/auth/screens/login_screen.dart';
+import 'package:Watered/features/consultation/screens/consultation_screen.dart';
+import 'package:Watered/features/commerce/screens/shop_screen.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:Watered/core/theme/theme_provider.dart';
 import 'package:Watered/core/widgets/premium_gate.dart';
 import 'package:Watered/features/subscription/screens/subscription_screen.dart';
 import 'package:Watered/core/services/ad_service.dart';
 import 'package:Watered/core/services/notification_service.dart';
+import 'package:Watered/features/home/providers/tab_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
@@ -65,19 +69,19 @@ class MyApp extends ConsumerWidget {
     final themeMode = ref.watch(themeProvider);
 
     // Build theme from dynamic settings
-    final primaryColor = _parseColor(settings?.primaryColor, const Color(0xFFD4AF37));
+    final primaryColor = _parseColor(settings?.primaryColor, const Color(0xFFF4B846));
     final secondaryColor = _parseColor(settings?.secondaryColor, const Color(0xFF6C63FF));
 
     final lightTheme = ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF4A5D4E), // Sage Green
-        primary: const Color(0xFF4A5D4E),
-        secondary: const Color(0xFF8A9A5B), // Earthy Olive
-        surface: const Color(0xFFF8F5F2), // Cream
+        seedColor: const Color(0xFF0077BE), // Water Blue
+        primary: const Color(0xFF0077BE),
+        secondary: const Color(0xFF005E99),
+        surface: Colors.white,
         brightness: Brightness.light,
       ),
-      scaffoldBackgroundColor: const Color(0xFFF8F5F2),
+      scaffoldBackgroundColor: const Color(0xFFF8F5F2), // Off-white
       fontFamily: 'Outfit',
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
@@ -87,29 +91,30 @@ class MyApp extends ConsumerWidget {
           fontFamily: 'Cinzel',
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: Color(0xFF2D3436), // Deep Slate
+          color: Colors.black,
         ),
-        iconTheme: IconThemeData(color: Color(0xFF2D3436)),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       textTheme: const TextTheme(
         headlineMedium: TextStyle(
           fontFamily: 'Cinzel',
           fontWeight: FontWeight.bold,
-          color: Color(0xFF2D3436),
+          color: Colors.black,
         ),
         titleLarge: TextStyle(
           fontFamily: 'Cinzel',
           fontWeight: FontWeight.bold,
           letterSpacing: 1.2,
-          color: Color(0xFF2D3436),
+          color: Colors.black,
         ),
         bodyMedium: TextStyle(
-          color: Color(0xFF4B5563),
+          color: Color(0xFF1A1A1A),
           height: 1.5,
         ),
       ),
       cardTheme: CardThemeData(
-        elevation: 0,
+        elevation: 2,
+        shadowColor: Colors.black.withOpacity(0.05),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         color: Colors.white,
       ),
@@ -118,13 +123,13 @@ class MyApp extends ConsumerWidget {
     final darkTheme = ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryColor,
-        primary: primaryColor,
-        secondary: secondaryColor,
-        surface: const Color(0xFF0F172A), 
+        seedColor: const Color(0xFF0077BE),
+        primary: const Color(0xFF0077BE),
+        secondary: const Color(0xFF00A3FF),
+        surface: const Color(0xFF1A1A1A), 
         brightness: Brightness.dark,
       ),
-      scaffoldBackgroundColor: const Color(0xFF0F172A),
+      scaffoldBackgroundColor: const Color(0xFF121212),
       fontFamily: 'Outfit',
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
@@ -134,31 +139,31 @@ class MyApp extends ConsumerWidget {
           fontFamily: 'Cinzel',
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: Color(0xFFD4AF37),
+          color: Colors.white,
         ),
-        iconTheme: IconThemeData(color: Color(0xFFD4AF37)),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       textTheme: const TextTheme(
         headlineMedium: TextStyle(
           fontFamily: 'Cinzel',
           fontWeight: FontWeight.bold,
-          color: Color(0xFFD4AF37),
+          color: Colors.white,
         ),
         titleLarge: TextStyle(
           fontFamily: 'Cinzel',
           fontWeight: FontWeight.bold,
           letterSpacing: 1.2,
-          color: Color(0xFFD4AF37),
+          color: Colors.white,
         ),
         bodyMedium: TextStyle(
-          color: Color(0xFFE2E8F0),
+          color: Color(0xFFF8F5F2),
           height: 1.5,
         ),
       ),
       cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        color: const Color(0xFF1E293B),
+        color: const Color(0xFF1E1E1E),
       ),
     );
 
@@ -241,7 +246,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 500), // Reduced from 1500ms
       vsync: this,
     );
     
@@ -312,7 +317,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 const SizedBox(
                   width: 40,
                   child: LinearProgressIndicator(
-                    color: Color(0xFFD4AF37),
+                    color: Color(0xFFF4B846),
                     backgroundColor: Color(0xFFE5E7EB),
                   ),
                 ),
@@ -326,39 +331,35 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 }
 
 
-class MainTabsScreen extends StatefulWidget {
+class MainTabsScreen extends ConsumerStatefulWidget {
   const MainTabsScreen({super.key});
 
   @override
-  State<MainTabsScreen> createState() => _MainTabsScreenState();
+  ConsumerState<MainTabsScreen> createState() => _MainTabsScreenState();
 }
 
-class _MainTabsScreenState extends State<MainTabsScreen> {
-  int _currentIndex = 0;
-
+class _MainTabsScreenState extends ConsumerState<MainTabsScreen> {
   final List<Widget> _screens = [
+    const DashboardScreen(),
     const PremiumGate(
       message: 'Explore our complete collection of ancient texts and wisdom.',
       child: LibraryScreen(),
     ),
-    const PremiumGate(
-      message: 'Listen to insightful teachings and ancient oral traditions.',
-      child: AudioFeedScreen(),
-    ),
-    const FeedScreen(),
-    const PremiumGate(
-      message: 'Join our sacred community of seekers and practitioners.',
-      child: CommunityFeedScreen(),
-    ),
-    const ProfileGate(), // Use Gate for Profile
+    const ConsultationScreen(),
+    const ShopScreen(),
+    const ProfileGate(),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final currentIndex = ref.watch(tabIndexProvider);
+
     return Scaffold(
       body: Stack(
         children: [
-          _screens[_currentIndex],
+          _screens[currentIndex],
           const Positioned(
             left: 0,
             right: 0,
@@ -370,33 +371,33 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           border: Border(
-            top: BorderSide(color: Colors.white.withOpacity(0.05), width: 1),
+            top: BorderSide(color: theme.dividerColor.withOpacity(0.1), width: 1),
           ),
         ),
         child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) => setState(() => _currentIndex = index),
-          backgroundColor: const Color(0xFF0F172A),
-          selectedItemColor: const Color(0xFFD4AF37),
-          unselectedItemColor: Colors.blueGrey.shade500,
+          currentIndex: currentIndex,
+          onTap: (index) => ref.read(tabIndexProvider.notifier).state = index,
+          backgroundColor: theme.scaffoldBackgroundColor,
+          selectedItemColor: theme.colorScheme.primary,
+          unselectedItemColor: isDark ? Colors.white54 : Colors.black38,
           type: BottomNavigationBarType.fixed,
           elevation: 0,
           items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_rounded),
+              label: 'Home',
+            ),
             BottomNavigationBarItem(
               icon: Icon(Icons.auto_stories_rounded),
               label: 'Library',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.mic_none_rounded),
-              label: 'Audio',
+              icon: Icon(Icons.calendar_month_rounded),
+              label: 'Consultation',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.movie_filter_rounded),
-              label: 'Reels',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.people_outline_rounded),
-              label: 'Community',
+              icon: Icon(Icons.shopping_bag_rounded),
+              label: 'Shop',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_rounded),
@@ -413,6 +414,19 @@ class ErrorScreen extends StatelessWidget {
   final String error;
   const ErrorScreen({super.key, required this.error});
 
+  String _getUserFriendlyMessage(String error) {
+    final lowerError = error.toLowerCase();
+    if (lowerError.contains('socket') || lowerError.contains('network')) {
+      return 'No internet connection. Please check your network and try again.';
+    } else if (lowerError.contains('timeout')) {
+      return 'Connection timeout. Please try again.';
+    } else if (lowerError.contains('refused') || lowerError.contains('failed host lookup')) {
+      return 'Cannot connect to server. Please try again later.';
+    } else {
+      return 'Something went wrong. Please try again.';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -422,7 +436,7 @@ class ErrorScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, color: Colors.red, size: 64),
+              const Icon(Icons.cloud_off_rounded, color: Colors.red, size: 64),
               const SizedBox(height: 16),
               Text(
                 'Connection Error',
@@ -430,7 +444,7 @@ class ErrorScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Please check your backend connection.\nError: $error',
+                _getUserFriendlyMessage(error),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),

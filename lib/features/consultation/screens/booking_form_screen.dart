@@ -29,7 +29,7 @@ class _BookingFormScreenState extends ConsumerState<BookingFormScreen> {
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: const ColorScheme.dark(
-              primary: Color(0xFFD4AF37),
+              primary: Theme.of(context).colorScheme.primary,
               onPrimary: Colors.black,
               surface: Color(0xFF1E293B),
               onSurface: Colors.white,
@@ -52,7 +52,7 @@ class _BookingFormScreenState extends ConsumerState<BookingFormScreen> {
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: const ColorScheme.dark(
-              primary: Color(0xFFD4AF37),
+              primary: Theme.of(context).colorScheme.primary,
               onPrimary: Colors.black,
               surface: Color(0xFF1E293B),
               onSurface: Colors.white,
@@ -110,7 +110,7 @@ class _BookingFormScreenState extends ConsumerState<BookingFormScreen> {
       appBar: AppBar(
         title: Text('BOOK ${widget.type.name.toUpperCase()}'),
         backgroundColor: const Color(0xFF0F172A),
-         iconTheme: const IconThemeData(color: Color(0xFFD4AF37)),
+         iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -136,7 +136,7 @@ class _BookingFormScreenState extends ConsumerState<BookingFormScreen> {
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.calendar_today, color: Color(0xFFD4AF37)),
+                          Icon(Icons.calendar_today, color: Theme.of(context).colorScheme.primary),
                           const SizedBox(width: 8),
                           Text(
                             _selectedDate == null ? 'Select Date' : DateFormat('MMM dd, yyyy').format(_selectedDate!),
@@ -160,7 +160,7 @@ class _BookingFormScreenState extends ConsumerState<BookingFormScreen> {
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.access_time, color: Color(0xFFD4AF37)),
+                          Icon(Icons.access_time, color: Theme.of(context).colorScheme.primary),
                           const SizedBox(width: 8),
                           Text(
                             _selectedTime == null ? 'Select Time' : _selectedTime!.format(context),
@@ -197,7 +197,7 @@ class _BookingFormScreenState extends ConsumerState<BookingFormScreen> {
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _submit,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFD4AF37),
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   foregroundColor: Colors.black,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

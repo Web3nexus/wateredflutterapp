@@ -14,12 +14,14 @@ class VideoList extends _$VideoList {
     int perPage = 20,
     int? traditionId,
     String? search,
+    bool isFeatured = false,
   }) async {
     return await fetchVideos(
       page: page,
       perPage: perPage,
       traditionId: traditionId,
       search: search,
+      isFeatured: isFeatured,
     );
   }
 
@@ -28,6 +30,7 @@ class VideoList extends _$VideoList {
     required int perPage,
     int? traditionId,
     String? search,
+    bool isFeatured = false,
   }) async {
     try {
       final apiClient = ref.read(apiClientProvider);
@@ -42,6 +45,10 @@ class VideoList extends _$VideoList {
 
       if (search != null && search.isNotEmpty) {
         queryParams['search'] = search;
+      }
+
+      if (isFeatured) {
+        queryParams['is_featured'] = '1';
       }
 
       final response = await apiClient.get(

@@ -5,6 +5,7 @@ import 'package:Watered/features/audio/models/audio.dart';
 
 final audioPlayerProvider = Provider<AudioPlayer>((ref) {
   final player = AudioPlayer();
+  player.setVolume(1.0); // Ensure volume is up
   ref.onDispose(() => player.dispose());
   return player;
 });

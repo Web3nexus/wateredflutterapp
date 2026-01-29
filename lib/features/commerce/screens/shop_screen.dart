@@ -5,6 +5,8 @@ import 'package:Watered/features/commerce/providers/product_provider.dart';
 import 'package:Watered/features/commerce/models/product.dart';
 import 'package:Watered/features/commerce/screens/product_detail_screen.dart';
 import 'package:Watered/features/commerce/screens/cart_screen.dart';
+import 'package:Watered/features/commerce/providers/currency_provider.dart';
+import 'package:Watered/features/commerce/utils/price_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ShopScreen extends ConsumerWidget {
@@ -15,11 +17,13 @@ class ShopScreen extends ConsumerWidget {
     final productsState = ref.watch(productListProvider);
     final cartItems = ref.watch(cartProvider);
 
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('SACRED OBJECTS'),
-        backgroundColor: const Color(0xFF0F172A),
+        backgroundColor: Colors.transparent,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
@@ -29,11 +33,11 @@ class ShopScreen extends ConsumerWidget {
                   '${ref.read(cartProvider.notifier).itemCount}',
                 ), // Use read for getters usually ok if updated via watch elsewhere, or create separate providers for count
                 isLabelVisible: cartItems.isNotEmpty,
-                backgroundColor: const Color(0xFFD4AF37),
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 child: IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.shopping_bag_outlined,
-                    color: Colors.white,
+                    color: theme.iconTheme.color,
                   ),
                   onPressed: () {
                     Navigator.of(context).push(
@@ -51,10 +55,10 @@ class ShopScreen extends ConsumerWidget {
       body: productsState.when(
         data: (products) {
           if (products.isEmpty) {
-            return const Center(
+            return Center(
               child: Text(
                 'The shop is currently closed.',
-                style: TextStyle(color: Colors.white54),
+                style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5)),
               ),
             );
           }
@@ -73,7 +77,7 @@ class ShopScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(
-          child: CircularProgressIndicator(color: Color(0xFFD4AF37)),
+          child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
         ),
         error: (err, stack) => Center(
           child: Text('Error: $err', style: const TextStyle(color: Colors.red)),
@@ -89,9 +93,10 @@ class _ProductCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
+        color: theme.cardTheme.color,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -156,8 +161,8 @@ class _ProductCard extends ConsumerWidget {
                   product.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: theme.textTheme.titleMedium?.color,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                     fontFamily: 'Cinzel',
@@ -165,9 +170,9 @@ class _ProductCard extends ConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '\$${(product.price / 100).toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    color: Color(0xFFD4AF37),
+                  PriceUtils.formatPrice(product, ref.watch(currencyProvider)),
+                  style: TextStyle(
+                    color: theme.colorScheme.primary,
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
@@ -186,8 +191,8 @@ class _ProductCard extends ConsumerWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white.withOpacity(0.1),
-                      foregroundColor: Colors.white,
+                      backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+                      foregroundColor: theme.colorScheme.primary,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),

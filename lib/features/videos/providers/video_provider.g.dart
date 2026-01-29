@@ -147,7 +147,7 @@ class _VillageVideoProviderElement
   int get id => (origin as VillageVideoProvider).id;
 }
 
-String _$videoListHash() => r'8e94b6f4c9e074d0b0f91b3a5d899848b6242f1a';
+String _$videoListHash() => r'aaad15f13e066a449114dbdfd279b46c20a8567a';
 
 abstract class _$VideoList
     extends BuildlessAutoDisposeAsyncNotifier<PaginatedResponse<Video>> {
@@ -155,12 +155,14 @@ abstract class _$VideoList
   late final int perPage;
   late final int? traditionId;
   late final String? search;
+  late final bool isFeatured;
 
   FutureOr<PaginatedResponse<Video>> build({
     int page = 1,
     int perPage = 20,
     int? traditionId,
     String? search,
+    bool isFeatured = false,
   });
 }
 
@@ -179,12 +181,14 @@ class VideoListFamily extends Family<AsyncValue<PaginatedResponse<Video>>> {
     int perPage = 20,
     int? traditionId,
     String? search,
+    bool isFeatured = false,
   }) {
     return VideoListProvider(
       page: page,
       perPage: perPage,
       traditionId: traditionId,
       search: search,
+      isFeatured: isFeatured,
     );
   }
 
@@ -195,6 +199,7 @@ class VideoListFamily extends Family<AsyncValue<PaginatedResponse<Video>>> {
       perPage: provider.perPage,
       traditionId: provider.traditionId,
       search: provider.search,
+      isFeatured: provider.isFeatured,
     );
   }
 
@@ -226,12 +231,14 @@ class VideoListProvider
     int perPage = 20,
     int? traditionId,
     String? search,
+    bool isFeatured = false,
   }) : this._internal(
          () => VideoList()
            ..page = page
            ..perPage = perPage
            ..traditionId = traditionId
-           ..search = search,
+           ..search = search
+           ..isFeatured = isFeatured,
          from: videoListProvider,
          name: r'videoListProvider',
          debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -243,6 +250,7 @@ class VideoListProvider
          perPage: perPage,
          traditionId: traditionId,
          search: search,
+         isFeatured: isFeatured,
        );
 
   VideoListProvider._internal(
@@ -256,12 +264,14 @@ class VideoListProvider
     required this.perPage,
     required this.traditionId,
     required this.search,
+    required this.isFeatured,
   }) : super.internal();
 
   final int page;
   final int perPage;
   final int? traditionId;
   final String? search;
+  final bool isFeatured;
 
   @override
   FutureOr<PaginatedResponse<Video>> runNotifierBuild(
@@ -272,6 +282,7 @@ class VideoListProvider
       perPage: perPage,
       traditionId: traditionId,
       search: search,
+      isFeatured: isFeatured,
     );
   }
 
@@ -284,7 +295,8 @@ class VideoListProvider
           ..page = page
           ..perPage = perPage
           ..traditionId = traditionId
-          ..search = search,
+          ..search = search
+          ..isFeatured = isFeatured,
         from: from,
         name: null,
         dependencies: null,
@@ -294,6 +306,7 @@ class VideoListProvider
         perPage: perPage,
         traditionId: traditionId,
         search: search,
+        isFeatured: isFeatured,
       ),
     );
   }
@@ -310,7 +323,8 @@ class VideoListProvider
         other.page == page &&
         other.perPage == perPage &&
         other.traditionId == traditionId &&
-        other.search == search;
+        other.search == search &&
+        other.isFeatured == isFeatured;
   }
 
   @override
@@ -320,6 +334,7 @@ class VideoListProvider
     hash = _SystemHash.combine(hash, perPage.hashCode);
     hash = _SystemHash.combine(hash, traditionId.hashCode);
     hash = _SystemHash.combine(hash, search.hashCode);
+    hash = _SystemHash.combine(hash, isFeatured.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -340,6 +355,9 @@ mixin VideoListRef
 
   /// The parameter `search` of this provider.
   String? get search;
+
+  /// The parameter `isFeatured` of this provider.
+  bool get isFeatured;
 }
 
 class _VideoListProviderElement
@@ -359,6 +377,8 @@ class _VideoListProviderElement
   int? get traditionId => (origin as VideoListProvider).traditionId;
   @override
   String? get search => (origin as VideoListProvider).search;
+  @override
+  bool get isFeatured => (origin as VideoListProvider).isFeatured;
 }
 
 // ignore_for_file: type=lint

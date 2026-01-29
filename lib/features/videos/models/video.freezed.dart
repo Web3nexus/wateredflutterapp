@@ -33,8 +33,14 @@ mixin _$Video {
   DateTime get publishedAt => throw _privateConstructorUsedError;
   int get traditionId => throw _privateConstructorUsedError;
   bool get isActive => throw _privateConstructorUsedError;
+  bool get isFeatured => throw _privateConstructorUsedError;
   @JsonKey(name: 'is_liked')
   bool get isLiked => throw _privateConstructorUsedError;
+  @JsonKey(name: 'likes_count')
+  int? get likesCount => throw _privateConstructorUsedError;
+  @JsonKey(name: 'comments_count')
+  int? get commentsCount => throw _privateConstructorUsedError;
+  List<String>? get tags => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
@@ -64,7 +70,11 @@ abstract class $VideoCopyWith<$Res> {
     DateTime publishedAt,
     int traditionId,
     bool isActive,
+    bool isFeatured,
     @JsonKey(name: 'is_liked') bool isLiked,
+    @JsonKey(name: 'likes_count') int? likesCount,
+    @JsonKey(name: 'comments_count') int? commentsCount,
+    List<String>? tags,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -96,7 +106,11 @@ class _$VideoCopyWithImpl<$Res, $Val extends Video>
     Object? publishedAt = null,
     Object? traditionId = null,
     Object? isActive = null,
+    Object? isFeatured = null,
     Object? isLiked = null,
+    Object? likesCount = freezed,
+    Object? commentsCount = freezed,
+    Object? tags = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -146,10 +160,26 @@ class _$VideoCopyWithImpl<$Res, $Val extends Video>
                 ? _value.isActive
                 : isActive // ignore: cast_nullable_to_non_nullable
                       as bool,
+            isFeatured: null == isFeatured
+                ? _value.isFeatured
+                : isFeatured // ignore: cast_nullable_to_non_nullable
+                      as bool,
             isLiked: null == isLiked
                 ? _value.isLiked
                 : isLiked // ignore: cast_nullable_to_non_nullable
                       as bool,
+            likesCount: freezed == likesCount
+                ? _value.likesCount
+                : likesCount // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            commentsCount: freezed == commentsCount
+                ? _value.commentsCount
+                : commentsCount // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            tags: freezed == tags
+                ? _value.tags
+                : tags // ignore: cast_nullable_to_non_nullable
+                      as List<String>?,
             createdAt: freezed == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
@@ -184,7 +214,11 @@ abstract class _$$VideoImplCopyWith<$Res> implements $VideoCopyWith<$Res> {
     DateTime publishedAt,
     int traditionId,
     bool isActive,
+    bool isFeatured,
     @JsonKey(name: 'is_liked') bool isLiked,
+    @JsonKey(name: 'likes_count') int? likesCount,
+    @JsonKey(name: 'comments_count') int? commentsCount,
+    List<String>? tags,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -215,7 +249,11 @@ class __$$VideoImplCopyWithImpl<$Res>
     Object? publishedAt = null,
     Object? traditionId = null,
     Object? isActive = null,
+    Object? isFeatured = null,
     Object? isLiked = null,
+    Object? likesCount = freezed,
+    Object? commentsCount = freezed,
+    Object? tags = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -265,10 +303,26 @@ class __$$VideoImplCopyWithImpl<$Res>
             ? _value.isActive
             : isActive // ignore: cast_nullable_to_non_nullable
                   as bool,
+        isFeatured: null == isFeatured
+            ? _value.isFeatured
+            : isFeatured // ignore: cast_nullable_to_non_nullable
+                  as bool,
         isLiked: null == isLiked
             ? _value.isLiked
             : isLiked // ignore: cast_nullable_to_non_nullable
                   as bool,
+        likesCount: freezed == likesCount
+            ? _value.likesCount
+            : likesCount // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        commentsCount: freezed == commentsCount
+            ? _value.commentsCount
+            : commentsCount // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        tags: freezed == tags
+            ? _value._tags
+            : tags // ignore: cast_nullable_to_non_nullable
+                  as List<String>?,
         createdAt: freezed == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
@@ -297,10 +351,14 @@ class _$VideoImpl implements _Video {
     required this.publishedAt,
     required this.traditionId,
     required this.isActive,
+    this.isFeatured = false,
     @JsonKey(name: 'is_liked') this.isLiked = false,
+    @JsonKey(name: 'likes_count') this.likesCount,
+    @JsonKey(name: 'comments_count') this.commentsCount,
+    final List<String>? tags,
     this.createdAt,
     this.updatedAt,
-  });
+  }) : _tags = tags;
 
   factory _$VideoImpl.fromJson(Map<String, dynamic> json) =>
       _$$VideoImplFromJson(json);
@@ -330,8 +388,27 @@ class _$VideoImpl implements _Video {
   @override
   final bool isActive;
   @override
+  @JsonKey()
+  final bool isFeatured;
+  @override
   @JsonKey(name: 'is_liked')
   final bool isLiked;
+  @override
+  @JsonKey(name: 'likes_count')
+  final int? likesCount;
+  @override
+  @JsonKey(name: 'comments_count')
+  final int? commentsCount;
+  final List<String>? _tags;
+  @override
+  List<String>? get tags {
+    final value = _tags;
+    if (value == null) return null;
+    if (_tags is EqualUnmodifiableListView) return _tags;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   final DateTime? createdAt;
   @override
@@ -339,7 +416,7 @@ class _$VideoImpl implements _Video {
 
   @override
   String toString() {
-    return 'Video(id: $id, title: $title, description: $description, youtubeUrl: $youtubeUrl, storageUrl: $storageUrl, videoType: $videoType, thumbnailUrl: $thumbnailUrl, duration: $duration, publishedAt: $publishedAt, traditionId: $traditionId, isActive: $isActive, isLiked: $isLiked, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Video(id: $id, title: $title, description: $description, youtubeUrl: $youtubeUrl, storageUrl: $storageUrl, videoType: $videoType, thumbnailUrl: $thumbnailUrl, duration: $duration, publishedAt: $publishedAt, traditionId: $traditionId, isActive: $isActive, isFeatured: $isFeatured, isLiked: $isLiked, likesCount: $likesCount, commentsCount: $commentsCount, tags: $tags, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -367,7 +444,14 @@ class _$VideoImpl implements _Video {
                 other.traditionId == traditionId) &&
             (identical(other.isActive, isActive) ||
                 other.isActive == isActive) &&
+            (identical(other.isFeatured, isFeatured) ||
+                other.isFeatured == isFeatured) &&
             (identical(other.isLiked, isLiked) || other.isLiked == isLiked) &&
+            (identical(other.likesCount, likesCount) ||
+                other.likesCount == likesCount) &&
+            (identical(other.commentsCount, commentsCount) ||
+                other.commentsCount == commentsCount) &&
+            const DeepCollectionEquality().equals(other._tags, _tags) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -389,7 +473,11 @@ class _$VideoImpl implements _Video {
     publishedAt,
     traditionId,
     isActive,
+    isFeatured,
     isLiked,
+    likesCount,
+    commentsCount,
+    const DeepCollectionEquality().hash(_tags),
     createdAt,
     updatedAt,
   );
@@ -421,7 +509,11 @@ abstract class _Video implements Video {
     required final DateTime publishedAt,
     required final int traditionId,
     required final bool isActive,
+    final bool isFeatured,
     @JsonKey(name: 'is_liked') final bool isLiked,
+    @JsonKey(name: 'likes_count') final int? likesCount,
+    @JsonKey(name: 'comments_count') final int? commentsCount,
+    final List<String>? tags,
     final DateTime? createdAt,
     final DateTime? updatedAt,
   }) = _$VideoImpl;
@@ -451,8 +543,18 @@ abstract class _Video implements Video {
   @override
   bool get isActive;
   @override
+  bool get isFeatured;
+  @override
   @JsonKey(name: 'is_liked')
   bool get isLiked;
+  @override
+  @JsonKey(name: 'likes_count')
+  int? get likesCount;
+  @override
+  @JsonKey(name: 'comments_count')
+  int? get commentsCount;
+  @override
+  List<String>? get tags;
   @override
   DateTime? get createdAt;
   @override

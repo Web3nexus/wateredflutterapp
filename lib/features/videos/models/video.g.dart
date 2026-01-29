@@ -18,7 +18,11 @@ _$VideoImpl _$$VideoImplFromJson(Map<String, dynamic> json) => _$VideoImpl(
   publishedAt: DateTime.parse(json['publishedAt'] as String),
   traditionId: (json['traditionId'] as num).toInt(),
   isActive: json['isActive'] as bool,
+  isFeatured: json['isFeatured'] as bool? ?? false,
   isLiked: json['is_liked'] as bool? ?? false,
+  likesCount: (json['likes_count'] as num?)?.toInt(),
+  commentsCount: (json['comments_count'] as num?)?.toInt(),
+  tags: (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList(),
   createdAt: json['createdAt'] == null
       ? null
       : DateTime.parse(json['createdAt'] as String),
@@ -40,7 +44,11 @@ Map<String, dynamic> _$$VideoImplToJson(_$VideoImpl instance) =>
       'publishedAt': instance.publishedAt.toIso8601String(),
       'traditionId': instance.traditionId,
       'isActive': instance.isActive,
+      'isFeatured': instance.isFeatured,
       'is_liked': instance.isLiked,
+      'likes_count': instance.likesCount,
+      'comments_count': instance.commentsCount,
+      'tags': instance.tags,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
     };

@@ -4,6 +4,7 @@ import 'package:Watered/features/audio/models/audio.dart';
 import 'package:Watered/features/audio/services/audio_service.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AudioPlayerBottomSheet extends ConsumerWidget {
   final Audio audio;
@@ -15,9 +16,17 @@ class AudioPlayerBottomSheet extends ConsumerWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-      decoration: const BoxDecoration(
-        color: Color(0xFF0F172A),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 20,
+            spreadRadius: 5,
+          ),
+        ],
+        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -27,7 +36,7 @@ class AudioPlayerBottomSheet extends ConsumerWidget {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Theme.of(context).dividerColor.withOpacity(0.2),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -45,8 +54,8 @@ class AudioPlayerBottomSheet extends ConsumerWidget {
                 : Container(
                     width: 240,
                     height: 240,
-                    color: const Color(0xFFD4AF37).withOpacity(0.1),
-                    child: const Icon(Icons.music_note_rounded, color: Color(0xFFD4AF37), size: 80),
+                    color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    child: Icon(Icons.music_note_rounded, color: Theme.of(context).colorScheme.primary, size: 80),
                   ),
           ),
           const SizedBox(height: 32),
@@ -58,7 +67,7 @@ class AudioPlayerBottomSheet extends ConsumerWidget {
               fontSize: 24,
               fontWeight: FontWeight.bold,
               fontFamily: 'Cinzel',
-              color: Color(0xFFD4AF37),
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
           const SizedBox(height: 8),
@@ -66,7 +75,7 @@ class AudioPlayerBottomSheet extends ConsumerWidget {
             audio.author ?? 'Watered Scholar',
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white.withOpacity(0.5),
+              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
               fontFamily: 'Outfit',
             ),
           ),
@@ -84,10 +93,10 @@ class AudioPlayerBottomSheet extends ConsumerWidget {
                     progress: position,
                     total: duration,
                     onSeek: (duration) => audioService.seek(duration),
-                    progressBarColor: const Color(0xFFD4AF37),
-                    baseBarColor: Colors.white.withOpacity(0.1),
-                    thumbColor: const Color(0xFFD4AF37),
-                    timeLabelTextStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+                    progressBarColor: Theme.of(context).colorScheme.primary,
+                    baseBarColor: Theme.of(context).dividerColor.withOpacity(0.1),
+                    thumbColor: Theme.of(context).colorScheme.primary,
+                    timeLabelTextStyle: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.5)),
                   );
                 },
               );
@@ -99,7 +108,7 @@ class AudioPlayerBottomSheet extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
-                icon: const Icon(Icons.replay_10_rounded, size: 32, color: Colors.white),
+                icon: Icon(Icons.replay_10_rounded, size: 32, color: Theme.of(context).iconTheme.color),
                 onPressed: () => audioService.seek(
                   audioService.player.position - const Duration(seconds: 10),
                 ),
@@ -113,7 +122,7 @@ class AudioPlayerBottomSheet extends ConsumerWidget {
                     width: 80,
                     height: 80,
                     decoration: const BoxDecoration(
-                      color: Color(0xFFD4AF37),
+                      color: Theme.of(context).colorScheme.primary,
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
@@ -129,13 +138,20 @@ class AudioPlayerBottomSheet extends ConsumerWidget {
               ),
               const SizedBox(width: 24),
               IconButton(
-                icon: const Icon(Icons.forward_10_rounded, size: 32, color: Colors.white),
+                icon: Icon(Icons.forward_10_rounded, size: 32, color: Theme.of(context).iconTheme.color),
                 onPressed: () => audioService.seek(
                   audioService.player.position + const Duration(seconds: 10),
                 ),
               ),
             ],
           ),
+          const SizedBox(height: 16),
+          if (audio.audioUrl.contains('audiomack.com') || audio.audioUrl.contains('spotify.com') || audio.audioUrl.contains('youtube.com'))
+            TextButton.icon(
+              onPressed: () => launchUrl(Uri.parse(audio.audioUrl), mode: LaunchMode.externalApplication),
+              icon: Icon(Icons.open_in_new_rounded, color: Theme.of(context).colorScheme.primary, size: 16),
+              label: Text('OPEN IN STREAMING PLATFORM', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 12, fontWeight: FontWeight.bold)),
+            ),
           const SizedBox(height: 24),
         ],
       ),

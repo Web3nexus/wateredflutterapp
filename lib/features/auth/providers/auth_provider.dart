@@ -46,9 +46,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final user = await _authService.getUser();
       state = AuthState(user: user);
     } catch (e) {
-      // Token likely invalid
-      await _apiClient.clearToken();
-      state = const AuthState();
+      // ONLY clear token and logout if it's a 401 Unauthorized
+      // This ensures persistent login even if network is briefly down on start
+      if (e.toString().contains('401')) {
+        await _apiClient.clearToken();
+        state = const AuthState();
+      } else {
+        // Just stop loading but keep the "authenticated" state if token exists
+        // The user might be redirected to an error screen if a crucial request fails later
+        state = state.copyWith(isLoading: false);
+      }
     }
   }
 

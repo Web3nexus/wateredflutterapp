@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/commerce/providers/cart_provider.dart';
 import 'package:Watered/core/network/api_client.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:Watered/features/commerce/screens/payment_selection_screen.dart';
+import 'package:Watered/features/commerce/providers/currency_provider.dart';
+import 'package:Watered/features/commerce/utils/price_utils.dart';
 
 class CartScreen extends ConsumerWidget {
   const CartScreen({super.key});
@@ -12,19 +15,23 @@ class CartScreen extends ConsumerWidget {
     final cartItems = ref.watch(cartProvider);
     final total = ref.read(cartProvider.notifier).totalPrice;
 
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final currency = ref.watch(currencyProvider);
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('YOUR CART'),
-        backgroundColor: const Color(0xFF0F172A),
+        backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFFD4AF37)),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: theme.colorScheme.primary),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: cartItems.isEmpty
-          ? const Center(
-              child: Text('Your cart is empty.', style: TextStyle(color: Colors.white54)),
+          ? Center(
+              child: Text('Your cart is empty.', style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5))),
             )
           : Column(
               children: [
@@ -32,7 +39,7 @@ class CartScreen extends ConsumerWidget {
                   child: ListView.separated(
                     padding: const EdgeInsets.all(16),
                     itemCount: cartItems.length,
-                    separatorBuilder: (context, index) => const Divider(color: Colors.white10),
+                    separatorBuilder: (context, index) => Divider(color: theme.dividerColor.withOpacity(0.1)),
                     itemBuilder: (context, index) {
                       final item = cartItems[index];
                       return ListTile(
@@ -41,7 +48,7 @@ class CartScreen extends ConsumerWidget {
                           height: 50,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
-                            color: Colors.white10,
+                            color: theme.colorScheme.primary.withOpacity(0.05),
                           ),
                           child: item.product.imageUrl != null
                           ? ClipRRect(
@@ -53,8 +60,8 @@ class CartScreen extends ConsumerWidget {
                             ) 
                           : const Icon(Icons.diamond_outlined, color: Colors.white24),
                         ),
-                        title: Text(item.product.name, style: const TextStyle(color: Colors.white)),
-                        subtitle: Text('\$${(item.product.price / 100).toStringAsFixed(2)} x ${item.quantity}', style: const TextStyle(color: Colors.white54)),
+                        title: Text(item.product.name, style: TextStyle(color: theme.textTheme.titleMedium?.color, fontWeight: FontWeight.bold, fontFamily: 'Cinzel')),
+                        subtitle: Text('${PriceUtils.formatPrice(item.product, currency)} x ${item.quantity}', style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6))),
                         trailing: IconButton(
                           icon: const Icon(Icons.remove_circle_outline, color: Colors.redAccent),
                           onPressed: () {
@@ -68,8 +75,8 @@ class CartScreen extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1E293B),
-                    border: Border(top: BorderSide(color: Colors.white.withOpacity(0.05))),
+                    color: theme.cardTheme.color,
+                    border: Border(top: BorderSide(color: theme.dividerColor.withOpacity(0.05))),
                   ),
                   child: SafeArea(
                     child: Column(
@@ -78,12 +85,14 @@ class CartScreen extends ConsumerWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text('Total', style: TextStyle(color: Colors.white, fontSize: 18)),
+                            Text('Total', style: TextStyle(color: theme.textTheme.titleLarge?.color, fontSize: 18, fontWeight: FontWeight.bold)),
                              Text(
-                              '\$${(total / 100).toStringAsFixed(2)}',
-                              style: const TextStyle(
+                              currency == 'NGN' 
+                                ? '₦${cartItems.fold(0, (sum, item) => sum + (PriceUtils.getRawPrice(item.product, 'NGN') * item.quantity).toInt())}'
+                                : '\$${(total / 100).toStringAsFixed(2)}',
+                              style: TextStyle(
                                 fontSize: 24,
-                                color: Color(0xFFD4AF37),
+                                color: theme.colorScheme.primary,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -116,7 +125,7 @@ class CartScreen extends ConsumerWidget {
                                }
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFD4AF37),
+                              backgroundColor: theme.colorScheme.primary,
                               foregroundColor: Colors.black,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

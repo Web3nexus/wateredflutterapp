@@ -13,7 +13,7 @@ class NotificationBell extends ConsumerWidget {
     return Stack(
       children: [
         IconButton(
-          icon: const Icon(Icons.notifications_none_rounded, color: Color(0xFFD4AF37)),
+          icon: Icon(Icons.notifications_none_rounded, color: Theme.of(context).colorScheme.primary),
           onPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const NotificationScreen()),

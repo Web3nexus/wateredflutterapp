@@ -7,15 +7,16 @@ import 'package:timeago/timeago.dart' as timeago;
 class CommentBottomSheet extends ConsumerStatefulWidget {
   final String type;
   final int id;
+  final VoidCallback? onCommentAdded;
 
-  const CommentBottomSheet({super.key, required this.type, required this.id});
+  const CommentBottomSheet({super.key, required this.type, required this.id, this.onCommentAdded});
 
-  static void show(BuildContext context, String type, int id) {
+  static void show(BuildContext context, String type, int id, {VoidCallback? onCommentAdded}) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => CommentBottomSheet(type: type, id: id),
+      builder: (context) => CommentBottomSheet(type: type, id: id, onCommentAdded: onCommentAdded),
     );
   }
 
@@ -65,6 +66,7 @@ class _CommentBottomSheetState extends ConsumerState<CommentBottomSheet> {
       await ref.read(interactionServiceProvider).addComment(widget.type, widget.id, content);
       _commentController.clear();
       _fetchComments(); // Refresh
+      widget.onCommentAdded?.call();
     } catch (e) {
       // Error
     } finally {

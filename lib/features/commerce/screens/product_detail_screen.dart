@@ -4,6 +4,8 @@ import 'package:Watered/features/commerce/models/product.dart';
 import 'package:Watered/features/commerce/providers/cart_provider.dart';
 import 'package:Watered/features/commerce/screens/cart_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:Watered/features/commerce/providers/currency_provider.dart';
+import 'package:Watered/features/commerce/utils/price_utils.dart';
 
 class ProductDetailScreen extends ConsumerWidget {
   final Product product;
@@ -12,15 +14,18 @@ class ProductDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final currency = ref.watch(currencyProvider);
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
          backgroundColor: Colors.transparent,
          actions: [
             Stack(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.shopping_bag_outlined, color: Color(0xFFD4AF37)),
+                  icon: Icon(Icons.shopping_bag_outlined, color: theme.colorScheme.primary),
                   onPressed: () {
                      Navigator.of(context).push(
                         MaterialPageRoute(builder: (context) => const CartScreen()),
@@ -70,7 +75,7 @@ class ProductDetailScreen extends ConsumerWidget {
                        gradient: LinearGradient(
                          begin: Alignment.topCenter,
                          end: Alignment.bottomCenter,
-                         colors: [Colors.black.withOpacity(0.4), Colors.transparent, const Color(0xFF0F172A)],
+                         colors: [Colors.black.withOpacity(0.4), Colors.transparent, theme.scaffoldBackgroundColor],
                        ),
                      ),
                    ),
@@ -85,19 +90,19 @@ class ProductDetailScreen extends ConsumerWidget {
                 children: [
                   Text(
                     product.name.toUpperCase(),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'Cinzel',
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: theme.textTheme.headlineMedium?.color,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '\$${(product.price / 100).toStringAsFixed(2)}',
-                    style: const TextStyle(
+                    PriceUtils.formatPrice(product, currency),
+                    style: TextStyle(
                       fontSize: 24,
-                      color: Color(0xFFD4AF37),
+                      color: theme.colorScheme.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -122,8 +127,8 @@ class ProductDetailScreen extends ConsumerWidget {
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: const Color(0xFF1E293B),
-          border: Border(top: BorderSide(color: Colors.white.withOpacity(0.05))),
+          color: theme.cardTheme.color,
+          border: Border(top: BorderSide(color: theme.dividerColor.withOpacity(0.05))),
         ),
         child: SafeArea(
           child: ElevatedButton(
@@ -134,7 +139,7 @@ class ProductDetailScreen extends ConsumerWidget {
                );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFD4AF37),
+              backgroundColor: theme.colorScheme.primary,
               foregroundColor: Colors.black,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

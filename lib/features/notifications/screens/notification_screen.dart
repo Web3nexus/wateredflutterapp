@@ -68,6 +68,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   Widget _buildFilters() {
+    final theme = Theme.of(context);
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -80,9 +81,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
               label: Text(filter),
               selected: isSelected,
               onSelected: (val) => setState(() => _selectedFilter = filter),
-              selectedColor: const Color(0xFFD4AF37).withOpacity(0.2),
+              selectedColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
               labelStyle: TextStyle(
-                color: isSelected ? const Color(0xFFD4AF37) : Colors.white54,
+                color: isSelected ? Theme.of(context).colorScheme.primary : theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),
@@ -115,7 +116,7 @@ class _NotificationCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.cardTheme.color,
         borderRadius: BorderRadius.circular(16),
-        border: isRead ? null : Border.all(color: const Color(0xFFD4AF37).withOpacity(0.3)),
+        border: isRead ? null : Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.3)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,12 +124,12 @@ class _NotificationCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: (isRead ? Colors.blueGrey : const Color(0xFFD4AF37)).withOpacity(0.1),
+              color: (isRead ? Colors.blueGrey : Theme.of(context).colorScheme.primary).withOpacity(0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
               isRead ? Icons.notifications_none_rounded : Icons.notifications_active_rounded,
-              color: isRead ? Colors.blueGrey : const Color(0xFFD4AF37),
+              color: isRead ? Colors.blueGrey : Theme.of(context).colorScheme.primary,
               size: 20,
             ),
           ),

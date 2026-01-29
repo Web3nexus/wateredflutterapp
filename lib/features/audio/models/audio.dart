@@ -16,6 +16,7 @@ class Audio with _$Audio {
     @JsonKey(name: 'publishedAt') DateTime? publishedAt,
     @JsonKey(name: 'traditionId') required int traditionId,
     @JsonKey(name: 'isActive') required bool isActive,
+    @Default(false) bool isFeatured,
     @JsonKey(name: 'is_liked') @Default(false) bool isLiked,
     @JsonKey(name: 'createdAt') DateTime? createdAt,
     @JsonKey(name: 'updatedAt') DateTime? updatedAt,

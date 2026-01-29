@@ -5,30 +5,73 @@ import 'package:Watered/features/traditions/models/text_collection.dart';
 import 'package:Watered/features/traditions/models/entry.dart';
 import 'package:Watered/features/traditions/providers/entry_provider.dart';
 
-class ReadingScreen extends ConsumerWidget {
+class ReadingScreen extends ConsumerStatefulWidget {
   final Chapter chapter;
   final TextCollection collection;
+  final int? initialVerse;
 
   const ReadingScreen({
     super.key,
     required this.chapter,
     required this.collection,
+    this.initialVerse,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final entriesState = ref.watch(entryListProvider(chapterId: chapter.id));
+  ConsumerState<ReadingScreen> createState() => _ReadingScreenState();
+}
+
+class _ReadingScreenState extends ConsumerState<ReadingScreen> {
+  final ScrollController _scrollController = ScrollController();
+  bool _hasScrolled = false;
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToVerse() {
+    if (_hasScrolled || widget.initialVerse == null) return;
+    
+    // Simple estimation: assume each verse is approx 100px. 
+    // Ideally we'd use scrollable_positioned_list but avoiding new deps for now.
+    // Or we can wait for frame and find render object.
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+       if (_scrollController.hasClients) {
+          final target = (widget.initialVerse! - 1) * 120.0; // Estimate
+          _scrollController.animateTo(
+            target, 
+            duration: const Duration(milliseconds: 500), 
+            curve: Curves.easeInOut,
+          );
+          _hasScrolled = true;
+       }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final entriesState = ref.watch(entryListProvider(chapterId: widget.chapter.id));
+
+    // Try to scroll when data is loaded
+    ref.listen(entryListProvider(chapterId: widget.chapter.id), (previous, next) {
+        if (next is AsyncData && !_hasScrolled && widget.initialVerse != null) {
+            _scrollToVerse();
+        }
+    });
 
     return Scaffold(
       appBar: AppBar(
         title: Column(
           children: [
             Text(
-              collection.name.toUpperCase(),
-              style: const TextStyle(fontSize: 10, letterSpacing: 2, color: Color(0xFFD4AF37)),
+              widget.collection.name.toUpperCase(),
+              style: TextStyle(fontSize: 10, letterSpacing: 2, color: Theme.of(context).colorScheme.primary),
             ),
             Text(
-              'CHAPTER ${chapter.order}',
+              'CHAPTER ${widget.chapter.order}',
               style: const TextStyle(fontFamily: 'Cinzel', fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ],
@@ -53,60 +96,107 @@ class ReadingScreen extends ConsumerWidget {
         ],
       ),
       body: entriesState.when(
-        data: (entries) => entries.data.isEmpty
-            ? const _EmptyReading()
-            : ListView.builder(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 100),
-                physics: const BouncingScrollPhysics(),
-                itemCount: entries.data.length,
-                itemBuilder: (context, index) {
-                  final entry = entries.data[index];
-                  return _EntryItem(entry: entry);
-                },
-              ),
-        loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFFD4AF37))),
+        data: (entries) {
+          if (entries.data.isEmpty) return const _EmptyReading();
+          
+          // Trigger scroll if first load
+          if (!_hasScrolled && widget.initialVerse != null) {
+              _scrollToVerse();
+          }
+
+          return ListView.builder(
+            controller: _scrollController,
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 100),
+            physics: const BouncingScrollPhysics(),
+            itemCount: entries.data.length + 1, // +1 for Header
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 24, bottom: 40),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                       Text(
+                        'PART I: THE AWAKENING', // Placeholder part if not in model
+                        style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Cinzel',
+                                ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Chapter ${widget.chapter.order}: ${widget.chapter.name.isNotEmpty ? widget.chapter.name : "The Text"}',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: 'Cinzel', // Serif font
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).textTheme.headlineMedium?.color,
+                          height: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Container(
+                        width: 40, 
+                        height: 4, 
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              final entry = entries.data[index - 1];
+              final isTarget = widget.initialVerse != null && entry.order == widget.initialVerse;
+              
+              return Container(
+                margin: const EdgeInsets.only(bottom: 24),
+                decoration: isTarget 
+                    ? BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      )
+                    : null,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                     Text(
+                        '${entry.order}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary, // Gold verse number
+                          fontFeatures: [FontFeature.superscripts()], 
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          entry.text,
+                          style: TextStyle(
+                            fontSize: 19,
+                            height: 1.8,
+                            letterSpacing: 0.3,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
+                            fontFamily: 'Outfit', // Clear readable font
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+        loading: () => Center(
+          child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
+        ),
         error: (err, stack) => Center(child: Text('Error: $err')),
-      ),
-    );
-  }
-}
-
-class _EntryItem extends StatelessWidget {
-  final Entry entry;
-  const _EntryItem({required this.entry});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 24),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 28,
-            margin: const EdgeInsets.only(top: 4),
-            child: Text(
-              '${entry.order}',
-              style: TextStyle(
-                fontFamily: 'Cinzel',
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFFD4AF37).withOpacity(0.6),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              entry.text,
-              style: const TextStyle(
-                fontSize: 18,
-                height: 1.8,
-                letterSpacing: 0.3,
-                color: Color(0xFFF1F5F9),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

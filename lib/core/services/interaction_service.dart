@@ -37,4 +37,13 @@ class InteractionService {
     });
     return response.data['data'];
   }
+
+  /// Share post (track on backend)
+  Future<void> sharePost(int postId) async {
+    try {
+      await _client.post('posts/$postId/share');
+    } catch (e) {
+      // Silently fail - sharing should work even if tracking fails
+    }
+  }
 }

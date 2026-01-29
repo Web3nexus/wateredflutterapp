@@ -10,7 +10,7 @@ class DailyWisdom with _$DailyWisdom {
     required String quote,
     String? author,
     @JsonKey(name: 'background_image_url') String? backgroundImageUrl,
-    @JsonKey(name: 'publish_date') required DateTime publishDate,
+    @JsonKey(name: 'active_date') required DateTime publishDate,
   }) = _DailyWisdom;
 
   factory DailyWisdom.fromJson(Map<String, dynamic> json) => _$DailyWisdomFromJson(json);

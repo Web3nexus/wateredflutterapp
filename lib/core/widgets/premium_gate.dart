@@ -59,10 +59,10 @@ class _LockedOverlay extends StatelessWidget {
             decoration: BoxDecoration(
               color: const Color(0xFF1E293B).withOpacity(0.95),
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.5)),
+              border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.5)),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFD4AF37).withOpacity(0.1),
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                   blurRadius: 20,
                   spreadRadius: 5,
                 ),
@@ -73,7 +73,7 @@ class _LockedOverlay extends StatelessWidget {
               children: [
                 const Icon(
                   Icons.lock_person_rounded,
-                  color: Color(0xFFD4AF37),
+                  color: Theme.of(context).colorScheme.primary,
                   size: 48,
                 ),
                 const SizedBox(height: 16),
@@ -83,7 +83,7 @@ class _LockedOverlay extends StatelessWidget {
                     fontFamily: 'Cinzel',
                     fontWeight: FontWeight.bold,
                     letterSpacing: 2,
-                    color: Color(0xFFD4AF37),
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -103,7 +103,7 @@ class _LockedOverlay extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFD4AF37),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

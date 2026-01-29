@@ -83,7 +83,7 @@ class NotificationSettingsScreen extends ConsumerWidget {
       subtitle: Text(subtitle, style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.6))),
       value: value,
       onChanged: onChanged,
-      activeColor: const Color(0xFFD4AF37),
+      activeColor: Theme.of(context).colorScheme.primary,
     );
   }
 }

@@ -4,6 +4,9 @@ import 'package:Watered/features/traditions/models/tradition.dart';
 import 'package:Watered/features/traditions/models/text_collection.dart';
 import 'package:Watered/features/traditions/providers/collection_provider.dart';
 import 'package:Watered/features/traditions/screens/collection_detail_screen.dart';
+import 'package:Watered/features/videos/providers/video_provider.dart';
+import 'package:Watered/features/videos/screens/video_player_screen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class TraditionDetailScreen extends ConsumerWidget {
   final Tradition tradition;
@@ -12,11 +15,15 @@ class TraditionDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final collectionsState = ref.watch(collectionListProvider(traditionId: tradition.id));
+    final videosState = ref.watch(videoListProvider(traditionId: tradition.id, perPage: 5));
+    final theme = Theme.of(context);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text(tradition.name.toUpperCase()),
+        title: Text(tradition.name.toUpperCase(), style: const TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
           onPressed: () => Navigator.pop(context),
@@ -27,8 +34,8 @@ class TraditionDetailScreen extends ConsumerWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                const Color(0xFF0F172A),
-                const Color(0xFF0F172A).withOpacity(0),
+                theme.scaffoldBackgroundColor,
+                theme.scaffoldBackgroundColor.withOpacity(0),
               ],
             ),
           ),
@@ -42,20 +49,22 @@ class TraditionDetailScreen extends ConsumerWidget {
             child: Stack(
               children: [
                 if (tradition.imageUrl != null)
-                  Image.network(
-                    tradition.imageUrl!,
+                  CachedNetworkImage(
+                    imageUrl: tradition.imageUrl!,
                     height: 350,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(color: theme.colorScheme.surface),
+                    errorWidget: (context, url, error) => Container(color: theme.colorScheme.surface),
                   )
                 else
                   Container(
                     height: 350,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
+                        colors: [theme.colorScheme.surface, theme.scaffoldBackgroundColor],
                       ),
                     ),
                   ),
@@ -66,8 +75,8 @@ class TraditionDetailScreen extends ConsumerWidget {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          const Color(0xFF0F172A).withOpacity(0.4),
-                          const Color(0xFF0F172A),
+                          theme.scaffoldBackgroundColor.withOpacity(0.4),
+                          theme.scaffoldBackgroundColor,
                         ],
                       ),
                     ),
@@ -86,7 +95,7 @@ class TraditionDetailScreen extends ConsumerWidget {
                           fontFamily: 'Cinzel',
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFFD4AF37),
+                          color: Theme.of(context).colorScheme.primary,
                           letterSpacing: 2,
                         ),
                       ),
@@ -95,7 +104,7 @@ class TraditionDetailScreen extends ConsumerWidget {
                         Text(
                           tradition.description!,
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.8),
+                            color: theme.textTheme.bodyMedium?.color?.withOpacity(0.8),
                             fontSize: 15,
                             height: 1.6,
                           ),
@@ -115,7 +124,7 @@ class TraditionDetailScreen extends ConsumerWidget {
                 padding: const EdgeInsets.only(bottom: 24),
                 child: Row(
                   children: [
-                    const Icon(Icons.auto_stories_rounded, size: 20, color: Color(0xFFD4AF37)),
+                    Icon(Icons.auto_awesome, size: 20, color: theme.colorScheme.primary),
                     const SizedBox(width: 12),
                     Text(
                       'AVAILABLE TEXTS',
@@ -124,7 +133,7 @@ class TraditionDetailScreen extends ConsumerWidget {
                         fontSize: 14,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5,
-                        color: const Color(0xFFD4AF37).withOpacity(0.9),
+                        color: Theme.of(context).colorScheme.primary.withOpacity(0.9),
                       ),
                     ),
                   ],
@@ -149,12 +158,13 @@ class TraditionDetailScreen extends ConsumerWidget {
                     ),
                   ),
             loading: () => const SliverFillRemaining(
-              child: Center(child: CircularProgressIndicator(color: Color(0xFFD4AF37))),
+              child: Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary)),
             ),
             error: (err, stack) => SliverFillRemaining(
-              child: Center(child: Text('Wisdom delayed: $err')),
+              child: Center(child: Text('Error: $err', style: const TextStyle(color: Colors.red))),
             ),
           ),
+
 
           const SliverToBoxAdapter(child: SizedBox(height: 100)),
         ],
@@ -191,11 +201,11 @@ class _CollectionItem extends StatelessWidget {
           width: 50,
           height: 50,
           decoration: BoxDecoration(
-            color: const Color(0xFFD4AF37).withOpacity(0.1),
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: const Center(
-            child: Icon(Icons.book_rounded, color: Color(0xFFD4AF37)),
+            child: Icon(Icons.book_rounded, color: Theme.of(context).colorScheme.primary),
           ),
         ),
         title: Text(
@@ -214,14 +224,14 @@ class _CollectionItem extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.5),
+              color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5),
               fontSize: 13,
             ),
           ),
         ),
         trailing: Icon(
           Icons.chevron_right_rounded,
-          color: Colors.white.withOpacity(0.3),
+          color: theme.textTheme.bodyMedium?.color?.withOpacity(0.3),
         ),
       ),
     );

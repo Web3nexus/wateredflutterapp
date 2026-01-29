@@ -14,11 +14,18 @@ class BookmarkService {
   Future<List<Bookmark>> getBookmarks() async {
     try {
       final response = await _client.get('bookmarks');
-      // Assuming paginated or list response. If Laravel default resource collection:
-      final List data = response.data['data'] ?? [];
-      return data.map((e) => Bookmark.fromJson(e)).toList();
+      if (response.statusCode == 200) {
+         final data = response.data['data'];
+         if (data is List) {
+           return data.map((e) => Bookmark.fromJson(e)).toList();
+         }
+      }
+      return [];
     } catch (e) {
-      throw 'Failed to load bookmarks.';
+      if (e.toString().contains('401')) {
+         throw 'Please login to view bookmarks.';
+      }
+      return []; // Return empty instead of crashing with Dio exception
     }
   }
 

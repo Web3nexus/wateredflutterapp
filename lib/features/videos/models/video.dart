@@ -17,7 +17,11 @@ class Video with _$Video {
     required DateTime publishedAt,
     required int traditionId,
     required bool isActive,
+    @Default(false) bool isFeatured,
     @JsonKey(name: 'is_liked') @Default(false) bool isLiked,
+    @JsonKey(name: 'likes_count') int? likesCount,
+    @JsonKey(name: 'comments_count') int? commentsCount,
+    List<String>? tags,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) = _Video;
