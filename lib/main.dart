@@ -11,7 +11,7 @@ import 'package:Watered/features/audio/widgets/mini_player.dart';
 import 'package:Watered/features/profile/screens/profile_screen.dart';
 import 'package:Watered/features/community/screens/community_feed_screen.dart';
 import 'package:Watered/features/auth/screens/login_screen.dart';
-import 'package:Watered/features/consultation/screens/consultation_screen.dart';
+import 'package:Watered/features/sacred_book/screens/sacred_book_screen.dart';
 import 'package:Watered/features/commerce/screens/shop_screen.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:Watered/core/theme/theme_provider.dart';
@@ -21,6 +21,8 @@ import 'package:Watered/core/services/ad_service.dart';
 import 'package:Watered/core/services/notification_service.dart';
 import 'package:Watered/features/home/providers/tab_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:Watered/core/services/navigation_service.dart';
+import 'package:Watered/features/auth/screens/verification_pending_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -168,6 +170,7 @@ class MyApp extends ConsumerWidget {
     );
 
     return MaterialApp(
+      navigatorKey: ref.read(navigationServiceProvider).navigatorKey,
       title: settings?.siteName ?? 'Watered',
       debugShowCheckedModeBanner: false,
       theme: lightTheme,
@@ -219,6 +222,14 @@ class _RootGateState extends ConsumerState<RootGate> {
       data: (status) {
         if (status == BootStatus.maintenance) {
           return const Scaffold(body: Center(child: Text('Under Maintenance')));
+        }
+
+        // Check for Email Verification
+        if (authState.isAuthenticated) {
+          final user = authState.user;
+          if (user != null && user.emailVerifiedAt == null) {
+            return VerificationPendingScreen(email: user.email);
+          }
         }
         
         // Allow everyone into MainTabsScreen
@@ -282,35 +293,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 // Logo with background support for visibility
                 Container(
                   padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
                   child: Image.asset(
                     'assets/icon/splashicon.png',
                     width: 140,
                     height: 140,
-                  ),
-                ),
-                const SizedBox(height: 32),
-                const Text(
-                  'WATERED',
-                  style: TextStyle(
-                    fontFamily: 'Cinzel',
-                    fontSize: 32,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 8,
-                    color: Color(0xFF1E293B),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'ANCIENT AFRICAN SPIRITUALITY',
-                  style: TextStyle(
-                    fontFamily: 'Outfit',
-                    fontSize: 13,
-                    letterSpacing: 2,
-                    color: const Color(0xFF1E293B).withOpacity(0.6),
                   ),
                 ),
                 const SizedBox(height: 60),
@@ -341,11 +327,11 @@ class MainTabsScreen extends ConsumerStatefulWidget {
 class _MainTabsScreenState extends ConsumerState<MainTabsScreen> {
   final List<Widget> _screens = [
     const DashboardScreen(),
-    const PremiumGate(
+    PremiumGate(
       message: 'Explore our complete collection of ancient texts and wisdom.',
-      child: LibraryScreen(),
+      child: const LibraryScreen(),
     ),
-    const ConsultationScreen(),
+    const SacredBookScreen(),
     const ShopScreen(),
     const ProfileGate(),
   ];
@@ -382,24 +368,53 @@ class _MainTabsScreenState extends ConsumerState<MainTabsScreen> {
           unselectedItemColor: isDark ? Colors.white54 : Colors.black38,
           type: BottomNavigationBarType.fixed,
           elevation: 0,
-          items: const [
-            BottomNavigationBarItem(
+          items: [
+            const BottomNavigationBarItem(
               icon: Icon(Icons.home_rounded),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.auto_stories_rounded),
-              label: 'Library',
+              icon: Image.asset(
+                'assets/icon/echoes_nav_icon.png',
+                width: 24,
+                height: 24,
+                color: currentIndex == 1 ? theme.colorScheme.primary : (isDark ? Colors.white54 : Colors.black38),
+              ),
+              label: 'Echoes',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_month_rounded),
-              label: 'Consultation',
+              icon: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: currentIndex == 2 ? const Color(0xFFF4B846) : theme.colorScheme.primary.withOpacity(0.15),
+                  shape: BoxShape.circle,
+                  boxShadow: currentIndex == 2 ? [
+                    BoxShadow(
+                      color: const Color(0xFFF4B846).withOpacity(0.4),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    )
+                  ] : null,
+                  border: Border.all(
+                    color: currentIndex == 2 ? Colors.white : theme.colorScheme.primary.withOpacity(0.3),
+                    width: 2,
+                  ),
+                ),
+                child: Image.asset(
+                  'assets/icon/sacred_book_nav_icon.png',
+                  width: 32,
+                  height: 32,
+                  // We might not want to tint the custom colorful icon too much, but let's see. 
+                  // If it's a colorful PNG, maybe don't use color: ...
+                ),
+              ),
+              label: 'Sacred Book',
             ),
-            BottomNavigationBarItem(
+            const BottomNavigationBarItem(
               icon: Icon(Icons.shopping_bag_rounded),
               label: 'Shop',
             ),
-            BottomNavigationBarItem(
+            const BottomNavigationBarItem(
               icon: Icon(Icons.person_rounded),
               label: 'Profile',
             ),

@@ -13,6 +13,8 @@ class ConsultationScreen extends ConsumerStatefulWidget {
 }
 
 class _ConsultationScreenState extends ConsumerState<ConsultationScreen> {
+  String _selectedCategory = 'All';
+  final List<String> _categories = ['All', 'Guidance', 'Emotional', 'Spiritual', 'Ancestral', 'Healing'];
   int? _selectedTypeId;
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
@@ -69,7 +71,7 @@ class _ConsultationScreenState extends ConsumerState<ConsultationScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final typesAsync = ref.watch(consultationTypesProvider);
+    final typesAsync = ref.watch(consultationTypesProvider(_selectedCategory == 'All' ? null : _selectedCategory));
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -79,6 +81,36 @@ class _ConsultationScreenState extends ConsumerState<ConsultationScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text('Filter by Category', style: theme.textTheme.titleMedium),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 50,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: _categories.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                itemBuilder: (context, index) {
+                  final cat = _categories[index];
+                  final isSelected = _selectedCategory == cat;
+                  return Center(
+                    child: FilterChip(
+                      label: Text(cat, style: const TextStyle(fontSize: 12)),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        setState(() {
+                          _selectedCategory = cat;
+                          _selectedTypeId = null; // Reset selection when category changes
+                        });
+                      },
+                      backgroundColor: theme.cardTheme.color,
+                      selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 24),
             Text('Select Consultation Type', style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
             typesAsync.when(

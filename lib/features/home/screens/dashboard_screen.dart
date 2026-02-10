@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:Watered/core/widgets/premium_gate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/core/theme/theme_provider.dart';
 import 'package:Watered/core/widgets/notification_bell.dart';
@@ -99,7 +100,12 @@ class DashboardScreen extends ConsumerWidget {
                         icon: Icon(Icons.calendar_today_rounded, color: theme.colorScheme.primary),
                         onPressed: () {
                           Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const CalendarHomeScreen()),
+                            MaterialPageRoute(
+                              builder: (_) => PremiumGate(
+                                message: 'Access the Ancient African Calendar and celestial alignments.',
+                                child: const CalendarHomeScreen(),
+                              ),
+                            ),
                           );
                         },
                       ),
@@ -225,10 +231,20 @@ class DashboardScreen extends ConsumerWidget {
                 crossAxisSpacing: 16,
                 children: [
                    _buildQuickAction(context, 'Rituals', Icons.auto_fix_high_rounded, () {
-                     Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RitualsScreen()));
+                     Navigator.of(context).push(MaterialPageRoute(
+                       builder: (_) => PremiumGate(
+                         message: 'Unlock sacred rituals and spiritual practices.',
+                         child: const RitualsScreen(),
+                       ),
+                     ));
                    }),
                    _buildQuickAction(context, 'Incantation', Icons.record_voice_over_rounded, () {
-                     Navigator.of(context).push(MaterialPageRoute(builder: (_) => const IncantationsScreen()));
+                     Navigator.of(context).push(MaterialPageRoute(
+                       builder: (_) => PremiumGate(
+                         message: 'Access powerful ancient incantations and oral traditions.',
+                         child: const IncantationsScreen(),
+                       ),
+                     ));
                    }),
                    _buildQuickAction(context, 'Consult', Icons.calendar_month_rounded, () {
                       ref.read(tabIndexProvider.notifier).state = 2;

@@ -2,9 +2,37 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/events/models/event.dart';
 import 'package:Watered/features/events/services/event_service.dart';
 
-final eventsListProvider = FutureProvider.autoDispose<List<Event>>((ref) async {
+class EventFilter {
+  final String? category;
+  final String? recurrence;
+  final int? traditionId;
+
+  const EventFilter({
+    this.category,
+    this.recurrence,
+    this.traditionId,
+  });
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is EventFilter &&
+        other.category == category &&
+        other.recurrence == recurrence &&
+        other.traditionId == traditionId;
+  }
+
+  @override
+  int get hashCode => Object.hash(category, recurrence, traditionId);
+}
+
+final eventsListProvider = FutureProvider.autoDispose.family<List<Event>, EventFilter>((ref, filter) async {
   final service = ref.watch(eventServiceProvider);
-  return await service.getEvents();
+  return await service.getEvents(
+    category: filter.category,
+    recurrence: filter.recurrence,
+    traditionId: filter.traditionId,
+  );
 });
 
 class EventController extends StateNotifier<AsyncValue<void>> {
@@ -17,7 +45,7 @@ class EventController extends StateNotifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       await _service.registerForEvent(eventId);
-      _ref.invalidate(eventsListProvider); // Refresh list to show 'registered' status
+      _ref.invalidate(eventsListProvider); // This will invalidate all families, which is fine
       state = const AsyncValue.data(null);
     } catch (e, st) {
       state = AsyncValue.error(e, st);

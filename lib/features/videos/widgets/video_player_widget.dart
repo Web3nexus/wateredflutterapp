@@ -158,7 +158,7 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
     if (!_isInitialized) {
       return Container(
         color: Colors.black,
-        child: const Center(
+        child: Center(
           child: CircularProgressIndicator(
             color: Theme.of(context).colorScheme.primary,
             strokeWidth: 2,
@@ -175,7 +175,7 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
         controller: _youtubeController!,
         showVideoProgressIndicator: true,
         progressIndicatorColor: Theme.of(context).colorScheme.primary,
-        progressColors: const ProgressBarColors(
+        progressColors: ProgressBarColors(
           playedColor: Theme.of(context).colorScheme.primary,
           handleColor: Theme.of(context).colorScheme.primary,
         ),

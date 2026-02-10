@@ -63,7 +63,7 @@ class AudioPlayerBottomSheet extends ConsumerWidget {
           Text(
             audio.title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
               fontFamily: 'Cinzel',
@@ -121,7 +121,7 @@ class AudioPlayerBottomSheet extends ConsumerWidget {
                   return Container(
                     width: 80,
                     height: 80,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.primary,
                       shape: BoxShape.circle,
                     ),

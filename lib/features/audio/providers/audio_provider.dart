@@ -14,12 +14,14 @@ class AudioList extends _$AudioList {
     int perPage = 20,
     int? traditionId,
     String? search,
+    String? category,
   }) async {
     return await fetchAudios(
       page: page,
       perPage: perPage,
       traditionId: traditionId,
       search: search,
+      category: category,
     );
   }
 
@@ -28,6 +30,7 @@ class AudioList extends _$AudioList {
     required int perPage,
     int? traditionId,
     String? search,
+    String? category,
   }) async {
     try {
       final apiClient = ref.read(apiClientProvider);
@@ -42,6 +45,10 @@ class AudioList extends _$AudioList {
 
       if (search != null && search.isNotEmpty) {
         queryParams['search'] = search;
+      }
+
+      if (category != null && category.isNotEmpty) {
+        queryParams['category'] = category;
       }
 
       final response = await apiClient.get(

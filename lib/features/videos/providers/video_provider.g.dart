@@ -147,7 +147,7 @@ class _VillageVideoProviderElement
   int get id => (origin as VillageVideoProvider).id;
 }
 
-String _$videoListHash() => r'aaad15f13e066a449114dbdfd279b46c20a8567a';
+String _$videoListHash() => r'38a09771200691dc985c89e0b02492ccdff0c23f';
 
 abstract class _$VideoList
     extends BuildlessAutoDisposeAsyncNotifier<PaginatedResponse<Video>> {
@@ -155,6 +155,7 @@ abstract class _$VideoList
   late final int perPage;
   late final int? traditionId;
   late final String? search;
+  late final String? category;
   late final bool isFeatured;
 
   FutureOr<PaginatedResponse<Video>> build({
@@ -162,6 +163,7 @@ abstract class _$VideoList
     int perPage = 20,
     int? traditionId,
     String? search,
+    String? category,
     bool isFeatured = false,
   });
 }
@@ -181,6 +183,7 @@ class VideoListFamily extends Family<AsyncValue<PaginatedResponse<Video>>> {
     int perPage = 20,
     int? traditionId,
     String? search,
+    String? category,
     bool isFeatured = false,
   }) {
     return VideoListProvider(
@@ -188,6 +191,7 @@ class VideoListFamily extends Family<AsyncValue<PaginatedResponse<Video>>> {
       perPage: perPage,
       traditionId: traditionId,
       search: search,
+      category: category,
       isFeatured: isFeatured,
     );
   }
@@ -199,6 +203,7 @@ class VideoListFamily extends Family<AsyncValue<PaginatedResponse<Video>>> {
       perPage: provider.perPage,
       traditionId: provider.traditionId,
       search: provider.search,
+      category: provider.category,
       isFeatured: provider.isFeatured,
     );
   }
@@ -231,6 +236,7 @@ class VideoListProvider
     int perPage = 20,
     int? traditionId,
     String? search,
+    String? category,
     bool isFeatured = false,
   }) : this._internal(
          () => VideoList()
@@ -238,6 +244,7 @@ class VideoListProvider
            ..perPage = perPage
            ..traditionId = traditionId
            ..search = search
+           ..category = category
            ..isFeatured = isFeatured,
          from: videoListProvider,
          name: r'videoListProvider',
@@ -250,6 +257,7 @@ class VideoListProvider
          perPage: perPage,
          traditionId: traditionId,
          search: search,
+         category: category,
          isFeatured: isFeatured,
        );
 
@@ -264,6 +272,7 @@ class VideoListProvider
     required this.perPage,
     required this.traditionId,
     required this.search,
+    required this.category,
     required this.isFeatured,
   }) : super.internal();
 
@@ -271,6 +280,7 @@ class VideoListProvider
   final int perPage;
   final int? traditionId;
   final String? search;
+  final String? category;
   final bool isFeatured;
 
   @override
@@ -282,6 +292,7 @@ class VideoListProvider
       perPage: perPage,
       traditionId: traditionId,
       search: search,
+      category: category,
       isFeatured: isFeatured,
     );
   }
@@ -296,6 +307,7 @@ class VideoListProvider
           ..perPage = perPage
           ..traditionId = traditionId
           ..search = search
+          ..category = category
           ..isFeatured = isFeatured,
         from: from,
         name: null,
@@ -306,6 +318,7 @@ class VideoListProvider
         perPage: perPage,
         traditionId: traditionId,
         search: search,
+        category: category,
         isFeatured: isFeatured,
       ),
     );
@@ -324,6 +337,7 @@ class VideoListProvider
         other.perPage == perPage &&
         other.traditionId == traditionId &&
         other.search == search &&
+        other.category == category &&
         other.isFeatured == isFeatured;
   }
 
@@ -334,6 +348,7 @@ class VideoListProvider
     hash = _SystemHash.combine(hash, perPage.hashCode);
     hash = _SystemHash.combine(hash, traditionId.hashCode);
     hash = _SystemHash.combine(hash, search.hashCode);
+    hash = _SystemHash.combine(hash, category.hashCode);
     hash = _SystemHash.combine(hash, isFeatured.hashCode);
 
     return _SystemHash.finish(hash);
@@ -356,6 +371,9 @@ mixin VideoListRef
   /// The parameter `search` of this provider.
   String? get search;
 
+  /// The parameter `category` of this provider.
+  String? get category;
+
   /// The parameter `isFeatured` of this provider.
   bool get isFeatured;
 }
@@ -377,6 +395,8 @@ class _VideoListProviderElement
   int? get traditionId => (origin as VideoListProvider).traditionId;
   @override
   String? get search => (origin as VideoListProvider).search;
+  @override
+  String? get category => (origin as VideoListProvider).category;
   @override
   bool get isFeatured => (origin as VideoListProvider).isFeatured;
 }

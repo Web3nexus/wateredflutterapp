@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/auth/providers/auth_provider.dart';
+import 'package:Watered/features/config/screens/legal_document_screen.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -160,7 +161,70 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Text(
+                          'By signing up, you agree to our ',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LegalDocumentScreen(
+                                  title: 'Terms of Service',
+                                  type: 'terms_of_service',
+                                ),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Terms of Service',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          ' and ',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LegalDocumentScreen(
+                                  title: 'Privacy Policy',
+                                  type: 'privacy_policy',
+                                ),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Privacy Policy',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
                     ElevatedButton(
                       onPressed: authState.isLoading ? null : _submit,
                       style: ElevatedButton.styleFrom(

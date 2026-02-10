@@ -14,16 +14,26 @@ import 'package:Watered/features/auth/screens/login_screen.dart';
 import 'package:Watered/core/services/ad_service.dart';
 import 'package:Watered/features/subscription/screens/subscription_screen.dart';
 
-class AudioFeedScreen extends ConsumerWidget {
-  const AudioFeedScreen({super.key});
+class AudioFeedScreen extends ConsumerStatefulWidget {
+  final bool showAppBar;
+  const AudioFeedScreen({super.key, this.showAppBar = true});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final audioState = ref.watch(audioListProvider());
+  ConsumerState<AudioFeedScreen> createState() => _AudioFeedScreenState();
+}
+
+class _AudioFeedScreenState extends ConsumerState<AudioFeedScreen> {
+  String _selectedCategory = 'All';
+  final List<String> _categories = ['All', 'Incantation', 'Music', 'Sermons', 'Meditation'];
+
+  @override
+  Widget build(BuildContext context) {
+    final audioState = ref.watch(audioListProvider(category: _selectedCategory == 'All' ? null : _selectedCategory));
     final isPremium = ref.watch(authProvider).user?.isPremium ?? false;
 
     return Scaffold(
-      appBar: AppBar(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: widget.showAppBar ? AppBar(
         title: const Text('AUDIO TEACHINGS'),
         actions: [
           if (!isPremium)
@@ -33,13 +43,43 @@ class AudioFeedScreen extends ConsumerWidget {
             ),
           const SizedBox(width: 8),
         ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: () => ref.read(audioListProvider().notifier).refresh(),
-        child: Column(
-          children: [
-            const AdBanner(screenKey: 'audio'),
-            Expanded(
+      ) : null,
+      body: Column(
+        children: [
+          const AdBanner(screenKey: 'audio'),
+          // Category Filters
+          SizedBox(
+            height: 60,
+            child: ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              scrollDirection: Axis.horizontal,
+              itemCount: _categories.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              itemBuilder: (context, index) {
+                final category = _categories[index];
+                final isSelected = _selectedCategory == category;
+                return FilterChip(
+                  label: Text(category),
+                  selected: isSelected,
+                  onSelected: (selected) {
+                    setState(() {
+                      _selectedCategory = category;
+                    });
+                  },
+                  backgroundColor: Theme.of(context).cardTheme.color,
+                  selectedColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                  checkmarkColor: Theme.of(context).colorScheme.primary,
+                  labelStyle: TextStyle(
+                    color: isSelected ? Theme.of(context).colorScheme.primary : null,
+                    fontWeight: isSelected ? FontWeight.bold : null,
+                  ),
+                );
+              },
+            ),
+          ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () => ref.read(audioListProvider(category: _selectedCategory == 'All' ? null : _selectedCategory).notifier).refresh(),
               child: audioState.when(
                 data: (audios) => audios.data.isEmpty
                     ? const _EmptyAudioFeed()
@@ -54,8 +94,8 @@ class AudioFeedScreen extends ConsumerWidget {
                 error: (err, stack) => Center(child: Text('Wisdom delayed: $err')),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

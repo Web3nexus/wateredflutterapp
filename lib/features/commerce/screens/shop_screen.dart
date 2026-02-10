@@ -55,28 +55,45 @@ class ShopScreen extends ConsumerWidget {
       body: productsState.when(
         data: (products) {
           if (products.isEmpty) {
-            return Center(
-              child: Text(
-                'The shop is currently closed.',
-                style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5)),
+            return RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(productListProvider);
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height - 200,
+                  child: Center(
+                    child: Text(
+                      'The shop is currently closed.',
+                      style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5)),
+                    ),
+                  ),
+                ),
               ),
             );
           }
-          return GridView.builder(
-            padding: const EdgeInsets.all(16),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.7,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-            ),
-            itemCount: products.length,
-            itemBuilder: (context, index) {
-              return _ProductCard(product: products[index]);
+          return RefreshIndicator(
+            onRefresh: () async {
+              ref.invalidate(productListProvider);
             },
+            child: GridView.builder(
+              padding: const EdgeInsets.all(16),
+              physics: const AlwaysScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.7,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+              ),
+              itemCount: products.length,
+              itemBuilder: (context, index) {
+                return _ProductCard(product: products[index]);
+              },
+            ),
           );
         },
-        loading: () => const Center(
+        loading: () => Center(
           child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
         ),
         error: (err, stack) => Center(

@@ -118,6 +118,14 @@ class AuthService {
     }
   }
 
+  Future<void> resendVerificationEmail() async {
+    try {
+      await _client.post('email/resend');
+    } catch (e) {
+      throw 'Failed to resend verification email: $e';
+    }
+  }
+
   Future<User> getUser() async {
     final response = await _client.get('user');
     return User.fromJson(response.data);

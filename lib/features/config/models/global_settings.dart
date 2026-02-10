@@ -21,6 +21,8 @@ class GlobalSettings with _$GlobalSettings {
     @JsonKey(name: 'site_name') String? siteName,
     @JsonKey(name: 'site_description') String? siteDescription,
     @JsonKey(name: 'logo_path') String? logoPath,
+    @JsonKey(name: 'privacy_policy') String? privacyPolicy,
+    @JsonKey(name: 'terms_of_service') String? termsOfService,
   }) = _GlobalSettings;
 
   factory GlobalSettings.fromJson(Map<String, dynamic> json) =>

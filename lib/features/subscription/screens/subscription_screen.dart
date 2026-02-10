@@ -76,7 +76,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 const SizedBox(height: 20),
                 Icon(Icons.auto_awesome_rounded, size: 64, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'WATERED PLUS+',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontFamily: 'Cinzel', fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 4, color: Theme.of(context).colorScheme.primary),

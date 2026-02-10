@@ -10,6 +10,11 @@ class Event {
   final double? price;
   final bool isRegistered;
 
+  final String? category;
+  final String? recurrence;
+  final int? traditionId;
+  final String? culturalOrigin;
+
   Event({
     required this.id,
     required this.title,
@@ -21,6 +26,10 @@ class Event {
     this.isPaid = false,
     this.price,
     this.isRegistered = false,
+    this.category,
+    this.recurrence,
+    this.traditionId,
+    this.culturalOrigin,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -35,6 +44,10 @@ class Event {
       isPaid: json['is_paid'] ?? false,
       price: json['price'] != null ? double.tryParse(json['price'].toString()) : null,
       isRegistered: json['is_registered'] ?? false,
+      category: json['category'],
+      recurrence: json['recurrence'],
+      traditionId: json['tradition_id'],
+      culturalOrigin: json['cultural_origin'],
     );
   }
 }

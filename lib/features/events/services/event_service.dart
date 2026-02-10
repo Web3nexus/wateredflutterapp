@@ -12,8 +12,18 @@ class EventService {
 
   EventService(this._client);
 
-  Future<List<Event>> getEvents({int page = 1}) async {
-    final response = await _client.get('events', queryParameters: {'page': page});
+  Future<List<Event>> getEvents({
+    int page = 1,
+    String? category,
+    String? recurrence,
+    int? traditionId,
+  }) async {
+    final Map<String, dynamic> queryParams = {'page': page};
+    if (category != null && category != 'All') queryParams['category'] = category;
+    if (recurrence != null && recurrence != 'All') queryParams['recurrence'] = recurrence;
+    if (traditionId != null) queryParams['tradition_id'] = traditionId;
+
+    final response = await _client.get('events', queryParameters: queryParams);
     final data = response.data['data'] as List;
     return data.map((e) => Event.fromJson(e)).toList();
   }

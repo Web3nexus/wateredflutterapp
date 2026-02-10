@@ -11,8 +11,12 @@ class RitualService {
 
   RitualService(this._client);
 
-  Future<List<Ritual>> getRituals() async {
-    final response = await _client.get('rituals');
+  Future<List<Ritual>> getRituals({String? category}) async {
+    final Map<String, dynamic> queryParams = {};
+    if (category != null && category != 'All') {
+      queryParams['category'] = category;
+    }
+    final response = await _client.get('rituals', queryParameters: queryParams);
     final data = response.data['data'] as List;
     return data.map((e) => Ritual.fromJson(e)).toList();
   }

@@ -21,7 +21,7 @@ class CalendarHomeScreen extends ConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: todayAsync.when(
-                data: (data) => _buildTodayContent(context, data),
+                data: (data) => _buildTodayContent(context, ref, data),
                 loading: () => Center(
                   child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
                 ),
@@ -90,11 +90,13 @@ class CalendarHomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildTodayContent(BuildContext context, Map<String, dynamic> data) {
+  Widget _buildTodayContent(BuildContext context, WidgetRef ref, Map<String, dynamic> data) {
     final kemetic = data['kemetic_date'];
     final dayDetails = data['day_details'] != null 
         ? CalendarDay.fromJson(data['day_details']) 
         : null;
+
+    final upcomingEventsAsync = ref.watch(upcomingEventsProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -108,12 +110,71 @@ class CalendarHomeScreen extends ConsumerWidget {
         ],
         const SizedBox(height: 24),
         _buildSectionHeader(context, 'UPCOMING FESTIVALS'),
-        // Placeholder for upcoming festivals
-        _buildPlaceholderList(context),
-      ],
-    );
-  }
-
+        const SizedBox(height: 12),
+        upcomingEventsAsync.when(
+          data: (events) {
+            if (events.isEmpty) {
+              return const Text('No upcoming festivals scheduled.', style: TextStyle(color: Colors.grey));
+            }
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: events.length > 3 ? 3 : events.length,
+              itemBuilder: (context, index) {
+                final event = events[index];
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.02),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.white.withOpacity(0.05)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 40, height: 40,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(Icons.event, color: Theme.of(context).colorScheme.primary, size: 20),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              event.title,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).textTheme.bodyMedium?.color,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              DateFormat('MMMM dd, yyyy').format(event.startTime),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.6),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+            loading: () => const Center(child: LinearProgressIndicator()),
+            error: (err, _) => Text('Failed to load events', style: TextStyle(color: Colors.red.withOpacity(0.8), fontSize: 12)),
+          ),
+        ],
+      );
+    }
   Widget _buildDateCard(BuildContext context, Map<String, dynamic> kemetic) {
     return Container(
       padding: const EdgeInsets.all(24),
@@ -246,44 +307,6 @@ class CalendarHomeScreen extends ConsumerWidget {
         fontWeight: FontWeight.bold,
         color: Theme.of(context).colorScheme.primary,
         letterSpacing: 2,
-      ),
-    );
-  }
-
-  Widget _buildPlaceholderList(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: 2,
-      itemBuilder: (context, index) => Container(
-        margin: const EdgeInsets.only(top: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.02),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 40, height: 40,
-              decoration: const BoxDecoration(
-                color: Colors.white10,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.star_border, color: Theme.of(context).colorScheme.primary),
-            ),
-            const SizedBox(width: 16),
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                   Text('Coming Soon', style: TextStyle(fontWeight: FontWeight.bold)),
-                   Text('Festival details being updated...', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

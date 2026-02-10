@@ -18,6 +18,7 @@ class Audio with _$Audio {
     @JsonKey(name: 'isActive') required bool isActive,
     @Default(false) bool isFeatured,
     @JsonKey(name: 'is_liked') @Default(false) bool isLiked,
+    String? category,
     @JsonKey(name: 'createdAt') DateTime? createdAt,
     @JsonKey(name: 'updatedAt') DateTime? updatedAt,
   }) = _Audio;

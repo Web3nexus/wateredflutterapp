@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:Watered/core/widgets/premium_gate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/auth/providers/auth_provider.dart';
 import 'package:Watered/features/community/screens/community_feed_screen.dart'; // Added import
@@ -86,209 +87,193 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const AdBanner(screenKey: 'profile'),
-              const SizedBox(height: 24),
-              // Profile Image
-              InkWell(
-                onTap: () => _pickAndUploadPhoto(context, ref),
-                borderRadius: BorderRadius.circular(60),
-                child: Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: theme.colorScheme.primary, width: 2),
-                        boxShadow: [
-                          BoxShadow(
-                            color: theme.colorScheme.primary.withOpacity(0.2),
-                            blurRadius: 20,
-                            spreadRadius: 5,
-                          ),
-                        ],
-                      ),
-                      child: CircleAvatar(
-                        radius: 60,
-                        backgroundColor: theme.cardTheme.color,
-                        backgroundImage: user.profilePhotoUrl != null
-                            ? CachedNetworkImageProvider(user.profilePhotoUrl!)
-                            : null,
-                        child: user.profilePhotoUrl == null
-                            ? Text(
-                                user.name.substring(0, 1).toUpperCase(),
-                                style: TextStyle(
-                                  fontSize: 48,
-                                  color: theme.colorScheme.primary,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Cinzel',
-                                ),
-                              )
-                            : null,
-                      ),
-                    ),
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, shape: BoxShape.circle),
-                        child: const Icon(Icons.camera_alt, color: Colors.black, size: 20),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-              // Name
-              Text(
-                user.name,
-                style: theme.textTheme.headlineMedium?.copyWith(fontSize: 28),
-              ),
-              if (user.isPremium) ...[
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.3)),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
+        child: RefreshIndicator(
+          onRefresh: () async {
+            // Reload user profile
+            await ref.read(authProvider.notifier).reloadUser();
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const AdBanner(screenKey: 'profile'),
+                const SizedBox(height: 24),
+                // Profile Image
+                InkWell(
+                  onTap: () => _pickAndUploadPhoto(context, ref),
+                  borderRadius: BorderRadius.circular(60),
+                  child: Stack(
                     children: [
-                      Icon(Icons.verified_rounded, color: Theme.of(context).colorScheme.primary, size: 14),
-                      SizedBox(width: 6),
-                      Text(
-                        'PREMIUM',
-                        style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 10, letterSpacing: 1),
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: theme.colorScheme.primary, width: 2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: theme.colorScheme.primary.withOpacity(0.2),
+                              blurRadius: 20,
+                              spreadRadius: 5,
+                            ),
+                          ],
+                        ),
+                        child: CircleAvatar(
+                          radius: 60,
+                          backgroundColor: theme.cardTheme.color,
+                          backgroundImage: user.profilePhotoUrl != null
+                              ? CachedNetworkImageProvider(user.profilePhotoUrl!)
+                              : null,
+                          child: user.profilePhotoUrl == null
+                              ? Text(
+                                  user.name.substring(0, 1).toUpperCase(),
+                                  style: TextStyle(
+                                    fontSize: 48,
+                                    color: theme.colorScheme.primary,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Cinzel',
+                                  ),
+                                )
+                              : null,
+                        ),
+                      ),
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, shape: BoxShape.circle),
+                          child: const Icon(Icons.camera_alt, color: Colors.black, size: 20),
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ],
-              const SizedBox(height: 8),
-              // Email
-              Text(
-                user.email,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontSize: 16,
-                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5),
+                const SizedBox(height: 24),
+                // Name
+                Text(
+                  user.name,
+                  style: theme.textTheme.headlineMedium?.copyWith(fontSize: 28),
                 ),
-              ),
-              const SizedBox(height: 24),
-              
-              // Search Bar
-              TextField(
-                controller: _searchController,
-                onChanged: (value) => setState(() => _searchQuery = value.toLowerCase()),
-                decoration: InputDecoration(
-                  hintText: 'Search menu options...',
-                  prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.primary),
-                  suffixIcon: _searchQuery.isNotEmpty 
-                    ? IconButton(
-                        icon: const Icon(Icons.clear, size: 18),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() => _searchQuery = '');
-                        },
-                      )
-                    : null,
-                  filled: true,
-                  fillColor: theme.cardTheme.color,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                ),
-              ),
-
-              const SizedBox(height: 32),
-              
-              // Theme Toggle
-              Container(
-                margin: const EdgeInsets.only(bottom: 16),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                decoration: BoxDecoration(
-                  color: theme.cardTheme.color,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
-                        color: theme.colorScheme.primary,
-                        size: 24,
-                      ),
+                if (user.isPremium) ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.3)),
                     ),
-                    const SizedBox(width: 16),
-                    const Text('Dark Mode', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                    const Spacer(),
-                    Switch(
-                      value: isDark,
-                      activeColor: theme.colorScheme.primary,
-                      onChanged: (value) => ref.read(themeProvider.notifier).toggleTheme(),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.verified_rounded, color: Theme.of(context).colorScheme.primary, size: 14),
+                        const SizedBox(width: 6),
+                        Text(
+                          'PREMIUM',
+                          style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 10, letterSpacing: 1),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-
-              // Menu Items
-              ..._getFilteredMenuItems(context).map((item) => Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: item,
-              )),
-              
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () async => await ref.read(authProvider.notifier).logout(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary.withOpacity(0.05),
-                    foregroundColor: Colors.redAccent,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    elevation: 0,
                   ),
-                  child: const Text('LOG OUT', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                ],
+                const SizedBox(height: 8),
+                // Email
+                Text(
+                  user.email,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontSize: 16,
+                    color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 24),
-            ],
+                const SizedBox(height: 24),
+                
+                // Search Bar
+                TextField(
+                  controller: _searchController,
+                  onChanged: (value) => setState(() => _searchQuery = value.toLowerCase()),
+                  decoration: InputDecoration(
+                    hintText: 'Search menu options...',
+                    prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.primary),
+                    suffixIcon: _searchQuery.isNotEmpty 
+                      ? IconButton(
+                          icon: const Icon(Icons.clear, size: 18),
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() => _searchQuery = '');
+                          },
+                        )
+                      : null,
+                    filled: true,
+                    fillColor: theme.cardTheme.color,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                  ),
+                ),
+  
+                const SizedBox(height: 32),
+                
+                const SizedBox(height: 16),
+  
+                // Menu Items
+                ..._getFilteredMenuItems(context, isDark, ref).map((item) => Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: item,
+                )),
+                
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async => await ref.read(authProvider.notifier).logout(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.colorScheme.primary.withOpacity(0.05),
+                      foregroundColor: Colors.redAccent,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      elevation: 0,
+                    ),
+                    child: const Text('LOG OUT', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  List<Widget> _getFilteredMenuItems(BuildContext context) {
+  List<Widget> _getFilteredMenuItems(BuildContext context, bool isDark, WidgetRef ref) {
+    // 1. Define the items in the generic map format
     final List<Map<String, dynamic>> items = [
-      {'icon': Icons.people_outline_rounded, 'title': 'Community', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CommunityFeedScreen()))},
-      {'icon': Icons.bookmark_border_rounded, 'title': 'My Collection', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UserLibraryScreen()))},
-      {'icon': Icons.diamond_outlined, 'title': 'Sacred Shop', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ShopScreen()))},
-      {'icon': Icons.map_outlined, 'title': 'Temple Discovery', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TempleScreen()))},
-      {'icon': Icons.event_available_rounded, 'title': 'Upcoming Events', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EventsScreen()))},
       {'icon': Icons.spa_outlined, 'title': 'Rituals', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RitualsScreen()))},
       {'icon': Icons.record_voice_over_outlined, 'title': 'Incantations', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const IncantationsScreen()))},
+      {'icon': Icons.diamond_outlined, 'title': 'Sacred Shop', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ShopScreen()))},
+      {'icon': Icons.event_available_rounded, 'title': 'Upcoming Events', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EventsScreen()))},
+      {'icon': Icons.alarm_rounded, 'title': 'Reminders', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => PremiumGate(message: 'Set sacred reminders for your rituals and spiritual practices.', child: const RemindersScreen())))},
+      {'icon': Icons.people_outline_rounded, 'title': 'Community', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CommunityFeedScreen()))},
+      {'icon': Icons.bookmark_border_rounded, 'title': 'My Collection', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UserLibraryScreen()))},
+      {'icon': Icons.map_outlined, 'title': 'Temple Discovery', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TempleScreen()))},
       {'icon': Icons.calendar_month_outlined, 'title': 'Book Consultation', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ConsultationScreen()))},
+      // Special item for Dark Mode
+      {'icon': isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded, 'title': 'Dark Mode', 'type': 'toggle'},
+      {'icon': Icons.star_border_rounded, 'title': 'Premium Access', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SubscriptionScreen()))},
       {'icon': Icons.person_outline_rounded, 'title': 'Edit Profile', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EditProfileScreen()))},
       {'icon': Icons.settings_outlined, 'title': 'Settings', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SettingsScreen()))},
-      {'icon': Icons.star_border_rounded, 'title': 'Premium Access', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SubscriptionScreen()))},
-      {'icon': Icons.alarm_rounded, 'title': 'Reminders', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RemindersScreen()))},
       {'icon': Icons.help_outline_rounded, 'title': 'Help & Support', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const HelpSupportScreen()))},
     ];
 
+    // 2. Filter and Map
     return items
         .where((item) => item['title'].toString().toLowerCase().contains(_searchQuery))
-        .map((item) => _buildMenuItem(context, icon: item['icon'], title: item['title'], onTap: item['onTap']))
+        .map((item) {
+          if (item['type'] == 'toggle' && item['title'] == 'Dark Mode') {
+            return _buildToggleItem(context, icon: item['icon'], title: item['title'], isDark: isDark, ref: ref);
+          }
+          return _buildMenuItem(context, icon: item['icon'], title: item['title'], onTap: item['onTap']);
+        })
         .toList();
   }
 
@@ -306,6 +291,33 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
       title: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
       trailing: Icon(Icons.arrow_forward_ios_rounded, color: theme.textTheme.bodyMedium?.color?.withOpacity(0.2), size: 16),
+    );
+  }
+
+  Widget _buildToggleItem(BuildContext context, {required IconData icon, required String title, required bool isDark, required WidgetRef ref}) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      decoration: BoxDecoration(
+        color: theme.cardTheme.color,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(color: theme.colorScheme.primary.withOpacity(0.1), shape: BoxShape.circle),
+            child: Icon(icon, color: theme.colorScheme.primary, size: 24),
+          ),
+          const SizedBox(width: 16),
+          Expanded(child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
+          Switch(
+            value: isDark,
+            activeColor: theme.colorScheme.primary,
+            onChanged: (value) => ref.read(themeProvider.notifier).toggleTheme(),
+          ),
+        ],
+      ),
     );
   }
 }

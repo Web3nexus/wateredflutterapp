@@ -28,6 +28,8 @@ _$GlobalSettingsImpl _$$GlobalSettingsImplFromJson(Map<String, dynamic> json) =>
       siteName: json['site_name'] as String?,
       siteDescription: json['site_description'] as String?,
       logoPath: json['logo_path'] as String?,
+      privacyPolicy: json['privacy_policy'] as String?,
+      termsOfService: json['terms_of_service'] as String?,
     );
 
 Map<String, dynamic> _$$GlobalSettingsImplToJson(
@@ -47,4 +49,6 @@ Map<String, dynamic> _$$GlobalSettingsImplToJson(
   'site_name': instance.siteName,
   'site_description': instance.siteDescription,
   'logo_path': instance.logoPath,
+  'privacy_policy': instance.privacyPolicy,
+  'terms_of_service': instance.termsOfService,
 };

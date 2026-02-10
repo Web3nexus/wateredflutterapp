@@ -4,6 +4,8 @@ import 'package:Watered/features/calendar/providers/calendar_provider.dart';
 import 'package:Watered/features/calendar/models/calendar_month.dart';
 import 'package:Watered/features/calendar/models/calendar_day.dart';
 import 'package:Watered/features/calendar/screens/day_detail_view.dart';
+import 'package:Watered/features/events/models/event.dart';
+import 'package:intl/intl.dart';
 
 class CalendarGridView extends ConsumerWidget {
   const CalendarGridView({super.key});
@@ -12,7 +14,11 @@ class CalendarGridView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final calendarAsync = ref.watch(fullCalendarProvider);
     final selectedMonthNum = ref.watch(selectedMonthProvider);
+    final eventsAsync = ref.watch(upcomingEventsProvider);
     final theme = Theme.of(context);
+
+    // Merge logic: we want to have events available when building cells
+    final List<Event> allEvents = eventsAsync.asData?.value ?? [];
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -31,7 +37,7 @@ class CalendarGridView extends ConsumerWidget {
               _buildMonthSelector(ref, theme, months, selectedMonthNum),
               _buildMonthHeader(theme, selectedMonth),
               Expanded(
-                child: _buildDaysGrid(theme, selectedMonth.days ?? []),
+                child: _buildDaysGrid(theme, selectedMonth.days ?? [], allEvents),
               ),
             ],
           );
@@ -104,7 +110,7 @@ class CalendarGridView extends ConsumerWidget {
     );
   }
 
-  Widget _buildDaysGrid(ThemeData theme, List<CalendarDay> days) {
+  Widget _buildDaysGrid(ThemeData theme, List<CalendarDay> days, List<Event> allEvents) {
     return GridView.builder(
       padding: const EdgeInsets.all(20),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -116,14 +122,43 @@ class CalendarGridView extends ConsumerWidget {
       itemCount: days.length,
       itemBuilder: (context, index) {
         final day = days[index];
-        return _buildDayCell(context, theme, day);
+        // Filter events for this day
+        // Note: This matches based on Gregorian date alignment if present.
+        // Assuming 'gregorianDay' string (e.g., "Sept 11") matches event date format or we simply match logic.
+        // For accurate matching, we need exact date comparison which might be tricky with rough "gregorianDay" string.
+        // However, if backend sends exact 'date' we could use it.
+        // For now, let's assume we filter by matching day/month if we can parse it, OR just pass empty for now if mapping is complex without exact dates.
+        // ACTUALLY: The request says "event schedules for a day should also show up".
+        // Let's match by checking if an event's start time falls on the *current year's* Gregorian date corresponding to this Kemetic day.
+        // Since `gregorianDay` is just a string range (e.g. "Sept 11"), parsing it exactly to a year-specific Date is hard.
+        // Ideally, the backend would provide exact dates for days.
+        // PROVISIONAL: We will match events that happen to have the SAME DAY index if we had that mapping.
+        // Lacking exact mapping, we will parse `gregorianDay` crudely if possible, otherwise we just pass empty.
+        
+        // Better approach: We check if `day.gregorianDay` (e.g. "Sep 11") matches `DateFormat('MMM d').format(event.startTime)`.
+        
+        final dayEvents = allEvents.where((e) {
+           if (day.gregorianDay == null) return false;
+           // format event date to "MMM d" (e.g. "Sep 11")
+           // Note: Data might be "Sept 11", so we need to be careful.
+           // Let's try flexible matching or standard format.
+           // Assume `gregorianDay` comes formatted from backend cleanly.
+           // Let's normalize both to be safe? 
+           // Or just check containment.
+           final eventDateStr = DateFormat('MMM d').format(e.startTime); // "Sep 11"
+           return day.gregorianDay!.contains(eventDateStr) || day.gregorianDay!.contains(DateFormat('MMMM d').format(e.startTime));
+        }).toList();
+
+        return _buildDayCell(context, theme, day, dayEvents);
       },
     );
   }
 
-  Widget _buildDayCell(BuildContext context, ThemeData theme, CalendarDay day) {
+  Widget _buildDayCell(BuildContext context, ThemeData theme, CalendarDay day, List<Event> dayEvents) {
+    final hasEvents = dayEvents.isNotEmpty;
+    
     return GestureDetector(
-      onTap: () => DayDetailView.show(context, day),
+      onTap: () => DayDetailView.show(context, day, events: dayEvents),
       child: Container(
         decoration: BoxDecoration(
           color: day.isSacred 
@@ -131,9 +166,9 @@ class CalendarGridView extends ConsumerWidget {
               : theme.dividerColor.withOpacity(0.05),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: day.isSacred 
+            color: hasEvents ? Colors.amber : (day.isSacred 
                 ? theme.colorScheme.primary.withOpacity(0.5) 
-                : theme.dividerColor.withOpacity(0.1)
+                : theme.dividerColor.withOpacity(0.1))
           ),
         ),
         child: Stack(
@@ -147,12 +182,24 @@ class CalendarGridView extends ConsumerWidget {
                 color: day.isSacred ? theme.colorScheme.primary : theme.textTheme.bodyMedium?.color?.withOpacity(0.8),
               ),
             ),
-            if (day.celebrationType != null)
+            if (day.celebrationType != null || hasEvents)
               Positioned(
                 bottom: 4,
-                child: Container(
-                  width: 4, height: 4,
-                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, shape: BoxShape.circle),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (day.celebrationType != null)
+                      Container(
+                        width: 4, height: 4,
+                        decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, shape: BoxShape.circle),
+                      ),
+                    if (hasEvents && day.celebrationType != null) const SizedBox(width: 2),
+                    if (hasEvents)
+                      Container(
+                        width: 4, height: 4,
+                        decoration: const BoxDecoration(color: Colors.amber, shape: BoxShape.circle),
+                      ),
+                  ],
                 ),
               ),
           ],

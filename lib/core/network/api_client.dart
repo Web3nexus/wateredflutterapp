@@ -4,25 +4,31 @@ import 'package:dio/io.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:Watered/core/services/navigation_service.dart';
 
 /// Provider for API Client
 final apiClientProvider = Provider<ApiClient>((ref) {
-  return ApiClient();
+  return ApiClient(
+    navigationService: ref.read(navigationServiceProvider),
+  );
 });
 
 /// API client wrapper for Dio with automatic token attachment and base configuration
 class ApiClient {
-  late final Dio _dio;
+  final NavigationService _navigationService;
   final FlutterSecureStorage _secureStorage;
+  late final Dio _dio;
   
   // Updated to use Laravel Herd domain for simulator access
   // Updated to use Live Production URL
-  static const String baseUrl = 'https://cryptogateshub.com/api/v1/';
-  //static const String baseUrl = 'https://wateredbackend.test/api'; // Local fallback
+  static const String baseUrl = 'https://mywatered.com/api/v1/';
   static const String tokenKey = 'auth_token';
 
-  ApiClient({FlutterSecureStorage? secureStorage})
-      : _secureStorage = secureStorage ?? const FlutterSecureStorage() {
+  ApiClient({
+    FlutterSecureStorage? secureStorage,
+    NavigationService? navigationService,
+  })  : _secureStorage = secureStorage ?? const FlutterSecureStorage(),
+        _navigationService = navigationService ?? NavigationService() {
     _dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
@@ -70,6 +76,13 @@ class ApiClient {
           print('❌ ERROR: ${error.requestOptions.method} ${error.requestOptions.path}');
           print('❌ Status: ${error.response?.statusCode}');
           print('❌ Message: ${error.message}');
+          
+          // Check for internet connectivity errors
+          if (error.type == DioExceptionType.connectionError || 
+              error.type == DioExceptionType.connectionTimeout) {
+            _navigationService.showNoInternetDialog();
+          }
+
           if (error.response?.data != null) {
             print('❌ Data: ${error.response?.data}');
           }

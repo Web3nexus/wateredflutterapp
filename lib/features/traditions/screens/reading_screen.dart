@@ -116,16 +116,6 @@ class _ReadingScreenState extends ConsumerState<ReadingScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                       Text(
-                        'PART I: THE AWAKENING', // Placeholder part if not in model
-                        style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Cinzel',
-                                ),
-                      ),
-                      const SizedBox(height: 16),
                       Text(
                         'Chapter ${widget.chapter.order}: ${widget.chapter.name.isNotEmpty ? widget.chapter.name : "The Text"}',
                         textAlign: TextAlign.center,

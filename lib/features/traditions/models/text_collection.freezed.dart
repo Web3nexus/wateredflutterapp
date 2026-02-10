@@ -25,7 +25,9 @@ mixin _$TextCollection {
   String get name => throw _privateConstructorUsedError;
   String get slug => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
-  int get traditionId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'cover_image_url')
+  String? get coverImageUrl => throw _privateConstructorUsedError;
+  int? get traditionId => throw _privateConstructorUsedError;
   int? get categoryId => throw _privateConstructorUsedError;
   int? get order => throw _privateConstructorUsedError;
   bool get isActive => throw _privateConstructorUsedError;
@@ -54,7 +56,8 @@ abstract class $TextCollectionCopyWith<$Res> {
     String name,
     String slug,
     String? description,
-    int traditionId,
+    @JsonKey(name: 'cover_image_url') String? coverImageUrl,
+    int? traditionId,
     int? categoryId,
     int? order,
     bool isActive,
@@ -82,7 +85,8 @@ class _$TextCollectionCopyWithImpl<$Res, $Val extends TextCollection>
     Object? name = null,
     Object? slug = null,
     Object? description = freezed,
-    Object? traditionId = null,
+    Object? coverImageUrl = freezed,
+    Object? traditionId = freezed,
     Object? categoryId = freezed,
     Object? order = freezed,
     Object? isActive = null,
@@ -107,10 +111,14 @@ class _$TextCollectionCopyWithImpl<$Res, $Val extends TextCollection>
                 ? _value.description
                 : description // ignore: cast_nullable_to_non_nullable
                       as String?,
-            traditionId: null == traditionId
+            coverImageUrl: freezed == coverImageUrl
+                ? _value.coverImageUrl
+                : coverImageUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            traditionId: freezed == traditionId
                 ? _value.traditionId
                 : traditionId // ignore: cast_nullable_to_non_nullable
-                      as int,
+                      as int?,
             categoryId: freezed == categoryId
                 ? _value.categoryId
                 : categoryId // ignore: cast_nullable_to_non_nullable
@@ -151,7 +159,8 @@ abstract class _$$TextCollectionImplCopyWith<$Res>
     String name,
     String slug,
     String? description,
-    int traditionId,
+    @JsonKey(name: 'cover_image_url') String? coverImageUrl,
+    int? traditionId,
     int? categoryId,
     int? order,
     bool isActive,
@@ -178,7 +187,8 @@ class __$$TextCollectionImplCopyWithImpl<$Res>
     Object? name = null,
     Object? slug = null,
     Object? description = freezed,
-    Object? traditionId = null,
+    Object? coverImageUrl = freezed,
+    Object? traditionId = freezed,
     Object? categoryId = freezed,
     Object? order = freezed,
     Object? isActive = null,
@@ -203,10 +213,14 @@ class __$$TextCollectionImplCopyWithImpl<$Res>
             ? _value.description
             : description // ignore: cast_nullable_to_non_nullable
                   as String?,
-        traditionId: null == traditionId
+        coverImageUrl: freezed == coverImageUrl
+            ? _value.coverImageUrl
+            : coverImageUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        traditionId: freezed == traditionId
             ? _value.traditionId
             : traditionId // ignore: cast_nullable_to_non_nullable
-                  as int,
+                  as int?,
         categoryId: freezed == categoryId
             ? _value.categoryId
             : categoryId // ignore: cast_nullable_to_non_nullable
@@ -240,7 +254,8 @@ class _$TextCollectionImpl implements _TextCollection {
     required this.name,
     required this.slug,
     this.description,
-    required this.traditionId,
+    @JsonKey(name: 'cover_image_url') this.coverImageUrl,
+    this.traditionId,
     this.categoryId,
     this.order,
     required this.isActive,
@@ -260,7 +275,10 @@ class _$TextCollectionImpl implements _TextCollection {
   @override
   final String? description;
   @override
-  final int traditionId;
+  @JsonKey(name: 'cover_image_url')
+  final String? coverImageUrl;
+  @override
+  final int? traditionId;
   @override
   final int? categoryId;
   @override
@@ -274,7 +292,7 @@ class _$TextCollectionImpl implements _TextCollection {
 
   @override
   String toString() {
-    return 'TextCollection(id: $id, name: $name, slug: $slug, description: $description, traditionId: $traditionId, categoryId: $categoryId, order: $order, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'TextCollection(id: $id, name: $name, slug: $slug, description: $description, coverImageUrl: $coverImageUrl, traditionId: $traditionId, categoryId: $categoryId, order: $order, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -287,6 +305,8 @@ class _$TextCollectionImpl implements _TextCollection {
             (identical(other.slug, slug) || other.slug == slug) &&
             (identical(other.description, description) ||
                 other.description == description) &&
+            (identical(other.coverImageUrl, coverImageUrl) ||
+                other.coverImageUrl == coverImageUrl) &&
             (identical(other.traditionId, traditionId) ||
                 other.traditionId == traditionId) &&
             (identical(other.categoryId, categoryId) ||
@@ -308,6 +328,7 @@ class _$TextCollectionImpl implements _TextCollection {
     name,
     slug,
     description,
+    coverImageUrl,
     traditionId,
     categoryId,
     order,
@@ -339,7 +360,8 @@ abstract class _TextCollection implements TextCollection {
     required final String name,
     required final String slug,
     final String? description,
-    required final int traditionId,
+    @JsonKey(name: 'cover_image_url') final String? coverImageUrl,
+    final int? traditionId,
     final int? categoryId,
     final int? order,
     required final bool isActive,
@@ -359,7 +381,10 @@ abstract class _TextCollection implements TextCollection {
   @override
   String? get description;
   @override
-  int get traditionId;
+  @JsonKey(name: 'cover_image_url')
+  String? get coverImageUrl;
+  @override
+  int? get traditionId;
   @override
   int? get categoryId;
   @override

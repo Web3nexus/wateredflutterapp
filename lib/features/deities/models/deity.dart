@@ -4,6 +4,11 @@ class Deity {
   final String? description;
   final String? imageUrl;
   final int traditionId;
+  final String? origin;
+  final String? mythologyStory;
+  final String? symbols;
+  final String? domains;
+  final String? sacredElements;
 
   Deity({
     required this.id,
@@ -11,6 +16,11 @@ class Deity {
     this.description,
     this.imageUrl,
     required this.traditionId,
+    this.origin,
+    this.mythologyStory,
+    this.symbols,
+    this.domains,
+    this.sacredElements,
   });
 
   factory Deity.fromJson(Map<String, dynamic> json) {
@@ -20,6 +30,11 @@ class Deity {
       description: json['description'],
       imageUrl: json['image_url'],
       traditionId: json['tradition_id'],
+      origin: json['origin'],
+      mythologyStory: json['mythology_story'],
+      symbols: json['symbols'],
+      domains: json['domains'],
+      sacredElements: json['sacred_elements'],
     );
   }
 }

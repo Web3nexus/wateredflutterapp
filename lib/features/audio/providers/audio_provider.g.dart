@@ -146,7 +146,7 @@ class _AudioDetailProviderElement
   int get id => (origin as AudioDetailProvider).id;
 }
 
-String _$audioListHash() => r'47f7fec1fd81c8da3cd9f1045577c5b9521d639d';
+String _$audioListHash() => r'60b71f906b1437c10420244127cc938a32917d55';
 
 abstract class _$AudioList
     extends BuildlessAutoDisposeAsyncNotifier<PaginatedResponse<Audio>> {
@@ -154,12 +154,14 @@ abstract class _$AudioList
   late final int perPage;
   late final int? traditionId;
   late final String? search;
+  late final String? category;
 
   FutureOr<PaginatedResponse<Audio>> build({
     int page = 1,
     int perPage = 20,
     int? traditionId,
     String? search,
+    String? category,
   });
 }
 
@@ -178,12 +180,14 @@ class AudioListFamily extends Family<AsyncValue<PaginatedResponse<Audio>>> {
     int perPage = 20,
     int? traditionId,
     String? search,
+    String? category,
   }) {
     return AudioListProvider(
       page: page,
       perPage: perPage,
       traditionId: traditionId,
       search: search,
+      category: category,
     );
   }
 
@@ -194,6 +198,7 @@ class AudioListFamily extends Family<AsyncValue<PaginatedResponse<Audio>>> {
       perPage: provider.perPage,
       traditionId: provider.traditionId,
       search: provider.search,
+      category: provider.category,
     );
   }
 
@@ -225,12 +230,14 @@ class AudioListProvider
     int perPage = 20,
     int? traditionId,
     String? search,
+    String? category,
   }) : this._internal(
          () => AudioList()
            ..page = page
            ..perPage = perPage
            ..traditionId = traditionId
-           ..search = search,
+           ..search = search
+           ..category = category,
          from: audioListProvider,
          name: r'audioListProvider',
          debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -242,6 +249,7 @@ class AudioListProvider
          perPage: perPage,
          traditionId: traditionId,
          search: search,
+         category: category,
        );
 
   AudioListProvider._internal(
@@ -255,12 +263,14 @@ class AudioListProvider
     required this.perPage,
     required this.traditionId,
     required this.search,
+    required this.category,
   }) : super.internal();
 
   final int page;
   final int perPage;
   final int? traditionId;
   final String? search;
+  final String? category;
 
   @override
   FutureOr<PaginatedResponse<Audio>> runNotifierBuild(
@@ -271,6 +281,7 @@ class AudioListProvider
       perPage: perPage,
       traditionId: traditionId,
       search: search,
+      category: category,
     );
   }
 
@@ -283,7 +294,8 @@ class AudioListProvider
           ..page = page
           ..perPage = perPage
           ..traditionId = traditionId
-          ..search = search,
+          ..search = search
+          ..category = category,
         from: from,
         name: null,
         dependencies: null,
@@ -293,6 +305,7 @@ class AudioListProvider
         perPage: perPage,
         traditionId: traditionId,
         search: search,
+        category: category,
       ),
     );
   }
@@ -309,7 +322,8 @@ class AudioListProvider
         other.page == page &&
         other.perPage == perPage &&
         other.traditionId == traditionId &&
-        other.search == search;
+        other.search == search &&
+        other.category == category;
   }
 
   @override
@@ -319,6 +333,7 @@ class AudioListProvider
     hash = _SystemHash.combine(hash, perPage.hashCode);
     hash = _SystemHash.combine(hash, traditionId.hashCode);
     hash = _SystemHash.combine(hash, search.hashCode);
+    hash = _SystemHash.combine(hash, category.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -339,6 +354,9 @@ mixin AudioListRef
 
   /// The parameter `search` of this provider.
   String? get search;
+
+  /// The parameter `category` of this provider.
+  String? get category;
 }
 
 class _AudioListProviderElement
@@ -358,6 +376,8 @@ class _AudioListProviderElement
   int? get traditionId => (origin as AudioListProvider).traditionId;
   @override
   String? get search => (origin as AudioListProvider).search;
+  @override
+  String? get category => (origin as AudioListProvider).category;
 }
 
 // ignore_for_file: type=lint

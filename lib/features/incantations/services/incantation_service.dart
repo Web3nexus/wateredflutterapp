@@ -11,8 +11,12 @@ class IncantationService {
 
   IncantationService(this._client);
 
-  Future<List<Incantation>> getIncantations() async {
-    final response = await _client.get('incantations');
+  Future<List<Incantation>> getIncantations({String? category}) async {
+    final Map<String, dynamic> queryParams = {};
+    if (category != null && category != 'All') {
+      queryParams['category'] = category;
+    }
+    final response = await _client.get('incantations', queryParameters: queryParams);
     final data = response.data['data'] as List;
     return data.map((e) => Incantation.fromJson(e)).toList();
   }

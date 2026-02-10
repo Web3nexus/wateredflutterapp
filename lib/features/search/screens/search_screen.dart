@@ -58,9 +58,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           controller: _searchController,
           onChanged: _onSearchChanged,
           style: const TextStyle(color: Colors.white),
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             hintText: 'Search wisdom, products, videos...',
-            hintStyle: TextStyle(color: Colors.white54),
+            hintStyle: const TextStyle(color: Colors.white54),
             border: InputBorder.none,
             prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.primary),
           ),
@@ -100,7 +100,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
+                Text(
                   'DAILY WISDOM',
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
@@ -131,7 +131,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           ),
         );
       },
-      loading: () => const Center(
+      loading: () => Center(
         child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
       ),
       error: (_, __) => const SizedBox.shrink(),
@@ -230,7 +230,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           ],
         );
       },
-      loading: () => const Center(
+      loading: () => Center(
         child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
       ),
       error: (err, _) => Center(
@@ -253,7 +253,7 @@ class _SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           color: Theme.of(context).colorScheme.primary,
           fontWeight: FontWeight.bold,
           fontSize: 12,

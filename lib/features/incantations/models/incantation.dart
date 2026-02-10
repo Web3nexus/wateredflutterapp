@@ -5,6 +5,7 @@ class Incantation {
   final String? content;
   final String? audioUrl;
   final bool isPaid;
+  final String? category;
 
   Incantation({
     required this.id,
@@ -13,6 +14,7 @@ class Incantation {
     this.content,
     this.audioUrl,
     this.isPaid = false,
+    this.category,
   });
 
   factory Incantation.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class Incantation {
       content: json['content'],
       audioUrl: json['audio_url'],
       isPaid: json['is_paid'] ?? false,
+      category: json['category'],
     );
   }
 }

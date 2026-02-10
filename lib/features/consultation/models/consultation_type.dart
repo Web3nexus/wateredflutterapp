@@ -4,6 +4,7 @@ class ConsultationType {
   final int durationMinutes;
   final double price;
   final String? description;
+  final String? category;
 
   ConsultationType({
     required this.id,
@@ -11,6 +12,7 @@ class ConsultationType {
     required this.durationMinutes,
     required this.price,
     this.description,
+    this.category,
   });
 
   factory ConsultationType.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class ConsultationType {
       durationMinutes: json['duration_minutes'],
       price: double.parse(json['price'].toString()),
       description: json['description'],
+      category: json['category'],
     );
   }
 
@@ -29,6 +32,7 @@ class ConsultationType {
         'duration_minutes': durationMinutes,
         'price': price,
         'description': description,
+        'category': category,
       };
 }
 

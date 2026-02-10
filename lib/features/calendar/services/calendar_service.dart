@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/core/network/api_client.dart';
 import 'package:Watered/features/calendar/models/calendar_month.dart';
 import 'package:Watered/features/calendar/models/calendar_day.dart';
+import 'package:Watered/features/events/models/event.dart';
 
 final calendarServiceProvider = Provider<CalendarService>((ref) {
   return CalendarService(ref.read(apiClientProvider));
@@ -32,5 +33,11 @@ class CalendarService {
   Future<Map<String, dynamic>> getToday() async {
     final response = await _client.get('calendar/today');
     return response.data;
+  }
+
+  Future<List<Event>> getUpcomingEvents() async {
+    final response = await _client.get('events');
+    final List data = response.data['data'];
+    return data.map((e) => Event.fromJson(e)).toList();
   }
 }

@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:Watered/features/calendar/models/calendar_day.dart';
 
+import 'package:Watered/features/events/models/event.dart';
+import 'package:intl/intl.dart';
+
 class DayDetailView extends StatelessWidget {
   final CalendarDay day;
+  final List<Event>? events;
 
-  const DayDetailView({super.key, required this.day});
+  const DayDetailView({super.key, required this.day, this.events});
 
-  static void show(BuildContext context, CalendarDay day) {
+  static void show(BuildContext context, CalendarDay day, {List<Event>? events}) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => DayDetailView(day: day),
+      builder: (context) => DayDetailView(day: day, events: events),
     );
   }
 
@@ -54,8 +58,43 @@ class DayDetailView extends StatelessWidget {
                         style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 14),
                       ),
                     const SizedBox(height: 32),
+                    if (events != null && events!.isNotEmpty) ...[
+                      const Text('EVENTS', 
+                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white30, letterSpacing: 1.2)
+                      ),
+                      const SizedBox(height: 12),
+                      ...events!.map((e) => Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.white10),
+                        ),
+                        child: Row(
+                          children: [
+                             Container(
+                                width: 40, height: 40,
+                                decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary.withOpacity(0.2), shape: BoxShape.circle),
+                                child: Icon(Icons.event, color: Theme.of(context).colorScheme.primary, size: 20),
+                             ),
+                             const SizedBox(width: 12),
+                             Expanded(
+                               child: Column(
+                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                 children: [
+                                   Text(e.title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                   Text(DateFormat('h:mm a').format(e.startTime), style: const TextStyle(color: Colors.white54, fontSize: 12)),
+                                 ],
+                               ),
+                             )
+                          ],
+                        ),
+                      )),
+                      const SizedBox(height: 24),
+                    ],
                     if (day.celebrationType != null) ...[
-                      _buildInfoTag(Icons.festival_outlined, day.celebrationType!),
+                      _buildInfoTag(context, Icons.festival_outlined, day.celebrationType!),
                       const SizedBox(height: 16),
                     ],
                     if (day.associatedDeities != null && day.associatedDeities!.isNotEmpty) ...[
@@ -97,7 +136,7 @@ class DayDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoTag(IconData icon, String text) {
+  Widget _buildInfoTag(BuildContext context, IconData icon, String text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(

@@ -49,6 +49,10 @@ mixin _$GlobalSettings {
   String? get siteDescription => throw _privateConstructorUsedError;
   @JsonKey(name: 'logo_path')
   String? get logoPath => throw _privateConstructorUsedError;
+  @JsonKey(name: 'privacy_policy')
+  String? get privacyPolicy => throw _privateConstructorUsedError;
+  @JsonKey(name: 'terms_of_service')
+  String? get termsOfService => throw _privateConstructorUsedError;
 
   /// Serializes this GlobalSettings to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -82,6 +86,8 @@ abstract class $GlobalSettingsCopyWith<$Res> {
     @JsonKey(name: 'site_name') String? siteName,
     @JsonKey(name: 'site_description') String? siteDescription,
     @JsonKey(name: 'logo_path') String? logoPath,
+    @JsonKey(name: 'privacy_policy') String? privacyPolicy,
+    @JsonKey(name: 'terms_of_service') String? termsOfService,
   });
 }
 
@@ -114,6 +120,8 @@ class _$GlobalSettingsCopyWithImpl<$Res, $Val extends GlobalSettings>
     Object? siteName = freezed,
     Object? siteDescription = freezed,
     Object? logoPath = freezed,
+    Object? privacyPolicy = freezed,
+    Object? termsOfService = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -173,6 +181,14 @@ class _$GlobalSettingsCopyWithImpl<$Res, $Val extends GlobalSettings>
                 ? _value.logoPath
                 : logoPath // ignore: cast_nullable_to_non_nullable
                       as String?,
+            privacyPolicy: freezed == privacyPolicy
+                ? _value.privacyPolicy
+                : privacyPolicy // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            termsOfService: freezed == termsOfService
+                ? _value.termsOfService
+                : termsOfService // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -203,6 +219,8 @@ abstract class _$$GlobalSettingsImplCopyWith<$Res>
     @JsonKey(name: 'site_name') String? siteName,
     @JsonKey(name: 'site_description') String? siteDescription,
     @JsonKey(name: 'logo_path') String? logoPath,
+    @JsonKey(name: 'privacy_policy') String? privacyPolicy,
+    @JsonKey(name: 'terms_of_service') String? termsOfService,
   });
 }
 
@@ -234,6 +252,8 @@ class __$$GlobalSettingsImplCopyWithImpl<$Res>
     Object? siteName = freezed,
     Object? siteDescription = freezed,
     Object? logoPath = freezed,
+    Object? privacyPolicy = freezed,
+    Object? termsOfService = freezed,
   }) {
     return _then(
       _$GlobalSettingsImpl(
@@ -293,6 +313,14 @@ class __$$GlobalSettingsImplCopyWithImpl<$Res>
             ? _value.logoPath
             : logoPath // ignore: cast_nullable_to_non_nullable
                   as String?,
+        privacyPolicy: freezed == privacyPolicy
+            ? _value.privacyPolicy
+            : privacyPolicy // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        termsOfService: freezed == termsOfService
+            ? _value.termsOfService
+            : termsOfService // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -317,6 +345,8 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
     @JsonKey(name: 'site_name') this.siteName,
     @JsonKey(name: 'site_description') this.siteDescription,
     @JsonKey(name: 'logo_path') this.logoPath,
+    @JsonKey(name: 'privacy_policy') this.privacyPolicy,
+    @JsonKey(name: 'terms_of_service') this.termsOfService,
   }) : _supportedLanguages = supportedLanguages,
        _adsScreens = adsScreens;
 
@@ -380,10 +410,16 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
   @override
   @JsonKey(name: 'logo_path')
   final String? logoPath;
+  @override
+  @JsonKey(name: 'privacy_policy')
+  final String? privacyPolicy;
+  @override
+  @JsonKey(name: 'terms_of_service')
+  final String? termsOfService;
 
   @override
   String toString() {
-    return 'GlobalSettings(primaryColor: $primaryColor, secondaryColor: $secondaryColor, defaultLanguage: $defaultLanguage, supportedLanguages: $supportedLanguages, maintenanceMode: $maintenanceMode, isAdsEnabled: $isAdsEnabled, adUnitIdAndroid: $adUnitIdAndroid, adUnitIdIos: $adUnitIdIos, adsScreens: $adsScreens, notificationSoundPath: $notificationSoundPath, alarmSoundPath: $alarmSoundPath, siteName: $siteName, siteDescription: $siteDescription, logoPath: $logoPath)';
+    return 'GlobalSettings(primaryColor: $primaryColor, secondaryColor: $secondaryColor, defaultLanguage: $defaultLanguage, supportedLanguages: $supportedLanguages, maintenanceMode: $maintenanceMode, isAdsEnabled: $isAdsEnabled, adUnitIdAndroid: $adUnitIdAndroid, adUnitIdIos: $adUnitIdIos, adsScreens: $adsScreens, notificationSoundPath: $notificationSoundPath, alarmSoundPath: $alarmSoundPath, siteName: $siteName, siteDescription: $siteDescription, logoPath: $logoPath, privacyPolicy: $privacyPolicy, termsOfService: $termsOfService)';
   }
 
   @override
@@ -422,7 +458,11 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
             (identical(other.siteDescription, siteDescription) ||
                 other.siteDescription == siteDescription) &&
             (identical(other.logoPath, logoPath) ||
-                other.logoPath == logoPath));
+                other.logoPath == logoPath) &&
+            (identical(other.privacyPolicy, privacyPolicy) ||
+                other.privacyPolicy == privacyPolicy) &&
+            (identical(other.termsOfService, termsOfService) ||
+                other.termsOfService == termsOfService));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -443,6 +483,8 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
     siteName,
     siteDescription,
     logoPath,
+    privacyPolicy,
+    termsOfService,
   );
 
   /// Create a copy of GlobalSettings
@@ -479,6 +521,8 @@ abstract class _GlobalSettings implements GlobalSettings {
     @JsonKey(name: 'site_name') final String? siteName,
     @JsonKey(name: 'site_description') final String? siteDescription,
     @JsonKey(name: 'logo_path') final String? logoPath,
+    @JsonKey(name: 'privacy_policy') final String? privacyPolicy,
+    @JsonKey(name: 'terms_of_service') final String? termsOfService,
   }) = _$GlobalSettingsImpl;
 
   factory _GlobalSettings.fromJson(Map<String, dynamic> json) =
@@ -526,6 +570,12 @@ abstract class _GlobalSettings implements GlobalSettings {
   @override
   @JsonKey(name: 'logo_path')
   String? get logoPath;
+  @override
+  @JsonKey(name: 'privacy_policy')
+  String? get privacyPolicy;
+  @override
+  @JsonKey(name: 'terms_of_service')
+  String? get termsOfService;
 
   /// Create a copy of GlobalSettings
   /// with the given fields replaced by the non-null parameter values.

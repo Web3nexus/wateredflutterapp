@@ -4,6 +4,7 @@ import 'package:Watered/core/theme/theme_provider.dart';
 import 'package:Watered/features/notifications/screens/notification_settings_screen.dart';
 import 'package:Watered/features/profile/screens/faq_screen.dart';
 import 'package:Watered/features/profile/screens/user_guides_screen.dart';
+import 'package:Watered/features/landing/landing_page_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -54,6 +55,15 @@ class SettingsScreen extends ConsumerWidget {
              onTap: () {
                Navigator.of(context).push(
                  MaterialPageRoute(builder: (_) => const UserGuidesScreen()),
+               );
+             },
+          ),
+          ListTile(
+             title: const Text('Landing Page'),
+             trailing: const Icon(Icons.chevron_right),
+             onTap: () {
+               Navigator.of(context).push(
+                 MaterialPageRoute(builder: (_) => const LandingPageScreen()),
                );
              },
           ),

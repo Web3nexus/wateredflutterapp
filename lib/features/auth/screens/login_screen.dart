@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/auth/providers/auth_provider.dart';
 import 'package:Watered/features/auth/screens/register_screen.dart';
+import 'package:Watered/features/config/screens/legal_document_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -65,24 +66,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Center(
-                      child: Container(
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: theme.cardTheme.color,
-                          borderRadius: BorderRadius.circular(32),
-                          boxShadow: [
-                            BoxShadow(
-                              color: theme.colorScheme.primary.withOpacity(0.2),
-                              blurRadius: 20,
-                              spreadRadius: 5,
-                            ),
-                          ],
-                        ),
-                        child: Image.asset(
-                          'assets/icon/splashicon.png',
-                          height: 80,
-                          width: 80,
-                        ),
+                      child: Image.asset(
+                        'assets/icon/splashicon.png',
+                        height: 100,
+                        width: 100,
+                        color: isDark ? Colors.white : null,
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -222,7 +210,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         text: TextSpan(
                           text: "Don't have an account? ",
                           style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6), fontFamily: 'Outfit'),
-                          children: const [
+                          children: [
                             TextSpan(
                               text: 'Sign Up',
                               style: TextStyle(
@@ -234,6 +222,57 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 32),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LegalDocumentScreen(
+                                  title: 'Privacy Policy',
+                                  type: 'privacy_policy',
+                                ),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Privacy Policy',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text('•', style: TextStyle(color: theme.textTheme.bodySmall?.color?.withOpacity(0.6))),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LegalDocumentScreen(
+                                  title: 'Terms of Service',
+                                  type: 'terms_of_service',
+                                ),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Terms of Service',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
                   ],
                 ),
               ),

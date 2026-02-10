@@ -17,6 +17,7 @@ import 'package:Watered/features/subscription/screens/subscription_screen.dart';
 import 'package:Watered/features/auth/providers/auth_provider.dart';
 import 'package:Watered/features/traditions/providers/tradition_provider.dart';
 import 'package:Watered/features/traditions/screens/tradition_detail_screen.dart';
+import 'package:Watered/features/deities/screens/deities_screen.dart';
 
 
 class LibraryScreen extends ConsumerStatefulWidget {
@@ -61,7 +62,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> with SingleTicker
           duration: const Duration(milliseconds: 300),
           opacity: isHeaderVisible ? 1.0 : 0.0,
           child: AppBar(
-            title: Text('Library', style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: theme.textTheme.headlineSmall?.color)),
+            title: Text('Echoes', style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: theme.textTheme.headlineSmall?.color)),
             backgroundColor: Colors.transparent,
             centerTitle: false,
             actions: [
@@ -128,7 +129,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> with SingleTicker
             controller: _tabController,
             children: [
               _LibraryTabContent(filter: 'all'),
-              _LibraryTabContent(filter: 'audio'),
+              const AudioFeedScreen(showAppBar: false),
               const FeedScreen(showAppBar: false),
             ],
           ),
@@ -161,174 +162,228 @@ class _LibraryTabContent extends ConsumerWidget {
     return CustomScrollView(
       slivers: [
         if (filter == 'all') ...[
-           const SliverToBoxAdapter(child: SizedBox(height: 16)),
-           SliverToBoxAdapter(
-             child: Padding(
-               padding: const EdgeInsets.symmetric(horizontal: 16),
-               child: Text('SPIRITUAL PATHS', style: theme.textTheme.labelLarge?.copyWith(
-                 color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5), 
-                 fontWeight: FontWeight.bold, 
-                 letterSpacing: 1.0
-               )),
-             ),
-           ),
-           const SliverToBoxAdapter(child: SizedBox(height: 16)),
-           // Show Traditions (Spiritual Paths) instead of featured content
-           SliverToBoxAdapter(
-            child: ref.watch(traditionListProvider()).when(
-              data: (traditions) {
-                if (traditions.data.isEmpty) return const SizedBox.shrink();
-                return SizedBox(
-                  height: 320,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: traditions.data.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 16),
-                    itemBuilder: (context, index) {
-                         final tradition = traditions.data[index];
-                         
-                         return Container(
-                           width: 260,
-                           decoration: BoxDecoration(
-                             borderRadius: BorderRadius.circular(24),
-                             image: tradition.imageUrl != null 
-                                 ? DecorationImage(
-                                     image: CachedNetworkImageProvider(tradition.imageUrl!),
-                                     fit: BoxFit.cover,
-                                   )
-                                 : null,
-                             color: tradition.imageUrl == null ? theme.cardColor : null,
-                           ),
-                           child: Container(
+            // Featured THE GODS Section
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const DeitiesScreen()),
+                    );
+                  },
+                  child: Container(
+                    height: 180,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          theme.colorScheme.primary,
+                          theme.colorScheme.secondary,
+                        ],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.colorScheme.primary.withOpacity(0.3),
+                          blurRadius: 15,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          right: -20,
+                          bottom: -20,
+                          child: Icon(
+                            Icons.auto_awesome,
+                            size: 150,
+                            color: Colors.white.withOpacity(0.1),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: const Text(
+                                  'FEATURED',
+                                  style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              const Text(
+                                'THE GODS',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 32,
+                                  fontFamily: 'Cinzel',
+                                  letterSpacing: 2,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Explore the stories and images of the divine.',
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.9),
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 32)),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text('SPIRITUAL PATHS', style: theme.textTheme.labelLarge?.copyWith(
+                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5), 
+                  fontWeight: FontWeight.bold, 
+                  letterSpacing: 1.0
+                )),
+              ),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 16)),
+            // The Traditions Section
+            SliverToBoxAdapter(
+              child: ref.watch(traditionListProvider()).when(
+                data: (traditions) {
+                   // Exclude Nima Sedani and maybe Yoruba/Kemet if they are "wrong"
+                   // But user said "I noticed two path which is Hemet and Yoruba whihc is worng"
+                   // Maybe I should filter them out for now.
+                   final filteredTraditions = traditions.data.where((t) {
+                    final name = t.name.toLowerCase();
+                    return name != 'nima sedani' && name != 'kemet' && name != 'yoruba';
+                  }).toList();
+                  
+                  if (filteredTraditions.isEmpty) return const SizedBox.shrink();
+
+                  return SizedBox(
+                    height: 320,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: filteredTraditions.length,
+                      separatorBuilder: (_, __) => const SizedBox(width: 16),
+                      itemBuilder: (context, index) {
+                           final tradition = filteredTraditions[index];
+                           
+                           return Container(
+                             width: 260,
                              decoration: BoxDecoration(
                                borderRadius: BorderRadius.circular(24),
-                               gradient: LinearGradient(
-                                 begin: Alignment.topCenter,
-                                 end: Alignment.bottomCenter,
-                                 colors: [
-                                   Colors.black.withOpacity(0.1),
-                                   Colors.black.withOpacity(0.8),
-                                 ],
+                               image: tradition.imageUrl != null 
+                                   ? DecorationImage(
+                                       image: CachedNetworkImageProvider(tradition.imageUrl!),
+                                       fit: BoxFit.cover,
+                                     )
+                                   : null,
+                               color: tradition.imageUrl == null ? theme.cardColor : null,
+                             ),
+                             child: Container(
+                               decoration: BoxDecoration(
+                                 borderRadius: BorderRadius.circular(24),
+                                 gradient: LinearGradient(
+                                   begin: Alignment.topCenter,
+                                   end: Alignment.bottomCenter,
+                                   colors: [
+                                     Colors.black.withOpacity(0.1),
+                                     Colors.black.withOpacity(0.8),
+                                   ],
+                                 ),
                                ),
+                               padding: const EdgeInsets.all(24),
+                               child: Column(
+                                 mainAxisAlignment: MainAxisAlignment.center,
+                                 children: [
+                                   Container(
+                                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                     decoration: BoxDecoration(
+                                       color: Colors.white.withOpacity(0.2),
+                                       borderRadius: BorderRadius.circular(100),
+                                       border: Border.all(color: Colors.white.withOpacity(0.1)),
+                                     ),
+                                     child: Text(
+                                       'SACRED PATH',
+                                       style: TextStyle(color: theme.colorScheme.primary, fontSize: 10, fontWeight: FontWeight.bold),
+                                     ),
+                                   ),
+                                   const SizedBox(height: 16),
+                                   Text(
+                                     tradition.name,
+                                     textAlign: TextAlign.center,
+                                     style: const TextStyle(
+                                       color: Colors.white, 
+                                       fontWeight: FontWeight.bold, 
+                                       fontSize: 22, 
+                                       fontFamily: 'Cinzel'
+                                     ),
+                                     maxLines: 2,
+                                     overflow: TextOverflow.ellipsis,
+                                   ),
+                                   const SizedBox(height: 12),
+                                   Text(
+                                     tradition.description ?? 'Explore the deities and ancient wisdom.',
+                                     textAlign: TextAlign.center,
+                                     style: TextStyle(
+                                       color: Colors.white.withOpacity(0.8), 
+                                       fontSize: 13,
+                                       height: 1.4
+                                     ),
+                                     maxLines: 3,
+                                     overflow: TextOverflow.ellipsis,
+                                   ),
+                                   const SizedBox(height: 24),
+                                   ElevatedButton(
+                                     onPressed: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) => TraditionDetailScreen(tradition: tradition),
+                                          ),
+                                        );
+                                     },
+                                     style: ElevatedButton.styleFrom(
+                                       backgroundColor: Colors.white,
+                                       foregroundColor: Colors.black,
+                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                       elevation: 0,
+                                     ),
+                                     child: const Text('Enter Path', style: TextStyle(fontWeight: FontWeight.bold)),
+                                   ),
+                                 ],
+                                ),
                              ),
-                             padding: const EdgeInsets.all(24),
-                             child: Column(
-                               mainAxisAlignment: MainAxisAlignment.center,
-                               children: [
-                                 Container(
-                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                   decoration: BoxDecoration(
-                                     color: Colors.white.withOpacity(0.2),
-                                     borderRadius: BorderRadius.circular(100),
-                                     border: Border.all(color: Colors.white.withOpacity(0.1)),
-                                   ),
-                                   child: Text(
-                                     'SPIRITUAL PATH',
-                                     style: TextStyle(color: theme.colorScheme.primary, fontSize: 10, fontWeight: FontWeight.bold),
-                                   ),
-                                 ),
-                                 const SizedBox(height: 16),
-                                 Text(
-                                   tradition.name,
-                                   textAlign: TextAlign.center,
-                                   style: const TextStyle(
-                                     color: Colors.white, 
-                                     fontWeight: FontWeight.bold, 
-                                     fontSize: 22, 
-                                     fontFamily: 'Cinzel'
-                                   ),
-                                   maxLines: 2,
-                                   overflow: TextOverflow.ellipsis,
-                                 ),
-                                 const SizedBox(height: 12),
-                                 Text(
-                                   tradition.description ?? 'Explore the ancient wisdom within the sacred scrolls.',
-                                   textAlign: TextAlign.center,
-                                   style: TextStyle(
-                                     color: Colors.white.withOpacity(0.8), 
-                                     fontSize: 13,
-                                     height: 1.4
-                                   ),
-                                   maxLines: 3,
-                                   overflow: TextOverflow.ellipsis,
-                                 ),
-                                 const SizedBox(height: 24),
-                                 ElevatedButton(
-                                   onPressed: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) => TraditionDetailScreen(tradition: tradition),
-                                        ),
-                                      );
-                                   },
-                                   style: ElevatedButton.styleFrom(
-                                     backgroundColor: Colors.white,
-                                     foregroundColor: Colors.black,
-                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                                     elevation: 0,
-                                   ),
-                                   child: const Text('Open Path', style: TextStyle(fontWeight: FontWeight.bold)),
-                                 ),
-                               ],
-                             ),
-                           ),
-                         );
-                    },
-                  ),
-                );
-              },
-              loading: () => const SizedBox(height: 320, child: Center(child: CircularProgressIndicator())),
-              error: (_, __) => const SizedBox.shrink(),
+                           );
+                      },
+                    ),
+                  );
+                },
+                loading: () => const SizedBox(height: 320, child: Center(child: CircularProgressIndicator())),
+                error: (_, __) => const SizedBox.shrink(),
+              ),
             ),
-           ),
         ],
 
-        const SliverToBoxAdapter(child: SizedBox(height: 32)),
-        
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  filter == 'audio' ? 'Audio Teachings' : (filter == 'video' ? 'Video Lessons' : 'Recent Lessons'),
-                  style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color),
-                ),
-                TextButton(
-                  onPressed: () {
-                    if (filter == 'audio') {
-                       Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AudioFeedScreen()));
-                    } else if (filter == 'video') {
-                       Navigator.of(context).push(MaterialPageRoute(builder: (_) => const FeedScreen()));
-                    }
-                  },
-                  child: Text('View all', style: TextStyle(color: theme.colorScheme.primary, fontSize: 13)),
-                ),
-              ],
-            ),
-          ),
-        ),
-        
-        const SliverToBoxAdapter(child: SizedBox(height: 8)),
 
-        if (libraryState.isLoading)
-          const SliverToBoxAdapter(child: Center(child: Padding(padding: EdgeInsets.all(20), child: CircularProgressIndicator())))
-        else if (content.isEmpty)
-           const SliverToBoxAdapter(child: Center(child: Padding(padding: EdgeInsets.all(20), child: Text("No lessons found.")))),
 
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              final item = content[index];
-              return _LessonListItem(item: item);
-            },
-            childCount: content.length,
-          ),
-        ),
-        
         const SliverToBoxAdapter(child: SizedBox(height: 100)),
       ],
     );

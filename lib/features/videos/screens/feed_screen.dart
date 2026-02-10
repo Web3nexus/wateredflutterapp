@@ -73,10 +73,15 @@ class _VideoFeed extends ConsumerStatefulWidget {
 class _VideoFeedState extends ConsumerState<_VideoFeed> {
   int _currentIndex = 0;
   bool _initialIndexSet = false;
+  String _selectedCategory = 'All';
+  final List<String> _categories = ['All', 'Teaching', 'Music Video', 'Ritual', 'Documentary'];
 
   @override
   Widget build(BuildContext context) {
-    final videoState = ref.watch(videoListProvider(isFeatured: widget.isFeatured));
+    final videoState = ref.watch(videoListProvider(
+      isFeatured: widget.isFeatured,
+      category: _selectedCategory == 'All' ? null : _selectedCategory,
+    ));
     final isPremium = ref.watch(authProvider).user?.isPremium ?? false;
 
     return Stack(
@@ -94,29 +99,72 @@ class _VideoFeedState extends ConsumerState<_VideoFeed> {
                _initialIndexSet = true;
             }
 
-            return PageView.builder(
-                  controller: PageController(initialPage: _currentIndex),
-                  scrollDirection: Axis.vertical,
-                  itemCount: videos.data.length,
-                  onPageChanged: (index) {
-                    setState(() {
-                      _currentIndex = index;
-                    });
-                  },
-                  itemBuilder: (context, index) {
-                    final video = videos.data[index];
-                    return _VideoReelItem(
-                      video: video,
-                      shouldPlay: index == _currentIndex,
-                    );
-                  },
-                );
+            return RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(videoListProvider);
+              },
+              child: PageView.builder(
+                    controller: PageController(initialPage: _currentIndex),
+                    scrollDirection: Axis.vertical,
+                    itemCount: videos.data.length,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      final video = videos.data[index];
+                      return _VideoReelItem(
+                        video: video,
+                        shouldPlay: index == _currentIndex,
+                      );
+                    },
+                  ),
+            );
           },
           loading: () => Center(
             child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
           ),
           error: (err, stack) => _ErrorView(error: err.toString()),
         ),
+
+        // Category Filters (Horizontal)
+        Positioned(
+          top: 50, // Reduced from 80
+          left: 0,
+          right: 0,
+          child: SizedBox(
+            height: 40,
+            child: ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              scrollDirection: Axis.horizontal,
+              itemCount: _categories.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              itemBuilder: (context, index) {
+                final category = _categories[index];
+                final isSelected = _selectedCategory == category;
+                return ChoiceChip(
+                  label: Text(category, style: const TextStyle(fontSize: 12)),
+                  selected: isSelected,
+                  onSelected: (selected) {
+                    setState(() {
+                      _selectedCategory = category;
+                      _currentIndex = 0; // Reset index when filtering
+                    });
+                  },
+                  backgroundColor: Colors.black45,
+                  selectedColor: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                  labelStyle: TextStyle(
+                    color: isSelected ? Colors.black : Colors.white70,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                );
+              },
+            ),
+          ),
+        ),
+
         if (!isPremium)
           Positioned(
             top: 50,
@@ -132,7 +180,7 @@ class _VideoFeedState extends ConsumerState<_VideoFeed> {
             ),
           ),
         const Positioned(
-          top: 40,
+          top: 0, // Reduced from 40
           left: 0,
           right: 0,
           child: Center(child: AdBanner(screenKey: 'reels')),

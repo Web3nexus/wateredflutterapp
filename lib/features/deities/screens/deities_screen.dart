@@ -17,7 +17,7 @@ class DeitiesScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Ancient Spirits'),
+        title: const Text('The Gods'),
       ),
       body: Column(
         children: [

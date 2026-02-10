@@ -91,7 +91,7 @@ class TraditionDetailScreen extends ConsumerWidget {
                     children: [
                       Text(
                         tradition.name.toUpperCase(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'Cinzel',
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
@@ -157,7 +157,7 @@ class TraditionDetailScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-            loading: () => const SliverFillRemaining(
+            loading: () => SliverFillRemaining(
               child: Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary)),
             ),
             error: (err, stack) => SliverFillRemaining(
@@ -204,7 +204,7 @@ class _CollectionItem extends StatelessWidget {
             color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Center(
+          child: Center(
             child: Icon(Icons.book_rounded, color: Theme.of(context).colorScheme.primary),
           ),
         ),

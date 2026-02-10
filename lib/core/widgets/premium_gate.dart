@@ -37,7 +37,7 @@ class _LockedOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final premiumGold = const Color(0xFFF4B846);
     
     return Stack(
       children: [
@@ -45,7 +45,7 @@ class _LockedOverlay extends StatelessWidget {
         AbsorbPointer(
           child: ColorFiltered(
             colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.5),
+              Colors.black.withOpacity(0.7), // Increased opacity for better focus
               BlendMode.darken,
             ),
             child: child,
@@ -54,36 +54,44 @@ class _LockedOverlay extends StatelessWidget {
         // Premium Message overlay
         Center(
           child: Container(
-            padding: const EdgeInsets.all(24),
-            margin: const EdgeInsets.symmetric(horizontal: 40),
+            padding: const EdgeInsets.all(32),
+            margin: const EdgeInsets.symmetric(horizontal: 32),
             decoration: BoxDecoration(
-              color: const Color(0xFF1E293B).withOpacity(0.95),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.5)),
+              color: const Color(0xFF0F172A).withValues(alpha: 0.98), // Deeper, more solid background
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(color: premiumGold.withValues(alpha: 0.3), width: 1.5),
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                  blurRadius: 20,
-                  spreadRadius: 5,
+                  color: premiumGold.withValues(alpha: 0.1),
+                  blurRadius: 30,
+                  spreadRadius: 8,
                 ),
               ],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
-                  Icons.lock_person_rounded,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 48,
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: premiumGold.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.auto_awesome_rounded, // More "plus" / premium feel
+                    color: premiumGold,
+                    size: 40,
+                  ),
                 ),
-                const SizedBox(height: 16),
-                const Text(
-                  'PREMIUM CONTENT',
+                const SizedBox(height: 20),
+                Text(
+                  'WATERED PLUS+',
                   style: TextStyle(
                     fontFamily: 'Cinzel',
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2,
-                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 3,
+                    fontSize: 18,
+                    color: premiumGold,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -91,28 +99,50 @@ class _LockedOverlay extends StatelessWidget {
                   message,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
+                    color: Colors.white, // Pure white for better readability
+                    fontSize: 15,
+                    height: 1.5,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const SubscriptionScreen()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const SubscriptionScreen()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: premiumGold,
+                      foregroundColor: const Color(0xFF0F172A),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    child: const Text(
+                      'UPGRADE NOW',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.5,
+                        fontSize: 14,
+                      ),
+                    ),
                   ),
-                  child: const Text(
-                    'GET PLUS+',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(
+                    'MAYBE LATER',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.5),
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
+                    ),
                   ),
                 ),
               ],

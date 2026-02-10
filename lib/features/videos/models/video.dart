@@ -22,6 +22,7 @@ class Video with _$Video {
     @JsonKey(name: 'likes_count') int? likesCount,
     @JsonKey(name: 'comments_count') int? commentsCount,
     List<String>? tags,
+    String? category,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) = _Video;

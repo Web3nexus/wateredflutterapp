@@ -23,6 +23,7 @@ _$VideoImpl _$$VideoImplFromJson(Map<String, dynamic> json) => _$VideoImpl(
   likesCount: (json['likes_count'] as num?)?.toInt(),
   commentsCount: (json['comments_count'] as num?)?.toInt(),
   tags: (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList(),
+  category: json['category'] as String?,
   createdAt: json['createdAt'] == null
       ? null
       : DateTime.parse(json['createdAt'] as String),
@@ -49,6 +50,7 @@ Map<String, dynamic> _$$VideoImplToJson(_$VideoImpl instance) =>
       'likes_count': instance.likesCount,
       'comments_count': instance.commentsCount,
       'tags': instance.tags,
+      'category': instance.category,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
     };

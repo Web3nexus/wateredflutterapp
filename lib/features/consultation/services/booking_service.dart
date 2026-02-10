@@ -12,8 +12,11 @@ class BookingService {
 
   BookingService(this._client);
 
-  Future<List<ConsultationType>> getConsultationTypes() async {
-    final response = await _client.get('consultation-types');
+  Future<List<ConsultationType>> getConsultationTypes({String? category}) async {
+    final Map<String, dynamic> queryParams = {};
+    if (category != null && category != 'All') queryParams['category'] = category;
+    
+    final response = await _client.get('consultation-types', queryParameters: queryParams);
     final data = response.data['data'] as List;
     return data.map((e) => ConsultationType.fromJson(e)).toList();
   }
