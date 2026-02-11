@@ -144,7 +144,7 @@ class _RitualsScreenState extends ConsumerState<RitualsScreen> {
                 error: (error, stack) => Center(child: Text('Error: $error')),
               ),
             ),
-            ),
+            ],
           ),
         ),
       ),

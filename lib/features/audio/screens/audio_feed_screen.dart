@@ -100,6 +100,7 @@ class _AudioFeedScreenState extends ConsumerState<AudioFeedScreen> {
           ),
         ],
       ),
+      ),
     );
   }
 }

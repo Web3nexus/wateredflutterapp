@@ -142,7 +142,7 @@ class _IncantationsScreenState extends ConsumerState<IncantationsScreen> {
                 error: (error, stack) => Center(child: Text('Error: $error')),
               ),
             ),
-            ),
+            ],
           ),
         ),
       ),
