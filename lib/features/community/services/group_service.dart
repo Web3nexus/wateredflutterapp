@@ -11,7 +11,7 @@ class GroupService {
   Future<List<Group>> fetchGroups() async {
     try {
       final response = await _api.get('/api/groups');
-      final List<dynamic> data = response['data'] ?? [];
+      final List<dynamic> data = response.data['data'] ?? [];
       return data.map((json) => Group.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to fetch groups: $e');
@@ -22,7 +22,7 @@ class GroupService {
   Future<List<int>> fetchUserGroupIds(int userId) async {
     try {
       final response = await _api.get('/api/users/$userId/groups');
-      final List<dynamic> data = response['data'] ?? [];
+      final List<dynamic> data = response.data['data'] ?? [];
       return data.map<int>((json) => json['id'] as int).toList();
     } catch (e) {
       throw Exception('Failed to fetch user groups: $e');
@@ -32,7 +32,7 @@ class GroupService {
   /// Join a group
   Future<void> joinGroup(int groupId) async {
     try {
-      await _api.post('/api/groups/$groupId/join', {});
+      await _api.post('/api/groups/$groupId/join', data: {});
     } catch (e) {
       throw Exception('Failed to join group: $e');
     }
@@ -51,7 +51,7 @@ class GroupService {
   Future<List<Post>> fetchGroupPosts(int groupId) async {
     try {
       final response = await _api.get('/api/groups/$groupId/posts');
-      final List<dynamic> data = response['data'] ?? [];
+      final List<dynamic> data = response.data['data'] ?? [];
       return data.map((json) => Post.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to fetch group posts: $e');
