@@ -45,7 +45,6 @@ class HolidayService {
               'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12
             };
             
-            final monthInt = monthMap[monthStr];
             final monthInt = monthMap[monthStr] ?? 
                              monthMap[monthStr.substring(0, 3)]; // Handle full month names if needed
 

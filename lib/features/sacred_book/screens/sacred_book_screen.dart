@@ -127,7 +127,7 @@ class _SacredBookScreenState extends ConsumerState<SacredBookScreen> {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final booksAsync = ref.watch(textCollectionListProvider);
 

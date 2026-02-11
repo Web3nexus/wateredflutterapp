@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:Watered/core/services/api_service.dart';
+import 'package:Watered/core/network/api_client.dart';
 import 'package:Watered/features/community/services/group_service.dart';
 import 'package:Watered/features/community/models/group.dart';
 import 'package:Watered/features/community/models/post.dart';
@@ -7,7 +7,7 @@ import 'package:Watered/features/auth/providers/auth_provider.dart';
 
 // Group service provider
 final groupServiceProvider = Provider<GroupService>((ref) {
-  final api = ref.watch(apiServiceProvider);
+  final api = ref.watch(apiClientProvider);
   return GroupService(api);
 });
 

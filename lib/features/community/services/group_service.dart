@@ -1,9 +1,9 @@
-import 'package:Watered/core/services/api_service.dart';
+import 'package:Watered/core/network/api_client.dart';
 import 'package:Watered/features/community/models/group.dart';
 import 'package:Watered/features/community/models/post.dart';
 
 class GroupService {
-  final ApiService _api;
+  final ApiClient _api;
 
   GroupService(this._api);
 
