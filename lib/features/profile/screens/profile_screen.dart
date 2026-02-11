@@ -252,7 +252,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       {'icon': Icons.record_voice_over_outlined, 'title': 'Incantations', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const IncantationsScreen()))},
       {'icon': Icons.diamond_outlined, 'title': 'Sacred Shop', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ShopScreen()))},
       {'icon': Icons.event_available_rounded, 'title': 'Upcoming Events', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EventsScreen()))},
-      {'icon': Icons.alarm_rounded, 'title': 'Reminders', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => PremiumGate(message: 'Set sacred reminders for your rituals and spiritual practices.', child: const RemindersScreen())))},
+      {'icon': Icons.alarm_rounded, 'title': 'Reminders', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RemindersScreen()))},
       {'icon': Icons.people_outline_rounded, 'title': 'Community', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CommunityFeedScreen()))},
       {'icon': Icons.bookmark_border_rounded, 'title': 'My Collection', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UserLibraryScreen()))},
       {'icon': Icons.map_outlined, 'title': 'Temple Discovery', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TempleScreen()))},

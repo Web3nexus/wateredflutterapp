@@ -28,8 +28,11 @@ mixin _$User {
   String? get profilePhotoUrl => throw _privateConstructorUsedError;
   @JsonKey(name: 'is_premium')
   bool get isPremium => throw _privateConstructorUsedError;
+  @JsonKey(name: 'email_verified_at')
   DateTime? get emailVerifiedAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this User to a JSON map.
@@ -52,9 +55,9 @@ abstract class $UserCopyWith<$Res> {
     String email,
     @JsonKey(name: 'profile_photo_url') String? profilePhotoUrl,
     @JsonKey(name: 'is_premium') bool isPremium,
-    DateTime? emailVerifiedAt,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'email_verified_at') DateTime? emailVerifiedAt,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   });
 }
 
@@ -136,9 +139,9 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
     String email,
     @JsonKey(name: 'profile_photo_url') String? profilePhotoUrl,
     @JsonKey(name: 'is_premium') bool isPremium,
-    DateTime? emailVerifiedAt,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'email_verified_at') DateTime? emailVerifiedAt,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   });
 }
 
@@ -211,9 +214,9 @@ class _$UserImpl implements _User {
     required this.email,
     @JsonKey(name: 'profile_photo_url') this.profilePhotoUrl,
     @JsonKey(name: 'is_premium') this.isPremium = false,
-    this.emailVerifiedAt,
-    this.createdAt,
-    this.updatedAt,
+    @JsonKey(name: 'email_verified_at') this.emailVerifiedAt,
+    @JsonKey(name: 'created_at') this.createdAt,
+    @JsonKey(name: 'updated_at') this.updatedAt,
   });
 
   factory _$UserImpl.fromJson(Map<String, dynamic> json) =>
@@ -232,10 +235,13 @@ class _$UserImpl implements _User {
   @JsonKey(name: 'is_premium')
   final bool isPremium;
   @override
+  @JsonKey(name: 'email_verified_at')
   final DateTime? emailVerifiedAt;
   @override
+  @JsonKey(name: 'created_at')
   final DateTime? createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
 
   @override
@@ -298,9 +304,9 @@ abstract class _User implements User {
     required final String email,
     @JsonKey(name: 'profile_photo_url') final String? profilePhotoUrl,
     @JsonKey(name: 'is_premium') final bool isPremium,
-    final DateTime? emailVerifiedAt,
-    final DateTime? createdAt,
-    final DateTime? updatedAt,
+    @JsonKey(name: 'email_verified_at') final DateTime? emailVerifiedAt,
+    @JsonKey(name: 'created_at') final DateTime? createdAt,
+    @JsonKey(name: 'updated_at') final DateTime? updatedAt,
   }) = _$UserImpl;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
@@ -318,10 +324,13 @@ abstract class _User implements User {
   @JsonKey(name: 'is_premium')
   bool get isPremium;
   @override
+  @JsonKey(name: 'email_verified_at')
   DateTime? get emailVerifiedAt;
   @override
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
 
   /// Create a copy of User

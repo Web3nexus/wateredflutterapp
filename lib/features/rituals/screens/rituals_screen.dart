@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/rituals/providers/ritual_providers.dart';
 import 'package:Watered/features/rituals/screens/ritual_detail_screen.dart';
 import 'package:Watered/core/widgets/premium_gate.dart';
+import 'package:Watered/features/activity/widgets/activity_tracker.dart';
 
 class RitualsScreen extends ConsumerStatefulWidget {
   const RitualsScreen({super.key});
@@ -36,8 +37,10 @@ class _RitualsScreenState extends ConsumerState<RitualsScreen> {
         appBar: AppBar(
           title: const Text('Rituals'),
         ),
-        body: Column(
-          children: [
+        body: ActivityTracker(
+          pageName: 'rituals',
+          child: Column(
+            children: [
             // Category Filter
             SizedBox(
               height: 60,
@@ -141,7 +144,8 @@ class _RitualsScreenState extends ConsumerState<RitualsScreen> {
                 error: (error, stack) => Center(child: Text('Error: $error')),
               ),
             ),
-          ],
+            ),
+          ),
         ),
       ),
     );

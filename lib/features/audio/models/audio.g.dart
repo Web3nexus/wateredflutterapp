@@ -10,24 +10,24 @@ _$AudioImpl _$$AudioImplFromJson(Map<String, dynamic> json) => _$AudioImpl(
   id: (json['id'] as num).toInt(),
   title: json['title'] as String,
   description: json['description'] as String?,
-  audioUrl: json['audioUrl'] as String,
-  thumbnailUrl: json['thumbnailUrl'] as String?,
+  audioUrl: json['audio_url'] as String,
+  thumbnailUrl: json['thumbnail_url'] as String?,
   duration: json['duration'] as String?,
   author: json['author'] as String?,
-  publishedAt: json['publishedAt'] == null
+  publishedAt: json['published_at'] == null
       ? null
-      : DateTime.parse(json['publishedAt'] as String),
-  traditionId: (json['traditionId'] as num).toInt(),
-  isActive: json['isActive'] as bool,
-  isFeatured: json['isFeatured'] as bool? ?? false,
+      : DateTime.parse(json['published_at'] as String),
+  traditionId: (json['tradition_id'] as num).toInt(),
+  isActive: json['is_active'] as bool,
+  isFeatured: json['is_featured'] as bool? ?? false,
   isLiked: json['is_liked'] as bool? ?? false,
   category: json['category'] as String?,
-  createdAt: json['createdAt'] == null
+  createdAt: json['created_at'] == null
       ? null
-      : DateTime.parse(json['createdAt'] as String),
-  updatedAt: json['updatedAt'] == null
+      : DateTime.parse(json['created_at'] as String),
+  updatedAt: json['updated_at'] == null
       ? null
-      : DateTime.parse(json['updatedAt'] as String),
+      : DateTime.parse(json['updated_at'] as String),
 );
 
 Map<String, dynamic> _$$AudioImplToJson(_$AudioImpl instance) =>
@@ -35,16 +35,16 @@ Map<String, dynamic> _$$AudioImplToJson(_$AudioImpl instance) =>
       'id': instance.id,
       'title': instance.title,
       'description': instance.description,
-      'audioUrl': instance.audioUrl,
-      'thumbnailUrl': instance.thumbnailUrl,
+      'audio_url': instance.audioUrl,
+      'thumbnail_url': instance.thumbnailUrl,
       'duration': instance.duration,
       'author': instance.author,
-      'publishedAt': instance.publishedAt?.toIso8601String(),
-      'traditionId': instance.traditionId,
-      'isActive': instance.isActive,
-      'isFeatured': instance.isFeatured,
+      'published_at': instance.publishedAt?.toIso8601String(),
+      'tradition_id': instance.traditionId,
+      'is_active': instance.isActive,
+      'is_featured': instance.isFeatured,
       'is_liked': instance.isLiked,
       'category': instance.category,
-      'createdAt': instance.createdAt?.toIso8601String(),
-      'updatedAt': instance.updatedAt?.toIso8601String(),
+      'created_at': instance.createdAt?.toIso8601String(),
+      'updated_at': instance.updatedAt?.toIso8601String(),
     };

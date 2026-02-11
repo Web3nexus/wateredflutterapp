@@ -13,6 +13,7 @@ import 'package:Watered/features/auth/providers/auth_provider.dart';
 import 'package:Watered/features/auth/screens/login_screen.dart';
 import 'package:Watered/core/services/ad_service.dart';
 import 'package:Watered/features/subscription/screens/subscription_screen.dart';
+import 'package:Watered/features/activity/widgets/activity_tracker.dart';
 
 class AudioFeedScreen extends ConsumerStatefulWidget {
   final bool showAppBar;
@@ -44,7 +45,9 @@ class _AudioFeedScreenState extends ConsumerState<AudioFeedScreen> {
           const SizedBox(width: 8),
         ],
       ) : null,
-      body: Column(
+      body: ActivityTracker(
+        pageName: 'music',
+        child: Column(
         children: [
           const AdBanner(screenKey: 'audio'),
           // Category Filters

@@ -327,10 +327,7 @@ class MainTabsScreen extends ConsumerStatefulWidget {
 class _MainTabsScreenState extends ConsumerState<MainTabsScreen> {
   final List<Widget> _screens = [
     const DashboardScreen(),
-    PremiumGate(
-      message: 'Explore our complete collection of ancient texts and wisdom.',
-      child: const LibraryScreen(),
-    ),
+    const LibraryScreen(),
     const SacredBookScreen(),
     const ShopScreen(),
     const ProfileGate(),
@@ -373,14 +370,9 @@ class _MainTabsScreenState extends ConsumerState<MainTabsScreen> {
               icon: Icon(Icons.home_rounded),
               label: 'Home',
             ),
-            BottomNavigationBarItem(
-              icon: Image.asset(
-                'assets/icon/echoes_nav_icon.png',
-                width: 24,
-                height: 24,
-                color: currentIndex == 1 ? theme.colorScheme.primary : (isDark ? Colors.white54 : Colors.black38),
-              ),
-              label: 'Echoes',
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.play_circle_rounded),
+              label: 'Media',
             ),
             BottomNavigationBarItem(
               icon: Container(

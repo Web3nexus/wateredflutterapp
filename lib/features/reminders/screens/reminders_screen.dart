@@ -11,7 +11,9 @@ import 'package:Watered/features/reminders/models/holiday.dart';
 import 'package:Watered/features/reminders/models/reminder.dart';
 import 'package:Watered/features/rituals/models/ritual.dart';
 import 'package:Watered/features/rituals/providers/ritual_providers.dart';
+import 'package:Watered/features/rituals/widgets/sacred_schedule_widget.dart';
 import 'package:intl/intl.dart';
+import 'package:just_audio/just_audio.dart';
 
 class RemindersScreen extends ConsumerStatefulWidget {
   const RemindersScreen({super.key});
@@ -21,68 +23,6 @@ class RemindersScreen extends ConsumerStatefulWidget {
 }
 
 class _RemindersScreenState extends ConsumerState<RemindersScreen> {
-  late Timer _timer;
-  DateTime _now = DateTime.now();
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (mounted) {
-        setState(() {
-          _now = DateTime.now();
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
-
-  String _getTimeUntil(TimeOfDay target) {
-    var targetDate = DateTime(_now.year, _now.month, _now.day, target.hour, target.minute);
-    if (targetDate.isBefore(_now)) {
-      targetDate = targetDate.add(const Duration(days: 1));
-    }
-    final diff = targetDate.difference(_now);
-    final hours = diff.inHours;
-    final minutes = diff.inMinutes % 60;
-    final seconds = diff.inSeconds % 60;
-    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
-  }
-
-  Map<String, dynamic>? _getNextRitual(List<Ritual> rituals) {
-    if (rituals.isEmpty) return null;
-
-    Map<String, dynamic>? next;
-    Duration? minDiff;
-
-    for (var ritual in rituals) {
-      if (ritual.timeOfDay == null) continue;
-      
-      final parts = ritual.timeOfDay!.split(':');
-      final hour = int.parse(parts[0]);
-      final minute = int.parse(parts[1]);
-      final time = TimeOfDay(hour: hour, minute: minute);
-      
-      var targetDate = DateTime(_now.year, _now.month, _now.day, time.hour, time.minute);
-      if (targetDate.isBefore(_now)) {
-        targetDate = targetDate.add(const Duration(days: 1));
-      }
-      final diff = targetDate.difference(_now);
-      if (minDiff == null || diff < minDiff) {
-        minDiff = diff;
-        next = {
-          'title': ritual.title,
-          'time': time,
-        };
-      }
-    }
-    return next;
-  }
 
   Future<void> _addReminder() async {
     TimeOfDay? time = await showTimePicker(
@@ -103,16 +43,45 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                   children: [
                     TextField(controller: titleController, decoration: const InputDecoration(hintText: 'e.g. Morning Ritual')),
                     const SizedBox(height: 16),
-                    DropdownButtonFormField<String>(
-                      value: selectedSound,
-                      decoration: const InputDecoration(labelText: 'Alarm Sound'),
-                      items: const [
-                        DropdownMenuItem(value: 'default', child: Text('Default Sound')),
-                        DropdownMenuItem(value: 'nature', child: Text('Nature (African Savannah)')),
-                        DropdownMenuItem(value: 'drums', child: Text('Sacred Drums')),
-                        DropdownMenuItem(value: 'chant', child: Text('Ancient Chant')),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: DropdownButtonFormField<String>(
+                            value: selectedSound,
+                            decoration: const InputDecoration(labelText: 'Alarm Sound'),
+                            items: const [
+                              DropdownMenuItem(value: 'default', child: Text('Default Sound')),
+                              DropdownMenuItem(value: 'nature', child: Text('Nature (African Savannah)')),
+                              DropdownMenuItem(value: 'drums', child: Text('Sacred Drums')),
+                              DropdownMenuItem(value: 'chant', child: Text('Ancient Chant')),
+                            ],
+                            onChanged: (val) {
+                              selectedSound = val;
+                              // Play preview logic could go here
+                            },
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.play_arrow_rounded),
+                          onPressed: () async {
+                              final player = AudioPlayer();
+                              // Determine asset path based on selection
+                              String assetPath = 'assets/audio/default.mp3';
+                              if (selectedSound == 'nature') assetPath = 'assets/audio/nature.mp3';
+                              if (selectedSound == 'drums') assetPath = 'assets/audio/drums.mp3';
+                              if (selectedSound == 'chant') assetPath = 'assets/audio/chant.mp3';
+                              
+                              try {
+                                await player.setAsset(assetPath);
+                                await player.play();
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Preview unavailable for this sound')),
+                                );
+                              }
+                          },
+                        ),
                       ],
-                      onChanged: (val) => selectedSound = val,
                     ),
                   ],
                 ),
@@ -144,297 +113,212 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
     final holidaysAsync = ref.watch(holidaysListProvider);
     final remindersAsync = ref.watch(remindersListProvider);
 
-    return PremiumGate(
-      message: 'Set sacred reminders for your rituals and spiritual practices.',
-      child: Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        appBar: AppBar(title: const Text('Sacred Reminders')),
-        body: CustomScrollView(
-          slivers: [
-            // Countdown Section
-            SliverToBoxAdapter(
-              child: ritualsAsync.when(
-                data: (rituals) {
-                  final nextRitual = _getNextRitual(rituals);
-                  if (nextRitual == null) return const SizedBox.shrink();
-                  final timeUntilRitual = _getTimeUntil(nextRitual['time']);
-
-                  return Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(24),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [theme.colorScheme.primary, Colors.black],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(24),
-                            boxShadow: [
-                              BoxShadow(
-                                color: theme.colorScheme.primary.withOpacity(0.3),
-                                blurRadius: 15,
-                                offset: const Offset(0, 8),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
-                                'NEXT RITUAL',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.8),
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 2,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                nextRitual['title'],
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Cinzel',
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                timeUntilRitual,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 48,
-                                  fontWeight: FontWeight.w900,
-                                  fontFamily: 'Outfit',
-                                  letterSpacing: 4,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'STARTS AT ${(nextRitual['time'] as TimeOfDay).format(context)}',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.7),
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(title: const Text('Sacred Reminders')),
+      body: CustomScrollView(
+        slivers: [
+          // Countdown Section Removed
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 24),
+                  Text(
+                    'UPCOMING HOLIDAYS',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                      color: theme.colorScheme.primary,
                     ),
-                  );
-                },
-                loading: () => const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-                error: (err, stack) => const SizedBox.shrink(),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 24),
-                    Text(
-                      'UPCOMING HOLIDAYS',
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    holidaysAsync.when(
-                      data: (holidays) {
-                        if (holidays.isEmpty) return const Text('No upcoming holidays.', style: TextStyle(color: Colors.grey));
-                        
-                        // Filter for upcoming holidays (next 30 days, including today)
-                        final upcomingHolidays = holidays.where((h) {
-                           final now = DateTime(_now.year, _now.month, _now.day);
-                           final date = DateTime(h.date.year, h.date.month, h.date.day);
-                           return !date.isBefore(now);
-                        }).toList();
-                        
-                        // Sort by date
-                        upcomingHolidays.sort((a, b) => a.date.compareTo(b.date));
+                  ),
+                  const SizedBox(height: 12),
+                  holidaysAsync.when(
+                    data: (holidays) {
+                      if (holidays.isEmpty) return const Text('No upcoming holidays.', style: TextStyle(color: Colors.grey));
+                      
+                      // Filter for upcoming holidays (next 30 days, including today)
+                      final upcomingHolidays = holidays.where((h) {
+                         final now = DateTime.now();
+                         final date = DateTime(h.date.year, h.date.month, h.date.day);
+                         return !date.isBefore(DateTime(now.year, now.month, now.day));
+                      }).toList();
+                      
+                      // Sort by date
+                      upcomingHolidays.sort((a, b) => a.date.compareTo(b.date));
 
-                        if (upcomingHolidays.isEmpty) return const Text('No upcoming holidays.', style: TextStyle(color: Colors.grey));
+                      if (upcomingHolidays.isEmpty) return const Text('No upcoming holidays.', style: TextStyle(color: Colors.grey));
 
-                        return SizedBox(
-                          height: 100,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: upcomingHolidays.length,
-                            itemBuilder: (context, index) {
-                              final h = upcomingHolidays[index];
-                              final isToday = DateUtils.isSameDay(h.date, _now);
-                              
-                              return Container(
-                                width: 220,
-                                margin: const EdgeInsets.only(right: 12),
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: isToday ? theme.colorScheme.primary.withOpacity(0.1) : theme.cardTheme.color,
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: isToday ? theme.colorScheme.primary.withOpacity(0.3) : Colors.white.withOpacity(0.05)),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        color: theme.colorScheme.secondary.withOpacity(0.1),
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(Icons.celebration_rounded, color: theme.colorScheme.secondary, size: 20),
+                      return SizedBox(
+                        height: 100,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: upcomingHolidays.length,
+                          itemBuilder: (context, index) {
+                            final h = upcomingHolidays[index];
+                            final now = DateTime.now();
+                            final isToday = DateUtils.isSameDay(h.date, now);
+                            
+                            return Container(
+                              width: 220,
+                              margin: const EdgeInsets.only(right: 12),
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: isToday ? theme.colorScheme.primary.withOpacity(0.1) : theme.cardTheme.color,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: isToday ? theme.colorScheme.primary.withOpacity(0.3) : Colors.white.withOpacity(0.05)),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: theme.colorScheme.secondary.withOpacity(0.1),
+                                      shape: BoxShape.circle,
                                     ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Text(h.name, 
-                                            style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-                                            maxLines: 1, overflow: TextOverflow.ellipsis),
-                                          Text(
-                                            isToday ? 'TODAY' : DateFormat('MMM d, y').format(h.date),
-                                            style: theme.textTheme.bodySmall?.copyWith(
-                                              color: isToday ? theme.colorScheme.primary : theme.colorScheme.primary.withOpacity(0.7),
-                                              fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                                            ),
+                                    child: Icon(Icons.celebration_rounded, color: theme.colorScheme.secondary, size: 20),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(h.name, 
+                                          style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                                          maxLines: 1, overflow: TextOverflow.ellipsis),
+                                        Text(
+                                          isToday ? 'TODAY' : DateFormat('MMM d, y').format(h.date),
+                                          style: theme.textTheme.bodySmall?.copyWith(
+                                            color: isToday ? theme.colorScheme.primary : theme.colorScheme.primary.withOpacity(0.7),
+                                            fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                      loading: () => const Center(child: CircularProgressIndicator()),
-                      error: (_, __) => const SizedBox.shrink(),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (_, __) => const SizedBox.shrink(),
+                  ),
+                  const SizedBox(height: 32),
+                  Text(
+                    'DAILY SACRED SCHEDULE',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                      color: theme.colorScheme.primary,
                     ),
-                    const SizedBox(height: 32),
-                    Text(
-                      'DAILY SACRED SCHEDULE',
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
+          ),
 
-            // Reminders List
-            remindersAsync.when(
-              data: (reminders) {
-                // Merge Today's Holidays into the daily schedule
-                final todayHolidays = holidaysAsync.asData?.value.where((h) => DateUtils.isSameDay(h.date, _now)) ?? [];
-                
-                final List<Map<String, dynamic>> combinedItems = [];
-                
-                // Add Holidays for TODAY
-                for (var h in todayHolidays) {
-                  combinedItems.add({
-                    'type': 'holiday',
-                    'title': h.name,
-                    'time': const TimeOfDay(hour: 0, minute: 0), // Full day
-                    'isPassed': false,
-                    'data': h,
-                  });
-                }
-                
-                // Add Reminders
-                for (var r in reminders) {
-                  final reminderTime = DateTime(_now.year, _now.month, _now.day, r.time.hour, r.time.minute);
-                  combinedItems.add({
-                    'type': 'reminder',
-                    'title': r.title,
-                    'time': r.time,
-                    // Check if time has passed TODAY
-                    'isPassed': reminderTime.isBefore(_now),
-                    'data': r,
-                  });
-                }
-                
-                // Sort by time
-                combinedItems.sort((a, b) {
-                  final tA = a['time'] as TimeOfDay;
-                  final tB = b['time'] as TimeOfDay;
-                  if (tA.hour != tB.hour) return tA.hour.compareTo(tB.hour);
-                  return tA.minute.compareTo(tB.minute);
+          // Reminders List
+          remindersAsync.when(
+            data: (reminders) {
+              // Merge Today's Holidays into the daily schedule
+              final now = DateTime.now();
+              final todayHolidays = holidaysAsync.asData?.value.where((h) => DateUtils.isSameDay(h.date, now)) ?? [];
+              
+              final List<Map<String, dynamic>> combinedItems = [];
+              
+              // Add Holidays for TODAY
+              for (var h in todayHolidays) {
+                combinedItems.add({
+                  'type': 'holiday',
+                  'title': h.name,
+                  'time': const TimeOfDay(hour: 0, minute: 0), // Full day
+                  'isPassed': false,
+                  'data': h,
                 });
+              }
+              
+              // Add Reminders
+              for (var r in reminders) {
+                final reminderTime = DateTime(now.year, now.month, now.day, r.time.hour, r.time.minute);
+                combinedItems.add({
+                  'type': 'reminder',
+                  'title': r.title,
+                  'time': r.time,
+                  // Check if time has passed TODAY
+                  'isPassed': reminderTime.isBefore(now),
+                  'data': r,
+                });
+              }
+              
+              // Sort by time
+              combinedItems.sort((a, b) {
+                final tA = a['time'] as TimeOfDay;
+                final tB = b['time'] as TimeOfDay;
+                if (tA.hour != tB.hour) return tA.hour.compareTo(tB.hour);
+                return tA.minute.compareTo(tB.minute);
+              });
 
-                if (combinedItems.isEmpty) {
-                  return SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.alarm_off_rounded, size: 60, color: Colors.grey),
-                          const SizedBox(height: 16),
-                          Text('No reminders or holidays for today.', style: theme.textTheme.bodyLarge),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-
-                final upcoming = combinedItems.where((i) => !i['isPassed']).toList();
-                final passed = combinedItems.where((i) => i['isPassed']).toList();
-
-                return SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      if (upcoming.isNotEmpty) ...[
+              if (combinedItems.isEmpty) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.alarm_off_rounded, size: 60, color: Colors.grey),
                         const SizedBox(height: 16),
-                        ...upcoming.map((item) => _buildReminderItem(context, item, theme, false)),
+                        Text('No reminders or holidays for today.', style: theme.textTheme.bodyLarge),
                       ],
-                      if (passed.isNotEmpty) ...[
-                        const SizedBox(height: 32),
-                        Text(
-                          'PASSED TODAY',
-                          style: theme.textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
-                            color: theme.textTheme.bodySmall?.color?.withOpacity(0.5),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        ...passed.map((item) => _buildReminderItem(context, item, theme, true)),
-                      ],
-                    ]),
+                    ),
                   ),
                 );
-              },
-              loading: () => const SliverFillRemaining(child: Center(child: CircularProgressIndicator())),
-              error: (e, s) => SliverFillRemaining(child: Center(child: Text('Error: $e'))),
-            ),
-            const SliverToBoxAdapter(child: SizedBox(height: 100)),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _addReminder,
-          backgroundColor: theme.colorScheme.primary,
-          foregroundColor: Colors.black,
-          child: const Icon(Icons.add),
-        ),
+              }
+
+              final upcoming = combinedItems.where((i) => !i['isPassed']).toList();
+              final passed = combinedItems.where((i) => i['isPassed']).toList();
+
+              return SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    if (upcoming.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      ...upcoming.map((item) => _buildReminderItem(context, item, theme, false)),
+                    ],
+                    if (passed.isNotEmpty) ...[
+                      const SizedBox(height: 32),
+                      Text(
+                        'PASSED TODAY',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
+                          color: theme.textTheme.bodySmall?.color?.withOpacity(0.5),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      ...passed.map((item) => _buildReminderItem(context, item, theme, true)),
+                    ],
+                  ]),
+                ),
+              );
+            },
+            loading: () => const SliverFillRemaining(child: Center(child: CircularProgressIndicator())),
+            error: (e, s) => SliverFillRemaining(child: Center(child: Text('Error: $e'))),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 100)),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addReminder,
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: Colors.black,
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -443,7 +327,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
     if (item['type'] == 'holiday') {
       return Container(
         margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: theme.colorScheme.secondary.withOpacity(0.05),
           borderRadius: BorderRadius.circular(16),

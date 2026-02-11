@@ -54,8 +54,8 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
         if (videoId != null) {
           _youtubeController = YoutubePlayerController(
             initialVideoId: videoId,
-            flags: const YoutubePlayerFlags(
-              autoPlay: false,
+            flags: YoutubePlayerFlags(
+              autoPlay: widget.shouldPlay,
               mute: false,
               disableDragSeek: true,
               loop: true,

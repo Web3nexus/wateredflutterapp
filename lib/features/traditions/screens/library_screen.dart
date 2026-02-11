@@ -62,7 +62,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> with SingleTicker
           duration: const Duration(milliseconds: 300),
           opacity: isHeaderVisible ? 1.0 : 0.0,
           child: AppBar(
-            title: Text('Echoes', style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: theme.textTheme.headlineSmall?.color)),
+            title: Text('Media', style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: theme.textTheme.headlineSmall?.color)),
             backgroundColor: Colors.transparent,
             centerTitle: false,
             actions: [

@@ -12,15 +12,15 @@ _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
   email: json['email'] as String,
   profilePhotoUrl: json['profile_photo_url'] as String?,
   isPremium: json['is_premium'] as bool? ?? false,
-  emailVerifiedAt: json['emailVerifiedAt'] == null
+  emailVerifiedAt: json['email_verified_at'] == null
       ? null
-      : DateTime.parse(json['emailVerifiedAt'] as String),
-  createdAt: json['createdAt'] == null
+      : DateTime.parse(json['email_verified_at'] as String),
+  createdAt: json['created_at'] == null
       ? null
-      : DateTime.parse(json['createdAt'] as String),
-  updatedAt: json['updatedAt'] == null
+      : DateTime.parse(json['created_at'] as String),
+  updatedAt: json['updated_at'] == null
       ? null
-      : DateTime.parse(json['updatedAt'] as String),
+      : DateTime.parse(json['updated_at'] as String),
 );
 
 Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
@@ -30,7 +30,7 @@ Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
       'email': instance.email,
       'profile_photo_url': instance.profilePhotoUrl,
       'is_premium': instance.isPremium,
-      'emailVerifiedAt': instance.emailVerifiedAt?.toIso8601String(),
-      'createdAt': instance.createdAt?.toIso8601String(),
-      'updatedAt': instance.updatedAt?.toIso8601String(),
+      'email_verified_at': instance.emailVerifiedAt?.toIso8601String(),
+      'created_at': instance.createdAt?.toIso8601String(),
+      'updated_at': instance.updatedAt?.toIso8601String(),
     };

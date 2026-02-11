@@ -96,6 +96,21 @@ class _VerificationPendingScreenState extends ConsumerState<VerificationPendingS
                     : const Text('Resend Verification Email'),
               ),
             ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: _isLoading ? null : () async {
+                   setState(() => _isLoading = true);
+                   await ref.read(authProvider.notifier).reloadUser();
+                   if (mounted) setState(() => _isLoading = false);
+                },
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: const Text('I have verified, check now'),
+              ),
+            ),
             const SizedBox(height: 16),
             TextButton(
               onPressed: () {

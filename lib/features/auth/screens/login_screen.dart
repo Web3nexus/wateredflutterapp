@@ -31,17 +31,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             _passwordController.text,
           );
 
-      if (success && mounted) {
+      if (!mounted) return;
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Login successful! Welcome back.'),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+          ),
+        );
         // RootGate will handle the transition automatically
       } else {
-        // Error handling is managed by the provider/state listener mostly,
-        // but we can show snackbar here if needed:
         final error = ref.read(authProvider).error;
-        if (error != null && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(error), backgroundColor: Colors.red),
-          );
+        String displayError = 'Login failed. Please try again.';
+        
+        if (error != null) {
+          if (error.contains('401') || error.toLowerCase().contains('unauthorized') || error.toLowerCase().contains('invalid')) {
+            displayError = 'Invalid email or password.';
+          } else if (error.contains('network') || error.contains('connection')) {
+            displayError = 'Network error. Please check your connection.';
+          } else {
+            // Sanitize generic errors for security
+            displayError = 'An error occurred. Please try again.';
+          }
         }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(displayError),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
       }
     }
   }

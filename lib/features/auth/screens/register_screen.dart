@@ -37,16 +37,41 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             passwordConfirmation: _confirmPasswordController.text,
           );
 
-      if (success && mounted) {
+      if (!mounted) return;
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Account created successfully! Welcome.'),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+          ),
+        );
         // Pop back to login or root, which will then redirect based on auth state
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
         final error = ref.read(authProvider).error;
-        if (error != null && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(error), backgroundColor: Colors.red),
-          );
+        String displayError = 'Registration failed. Please try again.';
+        
+        if (error != null) {
+          if (error.contains('email') && (error.contains('taken') || error.contains('exists'))) {
+            displayError = 'This email is already in use.';
+          } else if (error.contains('password')) {
+            displayError = 'Password does not meet requirements.';
+          } else if (error.contains('network') || error.contains('connection')) {
+            displayError = 'Network error. Please check your connection.';
+          } else {
+             // Sanitize generic errors
+            displayError = 'Unable to create account. Please try again later.';
+          }
         }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(displayError),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
       }
     }
   }

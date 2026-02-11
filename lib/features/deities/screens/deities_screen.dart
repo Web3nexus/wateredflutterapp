@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/deities/providers/deity_providers.dart';
 import 'package:Watered/features/deities/screens/deity_detail_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:Watered/features/activity/widgets/activity_tracker.dart';
 
 class DeitiesScreen extends ConsumerWidget {
   const DeitiesScreen({super.key});
@@ -19,7 +20,9 @@ class DeitiesScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('The Gods'),
       ),
-      body: Column(
+      body: ActivityTracker(
+        pageName: 'gods',
+        child: Column(
         children: [
           // Filter List
           SizedBox(
@@ -150,6 +153,8 @@ class DeitiesScreen extends ConsumerWidget {
           ),
         ],
       ),
+    ),
     );
   }
 }
+```

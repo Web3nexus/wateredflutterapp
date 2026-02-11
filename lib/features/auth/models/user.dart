@@ -11,9 +11,9 @@ class User with _$User {
     required String email,
     @JsonKey(name: 'profile_photo_url') String? profilePhotoUrl,
     @JsonKey(name: 'is_premium') @Default(false) bool isPremium,
-    DateTime? emailVerifiedAt,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'email_verified_at') DateTime? emailVerifiedAt,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/incantations/providers/incantation_providers.dart';
 import 'package:Watered/features/incantations/screens/incantation_detail_screen.dart';
 import 'package:Watered/core/widgets/premium_gate.dart';
+import 'package:Watered/features/activity/widgets/activity_tracker.dart';
 
 class IncantationsScreen extends ConsumerStatefulWidget {
   const IncantationsScreen({super.key});
@@ -36,8 +37,10 @@ class _IncantationsScreenState extends ConsumerState<IncantationsScreen> {
         appBar: AppBar(
           title: const Text('Incantations'),
         ),
-        body: Column(
-          children: [
+        body: ActivityTracker(
+          pageName: 'incantations',
+          child: Column(
+            children: [
             // Category Filter
             SizedBox(
               height: 60,
@@ -139,7 +142,8 @@ class _IncantationsScreenState extends ConsumerState<IncantationsScreen> {
                 error: (error, stack) => Center(child: Text('Error: $error')),
               ),
             ),
-          ],
+            ),
+          ),
         ),
       ),
     );

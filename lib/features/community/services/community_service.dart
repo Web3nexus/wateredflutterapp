@@ -14,10 +14,11 @@ class CommunityService {
     return data.map((e) => Post.fromJson(e)).toList();
   }
 
-  Future<Post> createPost({String? content, List<String>? mediaUrls}) async {
+  Future<Post> createPost({String? content, List<String>? mediaUrls, int? groupId}) async {
     final response = await _client.post('community/posts', data: {
       'content': content,
       'media_urls': mediaUrls,
+      if (groupId != null) 'group_id': groupId,
     });
     return Post.fromJson(response.data);
   }

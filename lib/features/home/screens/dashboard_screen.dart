@@ -18,6 +18,8 @@ import 'package:Watered/features/events/screens/events_screen.dart';
 import 'package:Watered/features/videos/screens/feed_screen.dart';
 import 'package:Watered/features/audio/screens/audio_player_screen.dart';
 import 'package:Watered/features/calendar/screens/calendar_home_screen.dart';
+import 'package:Watered/features/reminders/widgets/upcoming_holiday_widget.dart';
+import 'package:Watered/features/rituals/widgets/sacred_schedule_widget.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -101,10 +103,7 @@ class DashboardScreen extends ConsumerWidget {
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (_) => PremiumGate(
-                                message: 'Access the Ancient African Calendar and celestial alignments.',
-                                child: const CalendarHomeScreen(),
-                              ),
+                              builder: (_) => const CalendarHomeScreen(),
                             ),
                           );
                         },
@@ -232,31 +231,32 @@ class DashboardScreen extends ConsumerWidget {
                 children: [
                    _buildQuickAction(context, 'Rituals', Icons.auto_fix_high_rounded, () {
                      Navigator.of(context).push(MaterialPageRoute(
-                       builder: (_) => PremiumGate(
-                         message: 'Unlock sacred rituals and spiritual practices.',
-                         child: const RitualsScreen(),
-                       ),
+                       builder: (_) => const RitualsScreen(),
                      ));
                    }),
                    _buildQuickAction(context, 'Incantation', Icons.record_voice_over_rounded, () {
                      Navigator.of(context).push(MaterialPageRoute(
-                       builder: (_) => PremiumGate(
-                         message: 'Access powerful ancient incantations and oral traditions.',
-                         child: const IncantationsScreen(),
-                       ),
+                       builder: (_) => const IncantationsScreen(),
                      ));
                    }),
                    _buildQuickAction(context, 'Consult', Icons.calendar_month_rounded, () {
                       ref.read(tabIndexProvider.notifier).state = 2;
                    }),
                    _buildQuickAction(context, 'Events', Icons.event_rounded, () {
-                     Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EventsScreen()));
+                     Navigator.of(context).push(MaterialPageRoute(
+                       builder: (_) => const EventsScreen(),
+                     ));
                    }),
                 ],
               ),
 
               const SizedBox(height: 32),
 
+              // Sacred Rituals Reminder Widget
+              const SacredScheduleWidget(),
+
+              const SizedBox(height: 32),
+              
               // Featured Teachings
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -286,6 +286,9 @@ class DashboardScreen extends ConsumerWidget {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: items.map((item) {
+                        // Skip null items if any
+                        if (item == null) return const SizedBox.shrink();
+
                         String title = '';
                         String subtitle = '';
                         String? imageUrl;
@@ -298,7 +301,13 @@ class DashboardScreen extends ConsumerWidget {
                           title = item.title;
                           subtitle = 'Audio • ${item.duration ?? "Unknown"}';
                           imageUrl = item.thumbnailUrl;
+                        } else {
+                           // Handle unknown types or provide defaults to avoid "Type Null" or empty cards
+                           return const SizedBox.shrink();
                         }
+
+                        // Ensure imageUrl is not null before passing or handle it in widget
+                        final finalImageUrl = imageUrl ?? 'https://Placehold.co/600x400/png?text=No+Image';
 
                         return Padding(
                           padding: const EdgeInsets.only(right: 16),
@@ -314,7 +323,7 @@ class DashboardScreen extends ConsumerWidget {
                                 ));
                               }
                             },
-                            child: _buildFeaturedCard(context, title, subtitle, imageUrl ?? 'https://Placehold.co/600x400/png'),
+                            child: _buildFeaturedCard(context, title, subtitle, finalImageUrl),
                           ),
                         );
                       }).toList(),

@@ -9,6 +9,7 @@ import 'package:Watered/features/subscription/screens/subscription_screen.dart';
 import 'package:Watered/core/services/ad_service.dart';
 
 import 'package:Watered/features/blog/screens/blog_screen.dart';
+import 'package:Watered/features/community/screens/groups_screen.dart';
 
 class CommunityFeedScreen extends ConsumerWidget {
   const CommunityFeedScreen({super.key});
@@ -19,7 +20,7 @@ class CommunityFeedScreen extends ConsumerWidget {
     final isPremium = ref.watch(authProvider).user?.isPremium ?? false;
 
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
         appBar: AppBar(
@@ -27,6 +28,7 @@ class CommunityFeedScreen extends ConsumerWidget {
           bottom: TabBar(
             tabs: const [
               Tab(text: 'Feed'),
+              Tab(text: 'Groups'),
               Tab(text: 'Blog'),
             ],
             indicatorColor: theme.colorScheme.primary,
@@ -45,6 +47,7 @@ class CommunityFeedScreen extends ConsumerWidget {
         body: TabBarView(
           children: [
             _buildFeedTab(context, ref, theme),
+            const GroupsScreen(),
             const BlogScreen(embed: true),
           ],
         ),

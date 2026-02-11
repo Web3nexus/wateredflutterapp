@@ -32,4 +32,26 @@ class Ritual {
       traditionId: json['tradition_id'],
     );
   }
+
+  DateTime? get scheduledTime {
+    if (timeOfDay == null) return null;
+    try {
+      final parts = timeOfDay!.split(':');
+      final now = DateTime.now();
+      return DateTime(now.year, now.month, now.day, int.parse(parts[0]), int.parse(parts[1]));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  bool get isPast {
+    final time = scheduledTime;
+    if (time == null) return false;
+    return DateTime.now().isAfter(time);
+  }
+
+  String get formattedTime {
+    if (timeOfDay == null) return '--:--';
+    return timeOfDay!;
+  }
 }

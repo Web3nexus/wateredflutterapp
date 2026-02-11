@@ -1,25 +1,190 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/traditions/providers/text_collection_provider.dart';
-import 'package:Watered/features/traditions/screens/collection_detail_screen.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:Watered/features/traditions/providers/chapter_provider.dart';
+import 'package:Watered/features/traditions/providers/entry_provider.dart';
+import 'package:Watered/features/traditions/models/chapter.dart';
+import 'package:Watered/features/traditions/models/text_collection.dart';
+import 'package:Watered/features/activity/widgets/activity_tracker.dart';
 
-class SacredBookScreen extends ConsumerWidget {
+class SacredBookScreen extends ConsumerStatefulWidget {
   const SacredBookScreen({super.key});
+
+  @override
+  ConsumerState<SacredBookScreen> createState() => _SacredBookScreenState();
+}
+
+class _SacredBookScreenState extends ConsumerState<SacredBookScreen> {
+  final ScrollController _scrollController = ScrollController();
+  Chapter? _currentChapter;
+  TextCollection? _currentCollection;
+
+  void _showChapterSelector(BuildContext context, List<Chapter> chapters) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        minChildSize: 0.3,
+        maxChildSize: 0.9,
+        builder: (context, scrollController) {
+          final theme = Theme.of(context);
+          return Container(
+            decoration: BoxDecoration(
+              color: theme.scaffoldBackgroundColor,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: Column(
+              children: [
+                const SizedBox(height: 12),
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(
+                    'SELECT CHAPTER',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GridView.builder(
+                    controller: scrollController,
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
+                      childAspectRatio: 1,
+                    ),
+                    itemCount: chapters.length,
+                    itemBuilder: (context, index) {
+                      final chapter = chapters[index];
+                      final isSelected = _currentChapter?.id == chapter.id;
+                      return InkWell(
+                        onTap: () {
+                          setState(() {
+                            _currentChapter = chapter;
+                          });
+                          Navigator.pop(context);
+                          // Scroll to top when changing chapters
+                          if (_scrollController.hasClients) {
+                            _scrollController.animateTo(
+                              0,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeOut,
+                            );
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? theme.colorScheme.primary
+                                : theme.cardTheme.color,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isSelected
+                                  ? theme.colorScheme.primary
+                                  : Colors.white.withOpacity(0.05),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '${chapter.order}',
+                              style: TextStyle(
+                                fontFamily: 'Cinzel',
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: isSelected
+                                    ? Colors.white
+                                    : theme.colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    // Directly fetching TextCollections (sacred books)
     final booksAsync = ref.watch(textCollectionListProvider);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Sacred Book'),
+        title: Column(
+          children: [
+            Text(
+              'NIMA SEDANI',
+              style: TextStyle(
+                fontSize: 10,
+                letterSpacing: 2,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+            if (_currentChapter != null)
+              Text(
+                'CHAPTER ${_currentChapter!.order}',
+                style: const TextStyle(
+                  fontFamily: 'Cinzel',
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+          ],
+        ),
         centerTitle: true,
+        actions: [
+          if (_currentCollection != null)
+            Consumer(
+              builder: (context, ref, _) {
+                final chaptersAsync = ref.watch(
+                  chapterListProvider(collectionId: _currentCollection!.id),
+                );
+                return chaptersAsync.when(
+                  data: (chapters) => IconButton(
+                    icon: const Icon(Icons.list_rounded),
+                    tooltip: 'Chapters',
+                    onPressed: () => _showChapterSelector(context, chapters.data),
+                  ),
+                  loading: () => const SizedBox.shrink(),
+                  error: (_, __) => const SizedBox.shrink(),
+                );
+              },
+            ),
+          IconButton(
+            icon: const Icon(Icons.bookmark_border_rounded),
+            onPressed: () {
+              // TODO: Implement Bookmark
+            },
+          ),
+        ],
       ),
-      body: booksAsync.when(
+      body: ActivityTracker(
+        pageName: 'nima_sedani',
+        child: booksAsync.when(
         data: (books) {
           if (books.isEmpty) {
             return Center(
@@ -43,90 +208,159 @@ class SacredBookScreen extends ConsumerWidget {
             );
           }
 
-          return RefreshIndicator(
-            onRefresh: () async {
-              ref.invalidate(textCollectionListProvider);
-            },
-            child: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Sacred Book Icon with Animation
-                        Center(
-                          child: TweenAnimationBuilder(
-                            duration: const Duration(milliseconds: 800),
-                            tween: Tween<double>(begin: 0.0, end: 1.0),
-                            builder: (context, double value, child) {
-                              return Transform.scale(
-                                scale: value,
-                                child: Opacity(
-                                  opacity: value,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(24),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          theme.colorScheme.primary.withOpacity(0.2),
-                                          theme.colorScheme.primary.withOpacity(0.05),
-                                        ],
+          // Auto-select first book if not set
+          if (_currentCollection == null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              setState(() {
+                _currentCollection = books.first;
+              });
+            });
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          // Load chapters for the current collection
+          return Consumer(
+            builder: (context, ref, _) {
+              final chaptersAsync = ref.watch(
+                chapterListProvider(collectionId: _currentCollection!.id),
+              );
+
+              return chaptersAsync.when(
+                data: (chapters) {
+                  if (chapters.data.isEmpty) {
+                    return const Center(
+                      child: Text('No chapters available.'),
+                    );
+                  }
+
+                  // Auto-select first chapter if not set
+                  if (_currentChapter == null) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      setState(() {
+                        _currentChapter = chapters.data.first;
+                      });
+                    });
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  // Load entries for current chapter
+                  return Consumer(
+                    builder: (context, ref, _) {
+                      final entriesAsync = ref.watch(
+                        entryListProvider(chapterId: _currentChapter!.id),
+                      );
+
+                      return entriesAsync.when(
+                        data: (entries) {
+                          if (entries.data.isEmpty) {
+                            return const Center(
+                              child: Text(
+                                'This chapter appears to be empty or yet to be transcribed.',
+                                style: TextStyle(color: Colors.blueGrey),
+                              ),
+                            );
+                          }
+
+                          return ListView.builder(
+                            controller: _scrollController,
+                            padding: const EdgeInsets.fromLTRB(24, 0, 24, 100),
+                            physics: const BouncingScrollPhysics(),
+                            itemCount: entries.data.length + 1,
+                            itemBuilder: (context, index) {
+                              if (index == 0) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 24, bottom: 40),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      // Sacred Book Icon
+                                      Container(
+                                        padding: const EdgeInsets.all(20),
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              theme.colorScheme.primary.withOpacity(0.2),
+                                              theme.colorScheme.primary.withOpacity(0.05),
+                                            ],
+                                          ),
+                                        ),
+                                        child: Image.asset(
+                                          'assets/images/sacred_book_icon.png',
+                                          height: 60,
+                                          width: 60,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 24),
+                                      Text(
+                                        'Chapter ${_currentChapter!.order}${_currentChapter!.name.isNotEmpty ? ": ${_currentChapter!.name}" : ""}',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontFamily: 'Cinzel',
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.bold,
+                                          color: theme.textTheme.headlineMedium?.color,
+                                          height: 1.2,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Container(
+                                        width: 40,
+                                        height: 4,
+                                        decoration: BoxDecoration(
+                                          color: theme.colorScheme.primary.withOpacity(0.5),
+                                          borderRadius: BorderRadius.circular(2),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+
+                              final entry = entries.data[index - 1];
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 24),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${entry.order}',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: theme.colorScheme.primary,
+                                        fontFeatures: const [FontFeature.superscripts()],
                                       ),
                                     ),
-                                    child: Image.asset(
-                                      'assets/images/sacred_book_icon.png',
-                                      height: 80,
-                                      width: 80,
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        entry.text,
+                                        style: TextStyle(
+                                          fontSize: 19,
+                                          height: 1.8,
+                                          letterSpacing: 0.3,
+                                          color: theme.textTheme.bodyMedium?.color,
+                                          fontFamily: 'Outfit',
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               );
                             },
-                          ),
-                        ),
-                        const SizedBox(height: 32),
-                        Text(
-                          'NIMA SEDANI',
-                          style: theme.textTheme.headlineMedium?.copyWith(
-                            fontFamily: 'Cinzel',
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Sacred Scripture of the Watered Faith',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                        const SizedBox(height: 32),
-                      ],
-                    ),
-                  ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final book = books[index];
-                        return _SacredBookCard(
-                          book: book,
-                          index: index,
-                        );
-                      },
-                      childCount: books.length,
-                    ),
-                  ),
-                ),
-                const SliverToBoxAdapter(child: SizedBox(height: 100)),
-              ],
-            ),
+                          );
+                        },
+                        loading: () => const Center(child: CircularProgressIndicator()),
+                        error: (err, _) => Center(child: Text('Error: $err')),
+                      );
+                    },
+                  );
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (err, _) => Center(child: Text('Error loading chapters: $err')),
+              );
+            },
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -134,140 +368,13 @@ class SacredBookScreen extends ConsumerWidget {
           child: Text('Error loading sacred texts: $error'),
         ),
       ),
-    );
-  }
-}
-
-class _SacredBookCard extends StatelessWidget {
-  final dynamic book;
-  final int index;
-
-  const _SacredBookCard({
-    required this.book,
-    required this.index,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return TweenAnimationBuilder(
-      duration: Duration(milliseconds: 400 + (index * 100)),
-      tween: Tween<double>(begin: 0.0, end: 1.0),
-      builder: (context, double value, child) {
-        return Transform.translate(
-          offset: Offset(0, 20 * (1 - value)),
-          child: Opacity(
-            opacity: value,
-            child: child,
-          ),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              theme.cardTheme.color ?? theme.cardColor,
-              theme.cardTheme.color?.withOpacity(0.8) ?? theme.cardColor.withOpacity(0.8),
-            ],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(20),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => CollectionDetailScreen(collection: book),
-                ),
-              );
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  Container(
-                    width: 60,
-                    height: 80, // Taller for book shape
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      gradient: LinearGradient(
-                        colors: [
-                          theme.colorScheme.primary,
-                          theme.colorScheme.primary.withOpacity(0.7),
-                        ],
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 4,
-                            offset: const Offset(2, 2)
-                        )
-                      ]
-                    ),
-                    child: book.coverImageUrl != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: CachedNetworkImage(
-                              imageUrl: book.coverImageUrl!,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : const Center(
-                            child: Icon(
-                              Icons.menu_book_rounded,
-                              color: Colors.white,
-                              size: 32,
-                            ),
-                          ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          book.name,
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontFamily: 'Cinzel',
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          book.description ?? 'Sacred scripture',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    color: theme.colorScheme.primary,
-                    size: 20,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:Watered/features/profile/screens/faq_screen.dart';
+import 'package:Watered/features/profile/screens/user_guides_screen.dart';
 
 class HelpSupportScreen extends StatelessWidget {
   const HelpSupportScreen({super.key});
@@ -28,26 +30,32 @@ class HelpSupportScreen extends StatelessWidget {
              icon: Icons.question_answer_outlined,
              title: 'FAQs',
              subtitle: 'Find quick answers to common questions',
+             onTap: () => Navigator.of(context).push(
+               MaterialPageRoute(builder: (_) => const FaqScreen()),
+             ),
            ),
            _buildHelpItem(
              context,
              icon: Icons.library_books_outlined,
              title: 'User Guide',
              subtitle: 'Learn how to use the Watered app',
+             onTap: () => Navigator.of(context).push(
+               MaterialPageRoute(builder: (_) => const UserGuidesScreen()),
+             ),
            ),
         ],
       ),
     );
   }
 
-  Widget _buildHelpItem(BuildContext context, {required IconData icon, required String title, required String subtitle}) {
+  Widget _buildHelpItem(BuildContext context, {required IconData icon, required String title, required String subtitle, VoidCallback? onTap}) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       child: ListTile(
         leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(subtitle),
-        onTap: () {},
+        onTap: onTap,
       ),
     );
   }

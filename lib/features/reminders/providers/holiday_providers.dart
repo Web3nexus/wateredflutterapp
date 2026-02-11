@@ -35,6 +35,8 @@ class HolidayService {
           try {
             // "MMM d" format
             final dateParts = day.gregorianDay!.split(' ');
+            if (dateParts.length < 2) continue;
+            
             final monthStr = dateParts[0];
             final dayInt = int.parse(dateParts[1]);
             
@@ -44,15 +46,37 @@ class HolidayService {
             };
             
             final monthInt = monthMap[monthStr];
+            final monthInt = monthMap[monthStr] ?? 
+                             monthMap[monthStr.substring(0, 3)]; // Handle full month names if needed
+
             if (monthInt != null) {
-              final date = DateTime(now.year, monthInt, dayInt);
-              holidays.add(Holiday(
-                id: -day.id, // Use negative id to avoid conflict
-                name: day.displayName,
-                date: date,
-                description: day.content,
-                theme: day.celebrationType,
-              ));
+              var date = DateTime(now.year, monthInt, dayInt);
+              
+              // If the date has passed for this year, assume it's for next year
+              // (Only if we are treating these as recurring annual events)
+              // However, user said "upcoming", so if it's passed, it shouldn't show unless we project to next year.
+              // Let's check if it's seemingly passed (yesterday or before)
+              if (date.isBefore(DateTime(now.year, now.month, now.day))) {
+                 date = DateTime(now.year + 1, monthInt, dayInt);
+              }
+              
+              // Deduplicate: Check if this holiday already exists from backend
+              final exists = holidays.any((h) => 
+                h.name.toLowerCase().trim() == day.displayName.toLowerCase().trim() &&
+                h.date.year == date.year &&
+                h.date.month == date.month &&
+                h.date.day == date.day
+              );
+
+              if (!exists) {
+                holidays.add(Holiday(
+                  id: -day.id, // Use negative id to avoid conflict
+                  name: day.displayName,
+                  date: date,
+                  description: day.content,
+                  theme: day.celebrationType,
+                ));
+              }
             }
           } catch (e) {
             print('Error parsing gregorian day: ${day.gregorianDay}');

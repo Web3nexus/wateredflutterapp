@@ -37,7 +37,7 @@ class _LockedOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final premiumGold = const Color(0xFFF4B846);
+    final premiumBlue = const Color(0xFF0077BE);
     
     return Stack(
       children: [
@@ -59,10 +59,10 @@ class _LockedOverlay extends StatelessWidget {
             decoration: BoxDecoration(
               color: const Color(0xFF0F172A).withValues(alpha: 0.98), // Deeper, more solid background
               borderRadius: BorderRadius.circular(32),
-              border: Border.all(color: premiumGold.withValues(alpha: 0.3), width: 1.5),
+              border: Border.all(color: premiumBlue.withValues(alpha: 0.3), width: 1.5),
               boxShadow: [
                 BoxShadow(
-                  color: premiumGold.withValues(alpha: 0.1),
+                  color: premiumBlue.withValues(alpha: 0.1),
                   blurRadius: 30,
                   spreadRadius: 8,
                 ),
@@ -74,12 +74,12 @@ class _LockedOverlay extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: premiumGold.withValues(alpha: 0.1),
+                    color: premiumBlue.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.auto_awesome_rounded, // More "plus" / premium feel
-                    color: premiumGold,
+                    color: premiumBlue,
                     size: 40,
                   ),
                 ),
@@ -91,7 +91,7 @@ class _LockedOverlay extends StatelessWidget {
                     fontWeight: FontWeight.w900,
                     letterSpacing: 3,
                     fontSize: 18,
-                    color: premiumGold,
+                    color: premiumBlue,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -115,8 +115,8 @@ class _LockedOverlay extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: premiumGold,
-                      foregroundColor: const Color(0xFF0F172A),
+                      backgroundColor: premiumBlue,
+                      foregroundColor: Colors.white,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),

@@ -67,7 +67,7 @@ class ApiErrorHandler {
       }
     }
 
-    return NetworkException('An unknown error occurred.');
+    return NetworkException('An unknown error occurred: $error');
   }
 
   static ApiException _handleResponseError(Response? response) {
