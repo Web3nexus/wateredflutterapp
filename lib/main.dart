@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/config/providers/app_boot_provider.dart';
 import 'package:Watered/features/config/providers/global_settings_provider.dart';
@@ -25,7 +26,8 @@ import 'package:Watered/core/services/navigation_service.dart';
 import 'package:Watered/features/auth/screens/verification_pending_screen.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   
   // 1. Initialize Firebase first
   try {
@@ -212,10 +214,13 @@ class _RootGateState extends ConsumerState<RootGate> {
     final bootState = ref.watch(appBootProvider);
     final authState = ref.watch(authProvider);
 
-    // 1. Show Splash while booting or checking auth
+    // 1. Show nothing while booting or checking auth (Native splash stays visible)
     if (bootState.isLoading || authState.isLoading) {
-      return const SplashScreen();
+      return const SizedBox.shrink();
     }
+
+    // When we have data or error, remove the native splash
+    FlutterNativeSplash.remove();
 
     // 2. Show Error Screen if boot failed
     return bootState.when(
@@ -232,89 +237,14 @@ class _RootGateState extends ConsumerState<RootGate> {
           }
         }
         
-        // Allow everyone into MainTabsScreen
         return const MainTabsScreen();
       },
-      loading: () => const SplashScreen(),
+      loading: () => const SizedBox.shrink(),
       error: (error, stack) => ErrorScreen(error: error.toString()),
     );
   }
 }
 
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 500), // Reduced from 1500ms
-      vsync: this,
-    );
-    
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
-    
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
-    
-    _controller.forward();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: ScaleTransition(
-            scale: _scaleAnimation,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Logo with background support for visibility
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  child: Image.asset(
-                    'assets/images/logo_light.png',
-                    width: 140,
-                    height: 140,
-                  ),
-                ),
-                const SizedBox(height: 60),
-                const SizedBox(
-                  width: 40,
-                  child: LinearProgressIndicator(
-                    color: Color(0xFFF4B846),
-                    backgroundColor: Color(0xFFE5E7EB),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 
 class MainTabsScreen extends ConsumerStatefulWidget {
