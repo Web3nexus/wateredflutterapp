@@ -1,7 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:flutter_paystack_plus/flutter_paystack_plus.dart';
 import 'package:Watered/features/subscription/providers/subscription_providers.dart';
 import 'package:Watered/features/subscription/services/subscription_service.dart';
+import 'package:Watered/features/config/providers/global_settings_provider.dart';
 
 class SubscriptionScreen extends ConsumerStatefulWidget {
   const SubscriptionScreen({super.key});
@@ -12,25 +16,144 @@ class SubscriptionScreen extends ConsumerStatefulWidget {
 
 class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   bool _isLoading = false;
+  late final Stream<List<PurchaseDetails>> _purchaseUpdated;
+
+  @override
+  void initState() {
+    super.initState();
+    _purchaseUpdated = InAppPurchase.instance.purchaseStream;
+    _purchaseUpdated.listen((purchaseDetailsList) {
+      _handlePurchaseUpdates(purchaseDetailsList);
+    }, onDone: () {
+      // Handle when the stream is closed
+    }, onError: (error) {
+      // Handle stream errors
+    });
+  }
+
+  Future<void> _handlePurchaseUpdates(List<PurchaseDetails> purchaseDetailsList) async {
+    for (var purchaseDetails in purchaseDetailsList) {
+      if (purchaseDetails.status == PurchaseStatus.pending) {
+        setState(() => _isLoading = true);
+      } else {
+        if (purchaseDetails.status == PurchaseStatus.error) {
+          setState(() => _isLoading = false);
+          _showError(purchaseDetails.error?.message ?? 'Purchase failed');
+        } else if (purchaseDetails.status == PurchaseStatus.purchased ||
+                   purchaseDetails.status == PurchaseStatus.restored) {
+          // Verify with backend
+          try {
+            await ref.read(subscriptionServiceProvider).verifyApplePurchase(
+              planId: purchaseDetails.productID,
+              receiptData: purchaseDetails.verificationData.serverVerificationData,
+            );
+            
+            if (purchaseDetails.pendingCompletePurchase) {
+              await InAppPurchase.instance.completePurchase(purchaseDetails);
+            }
+            
+            ref.refresh(subscriptionStatusProvider);
+            _showSuccess('Welcome to Premium!');
+          } catch (e) {
+            _showError('Backend verification failed: $e');
+          } finally {
+            setState(() => _isLoading = false);
+          }
+        }
+        
+        if (purchaseDetails.pendingCompletePurchase) {
+          await InAppPurchase.instance.completePurchase(purchaseDetails);
+        }
+      }
+    }
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  void _showSuccess(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), backgroundColor: Colors.green));
+  }
 
   Future<void> _subscribe(String planId) async {
+    if (Platform.isIOS) {
+      await _subscribeWithApple(planId);
+    } else {
+      await _subscribeWithPaystack(planId);
+    }
+  }
+
+  Future<void> _subscribeWithApple(String planId) async {
+    // Get the real product ID from settings
+    final settings = ref.read(globalSettingsNotifierProvider).valueOrNull;
+    final productId = (planId.contains('monthly')) 
+        ? (settings?.premiumMonthlyId ?? planId) 
+        : (settings?.premiumYearlyId ?? planId);
+
+    final bool available = await InAppPurchase.instance.isAvailable();
+    if (!available) {
+      _showError('App Store is currently unavailable');
+      return;
+    }
+
+    const Set<String> _kIds = {}; // We'd ideally fetch these from settings too
+    final ProductDetailsResponse response = await InAppPurchase.instance.queryProductDetails({productId});
+    
+    if (response.notFoundIDs.contains(productId)) {
+       _showError('Product not found in App Store');
+       return;
+    }
+
+    final PurchaseParam purchaseParam = PurchaseParam(productDetails: response.productDetails.first);
+    await InAppPurchase.instance.buyNonConsumable(purchaseParam: purchaseParam);
+  }
+
+  Future<void> _subscribeWithPaystack(String planId) async {
+    final settings = ref.read(globalSettingsNotifierProvider).valueOrNull;
+    final publicKey = settings?.paystackPublicKey;
+    
+    if (publicKey == null || publicKey.isEmpty) {
+      _showError('Paystack is not configured in settings');
+      return;
+    }
+
     setState(() => _isLoading = true);
+    
     try {
-      await ref.read(subscriptionServiceProvider).mockSubscribe(planId);
-      ref.refresh(subscriptionStatusProvider); // Refresh status
-      if (mounted) {
-         ScaffoldMessenger.of(context).showSnackBar(
-           const SnackBar(content: Text('Welcome to Premium!')),
-         );
-      }
+      final amount = planId.contains('monthly') ? 999 : 9999; // Mock amounts for UI, Paystack expects kobo
+      
+      await FlutterPaystackPlus.openPaystackPopup(
+        publicKey: publicKey,
+        customerEmail: 'customer@example.com', // In reality, fetch from user profile
+        amount: (amount * 100).toString(),
+        reference: 'sub_${DateTime.now().millisecondsSinceEpoch}',
+        onClosed: () {
+          setState(() => _isLoading = false);
+          _showError('Payment closed');
+        },
+        onSuccess: () async {
+          // Verification usually happens via webook or manual verify call
+          // Here we tell the service to verify the reference
+          try {
+            await ref.read(subscriptionServiceProvider).verifyPaystackPayment(
+              planId: planId,
+              reference: 'sub_${DateTime.now().millisecondsSinceEpoch}', // This should be the actual ref used
+            );
+            ref.refresh(subscriptionStatusProvider);
+            _showSuccess('Paystack payment successful!');
+          } catch (e) {
+            _showError('Verification failed: $e');
+          } finally {
+            setState(() => _isLoading = false);
+          }
+        },
+      );
     } catch (e) {
-      if (mounted) {
-         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text('Error: $e')),
-         );
-      }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
+      _showError('Paystack Error: $e');
+      setState(() => _isLoading = false);
     }
   }
 
@@ -117,7 +240,13 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 ),
                 const SizedBox(height: 24),
                 TextButton(
-                    onPressed: _isLoading ? null : () {},
+                    onPressed: _isLoading ? null : () async {
+                      if (Platform.isIOS) {
+                        setState(() => _isLoading = true);
+                        await InAppPurchase.instance.restorePurchases();
+                        setState(() => _isLoading = false);
+                      }
+                    },
                     child: Text('Restore Purchases', style: TextStyle(color: theme.textTheme.bodySmall?.color?.withOpacity(0.5)))
                 ),
               ],

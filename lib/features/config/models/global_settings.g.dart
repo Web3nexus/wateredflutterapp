@@ -30,6 +30,9 @@ _$GlobalSettingsImpl _$$GlobalSettingsImplFromJson(Map<String, dynamic> json) =>
       logoPath: json['logo_path'] as String?,
       privacyPolicy: json['privacy_policy'] as String?,
       termsOfService: json['terms_of_service'] as String?,
+      paystackPublicKey: json['paystack_public_key'] as String?,
+      premiumMonthlyId: json['premium_monthly_id'] as String?,
+      premiumYearlyId: json['premium_yearly_id'] as String?,
     );
 
 Map<String, dynamic> _$$GlobalSettingsImplToJson(
@@ -51,4 +54,7 @@ Map<String, dynamic> _$$GlobalSettingsImplToJson(
   'logo_path': instance.logoPath,
   'privacy_policy': instance.privacyPolicy,
   'terms_of_service': instance.termsOfService,
+  'paystack_public_key': instance.paystackPublicKey,
+  'premium_monthly_id': instance.premiumMonthlyId,
+  'premium_yearly_id': instance.premiumYearlyId,
 };

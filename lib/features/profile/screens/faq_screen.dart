@@ -66,21 +66,22 @@ class _FaqExpansionTile extends StatelessWidget {
       child: Theme(
         data: theme.copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
-        title: Text(
-          faq.question,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-        ),
-        childrenPadding: const EdgeInsets.all(16),
-        expandedAlignment: Alignment.topLeft,
-        children: [
-          Text(
-            faq.answer,
-            style: TextStyle(
-              color: theme.textTheme.bodyMedium?.color?.withOpacity(0.8),
-              height: 1.5,
-            ),
+          title: Text(
+            faq.question,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
-        ],
+          childrenPadding: const EdgeInsets.all(16),
+          expandedAlignment: Alignment.topLeft,
+          children: [
+            Text(
+              faq.answer,
+              style: TextStyle(
+                color: theme.textTheme.bodyMedium?.color?.withOpacity(0.8),
+                height: 1.5,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

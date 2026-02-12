@@ -13,11 +13,33 @@ class SubscriptionService {
 
   Future<Subscription> getStatus() async {
     final response = await _client.get('subscription');
-    return Subscription.fromJson(response.data);
+    return Subscription.fromJson(response.data['subscription'] ?? response.data);
+  }
+
+  Future<void> verifyApplePurchase({
+    required String planId,
+    required String receiptData,
+  }) async {
+    await _client.post('subscription/verify', data: {
+      'plan_id': planId,
+      'provider': 'apple',
+      'receipt_data': receiptData,
+    });
+  }
+
+  Future<void> verifyPaystackPayment({
+    required String planId,
+    required String reference,
+  }) async {
+    await _client.post('subscription/verify', data: {
+      'plan_id': planId,
+      'provider': 'paystack',
+      'transaction_reference': reference,
+    });
   }
 
   Future<void> mockSubscribe(String planId) async {
-    // Mock purchase
+    // Keep for dev/testing if needed, but the UI should use the real ones
     await _client.post('subscription/verify', data: {
       'plan_id': planId,
       'provider': 'mock_provider',

@@ -53,6 +53,12 @@ mixin _$GlobalSettings {
   String? get privacyPolicy => throw _privateConstructorUsedError;
   @JsonKey(name: 'terms_of_service')
   String? get termsOfService => throw _privateConstructorUsedError;
+  @JsonKey(name: 'paystack_public_key')
+  String? get paystackPublicKey => throw _privateConstructorUsedError;
+  @JsonKey(name: 'premium_monthly_id')
+  String? get premiumMonthlyId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'premium_yearly_id')
+  String? get premiumYearlyId => throw _privateConstructorUsedError;
 
   /// Serializes this GlobalSettings to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -88,6 +94,9 @@ abstract class $GlobalSettingsCopyWith<$Res> {
     @JsonKey(name: 'logo_path') String? logoPath,
     @JsonKey(name: 'privacy_policy') String? privacyPolicy,
     @JsonKey(name: 'terms_of_service') String? termsOfService,
+    @JsonKey(name: 'paystack_public_key') String? paystackPublicKey,
+    @JsonKey(name: 'premium_monthly_id') String? premiumMonthlyId,
+    @JsonKey(name: 'premium_yearly_id') String? premiumYearlyId,
   });
 }
 
@@ -122,6 +131,9 @@ class _$GlobalSettingsCopyWithImpl<$Res, $Val extends GlobalSettings>
     Object? logoPath = freezed,
     Object? privacyPolicy = freezed,
     Object? termsOfService = freezed,
+    Object? paystackPublicKey = freezed,
+    Object? premiumMonthlyId = freezed,
+    Object? premiumYearlyId = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -189,6 +201,18 @@ class _$GlobalSettingsCopyWithImpl<$Res, $Val extends GlobalSettings>
                 ? _value.termsOfService
                 : termsOfService // ignore: cast_nullable_to_non_nullable
                       as String?,
+            paystackPublicKey: freezed == paystackPublicKey
+                ? _value.paystackPublicKey
+                : paystackPublicKey // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            premiumMonthlyId: freezed == premiumMonthlyId
+                ? _value.premiumMonthlyId
+                : premiumMonthlyId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            premiumYearlyId: freezed == premiumYearlyId
+                ? _value.premiumYearlyId
+                : premiumYearlyId // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -221,6 +245,9 @@ abstract class _$$GlobalSettingsImplCopyWith<$Res>
     @JsonKey(name: 'logo_path') String? logoPath,
     @JsonKey(name: 'privacy_policy') String? privacyPolicy,
     @JsonKey(name: 'terms_of_service') String? termsOfService,
+    @JsonKey(name: 'paystack_public_key') String? paystackPublicKey,
+    @JsonKey(name: 'premium_monthly_id') String? premiumMonthlyId,
+    @JsonKey(name: 'premium_yearly_id') String? premiumYearlyId,
   });
 }
 
@@ -254,6 +281,9 @@ class __$$GlobalSettingsImplCopyWithImpl<$Res>
     Object? logoPath = freezed,
     Object? privacyPolicy = freezed,
     Object? termsOfService = freezed,
+    Object? paystackPublicKey = freezed,
+    Object? premiumMonthlyId = freezed,
+    Object? premiumYearlyId = freezed,
   }) {
     return _then(
       _$GlobalSettingsImpl(
@@ -321,6 +351,18 @@ class __$$GlobalSettingsImplCopyWithImpl<$Res>
             ? _value.termsOfService
             : termsOfService // ignore: cast_nullable_to_non_nullable
                   as String?,
+        paystackPublicKey: freezed == paystackPublicKey
+            ? _value.paystackPublicKey
+            : paystackPublicKey // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        premiumMonthlyId: freezed == premiumMonthlyId
+            ? _value.premiumMonthlyId
+            : premiumMonthlyId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        premiumYearlyId: freezed == premiumYearlyId
+            ? _value.premiumYearlyId
+            : premiumYearlyId // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -347,6 +389,9 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
     @JsonKey(name: 'logo_path') this.logoPath,
     @JsonKey(name: 'privacy_policy') this.privacyPolicy,
     @JsonKey(name: 'terms_of_service') this.termsOfService,
+    @JsonKey(name: 'paystack_public_key') this.paystackPublicKey,
+    @JsonKey(name: 'premium_monthly_id') this.premiumMonthlyId,
+    @JsonKey(name: 'premium_yearly_id') this.premiumYearlyId,
   }) : _supportedLanguages = supportedLanguages,
        _adsScreens = adsScreens;
 
@@ -416,10 +461,19 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
   @override
   @JsonKey(name: 'terms_of_service')
   final String? termsOfService;
+  @override
+  @JsonKey(name: 'paystack_public_key')
+  final String? paystackPublicKey;
+  @override
+  @JsonKey(name: 'premium_monthly_id')
+  final String? premiumMonthlyId;
+  @override
+  @JsonKey(name: 'premium_yearly_id')
+  final String? premiumYearlyId;
 
   @override
   String toString() {
-    return 'GlobalSettings(primaryColor: $primaryColor, secondaryColor: $secondaryColor, defaultLanguage: $defaultLanguage, supportedLanguages: $supportedLanguages, maintenanceMode: $maintenanceMode, isAdsEnabled: $isAdsEnabled, adUnitIdAndroid: $adUnitIdAndroid, adUnitIdIos: $adUnitIdIos, adsScreens: $adsScreens, notificationSoundPath: $notificationSoundPath, alarmSoundPath: $alarmSoundPath, siteName: $siteName, siteDescription: $siteDescription, logoPath: $logoPath, privacyPolicy: $privacyPolicy, termsOfService: $termsOfService)';
+    return 'GlobalSettings(primaryColor: $primaryColor, secondaryColor: $secondaryColor, defaultLanguage: $defaultLanguage, supportedLanguages: $supportedLanguages, maintenanceMode: $maintenanceMode, isAdsEnabled: $isAdsEnabled, adUnitIdAndroid: $adUnitIdAndroid, adUnitIdIos: $adUnitIdIos, adsScreens: $adsScreens, notificationSoundPath: $notificationSoundPath, alarmSoundPath: $alarmSoundPath, siteName: $siteName, siteDescription: $siteDescription, logoPath: $logoPath, privacyPolicy: $privacyPolicy, termsOfService: $termsOfService, paystackPublicKey: $paystackPublicKey, premiumMonthlyId: $premiumMonthlyId, premiumYearlyId: $premiumYearlyId)';
   }
 
   @override
@@ -462,12 +516,18 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
             (identical(other.privacyPolicy, privacyPolicy) ||
                 other.privacyPolicy == privacyPolicy) &&
             (identical(other.termsOfService, termsOfService) ||
-                other.termsOfService == termsOfService));
+                other.termsOfService == termsOfService) &&
+            (identical(other.paystackPublicKey, paystackPublicKey) ||
+                other.paystackPublicKey == paystackPublicKey) &&
+            (identical(other.premiumMonthlyId, premiumMonthlyId) ||
+                other.premiumMonthlyId == premiumMonthlyId) &&
+            (identical(other.premiumYearlyId, premiumYearlyId) ||
+                other.premiumYearlyId == premiumYearlyId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     runtimeType,
     primaryColor,
     secondaryColor,
@@ -485,7 +545,10 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
     logoPath,
     privacyPolicy,
     termsOfService,
-  );
+    paystackPublicKey,
+    premiumMonthlyId,
+    premiumYearlyId,
+  ]);
 
   /// Create a copy of GlobalSettings
   /// with the given fields replaced by the non-null parameter values.
@@ -523,6 +586,9 @@ abstract class _GlobalSettings implements GlobalSettings {
     @JsonKey(name: 'logo_path') final String? logoPath,
     @JsonKey(name: 'privacy_policy') final String? privacyPolicy,
     @JsonKey(name: 'terms_of_service') final String? termsOfService,
+    @JsonKey(name: 'paystack_public_key') final String? paystackPublicKey,
+    @JsonKey(name: 'premium_monthly_id') final String? premiumMonthlyId,
+    @JsonKey(name: 'premium_yearly_id') final String? premiumYearlyId,
   }) = _$GlobalSettingsImpl;
 
   factory _GlobalSettings.fromJson(Map<String, dynamic> json) =
@@ -576,6 +642,15 @@ abstract class _GlobalSettings implements GlobalSettings {
   @override
   @JsonKey(name: 'terms_of_service')
   String? get termsOfService;
+  @override
+  @JsonKey(name: 'paystack_public_key')
+  String? get paystackPublicKey;
+  @override
+  @JsonKey(name: 'premium_monthly_id')
+  String? get premiumMonthlyId;
+  @override
+  @JsonKey(name: 'premium_yearly_id')
+  String? get premiumYearlyId;
 
   /// Create a copy of GlobalSettings
   /// with the given fields replaced by the non-null parameter values.
