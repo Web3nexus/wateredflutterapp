@@ -17,8 +17,7 @@ import 'package:Watered/features/subscription/screens/subscription_screen.dart';
 import 'package:Watered/features/auth/providers/auth_provider.dart';
 import 'package:Watered/features/traditions/providers/tradition_provider.dart';
 import 'package:Watered/features/traditions/screens/tradition_detail_screen.dart';
-import 'package:Watered/features/deities/screens/deities_screen.dart';
-
+import 'package:Watered/features/deities/screens/deities_screen.dart';import 'package:Watered/features/activity/widgets/activity_tracker.dart';
 
 class LibraryScreen extends ConsumerStatefulWidget {
   const LibraryScreen({super.key});
@@ -44,6 +43,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> with SingleTicker
   @override
   void dispose() {
     _tabController.dispose();
+    // Reset header visibility when leaving library screen
+    ref.read(videoHeaderVisibleProvider.notifier).state = true;
     super.dispose();
   }
 
@@ -54,84 +55,94 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> with SingleTicker
 
     final isHeaderVisible = ref.watch(videoHeaderVisibleProvider);
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(isHeaderVisible ? 56 : 0),
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 300),
-          opacity: isHeaderVisible ? 1.0 : 0.0,
-          child: AppBar(
-            title: Text('Media', style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: theme.textTheme.headlineSmall?.color)),
-            backgroundColor: Colors.transparent,
-            centerTitle: false,
-            actions: [
-              IconButton(
-                icon: Icon(Icons.search, color: theme.colorScheme.primary),
-                onPressed: () {
-                  // TODO: Implement search navigation
-                },
-              ),
-              const SizedBox(width: 8),
-            ],
+    // If we are not on the video tab (index 2), ensure header is visible
+    if (_tabController.index != 2 && !isHeaderVisible) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(videoHeaderVisibleProvider.notifier).state = true;
+      });
+    }
+
+    return ActivityTracker(
+      pageName: 'Media',
+      child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(isHeaderVisible ? 56 : 0),
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 300),
+            opacity: isHeaderVisible ? 1.0 : 0.0,
+            child: AppBar(
+              title: Text('Media', style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: theme.textTheme.headlineSmall?.color)),
+              backgroundColor: Colors.transparent,
+              centerTitle: false,
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.search, color: theme.colorScheme.primary),
+                  onPressed: () {
+                    // TODO: Implement search navigation
+                  },
+                ),
+                const SizedBox(width: 8),
+              ],
+            ),
           ),
         ),
-      ),
-      body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
-            SliverToBoxAdapter(
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                height: isHeaderVisible ? 68 : 0,
-                child: SingleChildScrollView(
-                  physics: const NeverScrollableScrollPhysics(),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    child: Container(
-                      height: 44,
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: theme.brightness == Brightness.dark ? const Color(0xFF1E293B) : Colors.grey.withOpacity(0.1), 
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: TabBar(
-                        controller: _tabController,
-                        indicator: BoxDecoration(
-                          color: theme.colorScheme.primary,
-                          borderRadius: BorderRadius.circular(8),
+        body: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              SliverToBoxAdapter(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  height: isHeaderVisible ? 68 : 0,
+                  child: SingleChildScrollView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      child: Container(
+                        height: 44,
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: theme.brightness == Brightness.dark ? const Color(0xFF1E293B) : Colors.grey.withOpacity(0.1), 
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        indicatorSize: TabBarIndicatorSize.tab,
-                        labelColor: Colors.black, // Text on Gold
-                        unselectedLabelColor: Colors.grey,
-                        labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-                        tabs: const [
-                          Tab(text: 'All'),
-                          Tab(text: 'Audio'),
-                          Tab(text: 'Video'),
-                        ],
-                        dividerColor: Colors.transparent,
+                        child: TabBar(
+                          controller: _tabController,
+                          indicator: BoxDecoration(
+                            color: theme.colorScheme.primary,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          labelColor: Colors.black, // Text on Gold
+                          unselectedLabelColor: Colors.grey,
+                          labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                          tabs: const [
+                            Tab(text: 'All'),
+                            Tab(text: 'Audio'),
+                            Tab(text: 'Video'),
+                          ],
+                          dividerColor: Colors.transparent,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ];
-        },
-        body: RefreshIndicator(
-          color: theme.colorScheme.primary,
-          onRefresh: () async {
-            ref.invalidate(traditionListProvider());
-            ref.invalidate(libraryProvider);
+            ];
           },
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              _LibraryTabContent(filter: 'all'),
-              const AudioFeedScreen(showAppBar: false),
-              const FeedScreen(showAppBar: false),
-            ],
+          body: RefreshIndicator(
+            color: theme.colorScheme.primary,
+            onRefresh: () async {
+              ref.invalidate(traditionListProvider());
+              ref.invalidate(libraryProvider);
+            },
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _LibraryTabContent(filter: 'all'),
+                const AudioFeedScreen(showAppBar: false),
+                const FeedScreen(showAppBar: false),
+              ],
+            ),
           ),
         ),
       ),
@@ -269,8 +280,7 @@ class _LibraryTabContent extends ConsumerWidget {
                    // But user said "I noticed two path which is Hemet and Yoruba whihc is worng"
                    // Maybe I should filter them out for now.
                    final filteredTraditions = traditions.data.where((t) {
-                    final name = t.name.toLowerCase();
-                    return name != 'nima sedani' && name != 'kemet' && name != 'yoruba';
+                    return t.name.toLowerCase() != 'nima sedani';
                   }).toList();
                   
                   if (filteredTraditions.isEmpty) return const SizedBox.shrink();

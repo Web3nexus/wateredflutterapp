@@ -17,8 +17,8 @@ _$AudioImpl _$$AudioImplFromJson(Map<String, dynamic> json) => _$AudioImpl(
   publishedAt: json['published_at'] == null
       ? null
       : DateTime.parse(json['published_at'] as String),
-  traditionId: (json['tradition_id'] as num).toInt(),
-  isActive: json['is_active'] as bool,
+  traditionId: (json['tradition_id'] as num?)?.toInt(),
+  isActive: json['is_active'] as bool? ?? true,
   isFeatured: json['is_featured'] as bool? ?? false,
   isLiked: json['is_liked'] as bool? ?? false,
   category: json['category'] as String?,

@@ -50,7 +50,7 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
   Future<void> _initializePlayer() async {
     try {
       if (widget.video.videoType == 'youtube') {
-        final videoId = YoutubePlayer.convertUrlToId(widget.video.youtubeUrl);
+        final videoId = YoutubePlayer.convertUrlToId(widget.video.youtubeUrl ?? '');
         if (videoId != null) {
           _youtubeController = YoutubePlayerController(
             initialVideoId: videoId,

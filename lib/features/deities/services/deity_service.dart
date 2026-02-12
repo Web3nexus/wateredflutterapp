@@ -16,6 +16,7 @@ class DeityService {
     final Map<String, dynamic> params = {};
     if (traditionId != null) params['tradition_id'] = traditionId;
     if (search != null && search.isNotEmpty) params['search'] = search;
+    params['per_page'] = 100;
 
     final response = await _client.get('deities', queryParameters: params);
     final data = response.data['data'] as List;
@@ -24,7 +25,7 @@ class DeityService {
   
   // Also need traditions for the filter
   Future<List<Tradition>> getTraditions() async {
-    final response = await _client.get('traditions');
+    final response = await _client.get('traditions', queryParameters: {'per_page': 100});
      final data = response.data['data'] as List;
     return data.map((e) => Tradition.fromJson(e)).toList();
   }

@@ -3,6 +3,8 @@ import 'package:Watered/features/videos/models/video.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
+import 'package:flutter/services.dart';
+import 'package:Watered/features/activity/widgets/activity_tracker.dart';
 
 class VideoPlayerScreen extends StatefulWidget {
   final Video video;
@@ -25,7 +27,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     _isYoutube = widget.video.videoType == 'youtube';
     
     if (_isYoutube) {
-      final videoId = YoutubePlayer.convertUrlToId(widget.video.youtubeUrl) ?? '';
+      final videoId = YoutubePlayer.convertUrlToId(widget.video.youtubeUrl ?? '') ?? '';
       _youtubeController = YoutubePlayerController(
         initialVideoId: videoId,
         flags: YoutubePlayerFlags(
@@ -64,35 +66,46 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     _youtubeController?.dispose();
     _videoPlayerController?.dispose();
     _chewieController?.dispose();
+    // Reset system UI when leaving video player
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: Text(
-          widget.video.title,
-          style: const TextStyle(color: Colors.white, fontSize: 16),
-        ),
-      ),
-      body: Center(
-        child: _isYoutube
-            ? YoutubePlayer(
-                controller: _youtubeController!,
-                showVideoProgressIndicator: true,
-                progressIndicatorColor: Theme.of(context).colorScheme.primary,
-              )
-            : _chewieController != null
-                ? AspectRatio(
-                    aspectRatio: _videoPlayerController!.value.aspectRatio,
-                    child: Chewie(controller: _chewieController!),
+    return ActivityTracker(
+      pageName: 'video_player',
+      child: Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            iconTheme: const IconThemeData(color: Colors.white),
+            title: Text(
+              widget.video.title,
+              style: const TextStyle(color: Colors.white, fontSize: 16),
+            ),
+          ),
+          body: Center(
+            child: _isYoutube
+                ? YoutubePlayer(
+                    controller: _youtubeController!,
+                    showVideoProgressIndicator: true,
+                    progressIndicatorColor: Theme.of(context).colorScheme.primary,
                   )
-                : const CircularProgressIndicator(),
-      ),
+                : _chewieController != null
+                    ? AspectRatio(
+                        aspectRatio: _videoPlayerController!.value.aspectRatio,
+                        child: Chewie(controller: _chewieController!),
+                      )
+                    : const CircularProgressIndicator(),
+          ),
+        ),
     );
   }
 }

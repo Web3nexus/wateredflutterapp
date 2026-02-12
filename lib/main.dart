@@ -294,7 +294,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 Container(
                   padding: const EdgeInsets.all(20),
                   child: Image.asset(
-                    'assets/icon/splashicon.png',
+                    'assets/images/logo_light.png',
                     width: 140,
                     height: 140,
                   ),

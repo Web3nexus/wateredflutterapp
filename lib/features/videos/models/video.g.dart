@@ -10,7 +10,7 @@ _$VideoImpl _$$VideoImplFromJson(Map<String, dynamic> json) => _$VideoImpl(
   id: (json['id'] as num).toInt(),
   title: json['title'] as String,
   description: json['description'] as String?,
-  youtubeUrl: json['youtube_url'] as String,
+  youtubeUrl: json['youtube_url'] as String?,
   storageUrl: json['storage_url'] as String?,
   videoType: json['video_type'] as String? ?? 'youtube',
   thumbnailUrl: json['thumbnail_url'] as String?,
@@ -18,8 +18,8 @@ _$VideoImpl _$$VideoImplFromJson(Map<String, dynamic> json) => _$VideoImpl(
   publishedAt: json['published_at'] == null
       ? null
       : DateTime.parse(json['published_at'] as String),
-  traditionId: (json['tradition_id'] as num).toInt(),
-  isActive: json['is_active'] as bool,
+  traditionId: (json['tradition_id'] as num?)?.toInt(),
+  isActive: json['is_active'] as bool? ?? true,
   isFeatured: json['is_featured'] as bool? ?? false,
   isLiked: json['is_liked'] as bool? ?? false,
   likesCount: (json['likes_count'] as num?)?.toInt(),

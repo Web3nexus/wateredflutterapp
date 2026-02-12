@@ -11,6 +11,8 @@ import 'package:Watered/core/services/ad_service.dart';
 import 'package:Watered/features/videos/providers/video_feed_providers.dart';
 import 'package:Watered/features/subscription/screens/subscription_screen.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:Watered/features/activity/widgets/activity_tracker.dart';
+import 'package:flutter/services.dart';
 
 class FeedScreen extends ConsumerStatefulWidget {
   final int? initialVideoId;
@@ -22,40 +24,55 @@ class FeedScreen extends ConsumerStatefulWidget {
 }
 
 class _FeedScreenState extends ConsumerState<FeedScreen> {
-  int _currentIndex = 0;
-  bool _initialIndexSet = false;
+
+  @override
+  void dispose() {
+    // Reset system UI when leaving reels
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+    // Reset header visibility when leaving feed screen
+    ref.read(videoHeaderVisibleProvider.notifier).state = true;
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final videoState = ref.watch(videoListProvider());
-    final isPremium = ref.watch(authProvider).user?.isPremium ?? false;
 
     return DefaultTabController(
       length: 2,
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        appBar: widget.showAppBar ? AppBar(
-          backgroundColor: Colors.black,
-          elevation: 0,
-          title: TabBar(
-            indicatorColor: Theme.of(context).colorScheme.primary,
-            labelColor: Theme.of(context).colorScheme.primary,
-            unselectedLabelColor: Colors.white70,
-            tabs: const [
-              Tab(text: 'For You'),
-              Tab(text: 'Featured'),
-            ],
+      child: ActivityTracker(
+        pageName: 'reels',
+        child: Scaffold(
+            backgroundColor: Colors.black,
+            appBar: widget.showAppBar ? AppBar(
+              backgroundColor: Colors.black,
+              elevation: 0,
+              leading: Navigator.of(context).canPop() 
+                  ? IconButton(
+                      icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+                      onPressed: () => Navigator.of(context).pop(),
+                    )
+                  : null,
+              title: TabBar(
+                indicatorColor: Theme.of(context).colorScheme.primary,
+                labelColor: Theme.of(context).colorScheme.primary,
+                unselectedLabelColor: Colors.white70,
+                tabs: const [
+                  Tab(text: 'For You'),
+                  Tab(text: 'Featured'),
+                ],
+              ),
+            ) : null,
+            body: TabBarView(
+              children: [
+                // FYP Tab (default, all videos)
+                _VideoFeed(isFeatured: false, initialVideoId: widget.initialVideoId),
+                // Featured Tab
+                _VideoFeed(isFeatured: true, initialVideoId: null),
+              ],
+            ),
           ),
-        ) : null,
-        body: TabBarView(
-          children: [
-            // FYP Tab (default, all videos)
-            _VideoFeed(isFeatured: false, initialVideoId: widget.initialVideoId),
-            // Featured Tab
-            _VideoFeed(isFeatured: true, initialVideoId: null),
-          ],
         ),
-      ),
     );
   }
 }
@@ -78,6 +95,7 @@ class _VideoFeedState extends ConsumerState<_VideoFeed> {
 
   @override
   Widget build(BuildContext context) {
+
     final videoState = ref.watch(videoListProvider(
       isFeatured: widget.isFeatured,
       category: _selectedCategory == 'All' ? null : _selectedCategory,

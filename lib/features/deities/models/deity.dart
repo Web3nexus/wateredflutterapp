@@ -3,7 +3,7 @@ class Deity {
   final String name;
   final String? description;
   final String? imageUrl;
-  final int traditionId;
+  final int? traditionId;
   final String? origin;
   final String? mythologyStory;
   final String? symbols;
@@ -15,7 +15,7 @@ class Deity {
     required this.name,
     this.description,
     this.imageUrl,
-    required this.traditionId,
+    this.traditionId,
     this.origin,
     this.mythologyStory,
     this.symbols,

@@ -20,9 +20,14 @@ class DeitiesScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('The Gods'),
       ),
-      body: ActivityTracker(
-        pageName: 'gods',
-        child: Column(
+      body: RefreshIndicator(
+        onRefresh: () async {
+          ref.invalidate(traditionsListProvider);
+          ref.invalidate(deitiesListProvider);
+        },
+        child: ActivityTracker(
+          pageName: 'gods',
+          child: Column(
         children: [
           // Filter List
           SizedBox(
@@ -66,8 +71,11 @@ class DeitiesScreen extends ConsumerWidget {
                   },
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, s) => const SizedBox(),
+              loading: () => const Center(child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )),
+              error: (e, s) => Center(child: Text('Error: $e', style: const TextStyle(fontSize: 10, color: Colors.red))),
             ),
           ),
           
@@ -154,7 +162,8 @@ class DeitiesScreen extends ConsumerWidget {
         ],
       ),
     ),
-    );
+  ),
+);
   }
 }
 

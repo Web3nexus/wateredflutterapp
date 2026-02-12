@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:Watered/features/rituals/providers/ritual_providers.dart';
-import 'package:Watered/features/rituals/screens/ritual_detail_screen.dart';
 import 'package:Watered/core/widgets/premium_gate.dart';
 import 'package:Watered/features/activity/widgets/activity_tracker.dart';
+import 'package:Watered/features/rituals/providers/ritual_providers.dart';
+import 'package:Watered/features/rituals/screens/ritual_detail_screen.dart';
+import 'package:Watered/features/rituals/widgets/sacred_schedule_widget.dart';
 
 class RitualsScreen extends ConsumerStatefulWidget {
   const RitualsScreen({super.key});
@@ -39,8 +40,14 @@ class _RitualsScreenState extends ConsumerState<RitualsScreen> {
         ),
         body: ActivityTracker(
           pageName: 'rituals',
-          child: Column(
-            children: [
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: SacredScheduleWidget(),
+              ),
+              const Divider(height: 32),
             // Category Filter
             SizedBox(
               height: 60,
@@ -76,78 +83,86 @@ class _RitualsScreenState extends ConsumerState<RitualsScreen> {
                 },
               ),
             ),
-            Expanded(
-              child: ritualsAsync.when(
-                data: (rituals) {
-                  final filteredRituals = rituals;
+            ritualsAsync.when(
+              data: (rituals) {
+                final filteredRituals = rituals;
 
-                  if (filteredRituals.isEmpty) {
-                    return Center(
+                if (filteredRituals.isEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32.0),
                       child: Text(
                         'No rituals available in this category.',
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: theme.textTheme.bodyLarge?.color?.withOpacity(0.5),
                         ),
                       ),
-                    );
-                  }
-                  return ListView.separated(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: filteredRituals.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 16),
-                    itemBuilder: (context, index) {
-                      final ritual = filteredRituals[index];
-                      return ListTile(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => RitualDetailScreen(ritual: ritual),
-                            ),
-                          );
-                        },
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        tileColor: theme.cardTheme.color,
-                        contentPadding: const EdgeInsets.all(16),
-                        leading: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.primary.withOpacity(0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(Icons.spa, color: theme.colorScheme.primary),
-                        ),
-                        title: Text(
-                          ritual.title,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        subtitle: ritual.description != null
-                            ? Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Text(
-                                  ritual.description!,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
-                                  ),
-                                ),
-                              )
-                            : null,
-                        trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-                      );
-                    },
+                    ),
                   );
-                },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, stack) => Center(child: Text('Error: $error')),
-              ),
+                }
+                return ListView.separated(
+                  padding: const EdgeInsets.all(16),
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: filteredRituals.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 16),
+                  itemBuilder: (context, index) {
+                    final ritual = filteredRituals[index];
+                    return ListTile(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => RitualDetailScreen(ritual: ritual),
+                          ),
+                        );
+                      },
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      tileColor: theme.cardTheme.color,
+                      contentPadding: const EdgeInsets.all(16),
+                      leading: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(Icons.spa, color: theme.colorScheme.primary),
+                      ),
+                      title: Text(
+                        ritual.title,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: ritual.description != null
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                ritual.description!,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                                ),
+                              ),
+                            )
+                          : null,
+                      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                    );
+                  },
+                );
+              },
+              loading: () => const Center(child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 32.0),
+                child: CircularProgressIndicator(),
+              )),
+              error: (error, stack) => Center(child: Text('Error: $error')),
             ),
+            const SizedBox(height: 32),
             ],
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

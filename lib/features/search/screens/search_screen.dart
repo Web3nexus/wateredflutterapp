@@ -8,7 +8,7 @@ import 'package:Watered/features/commerce/screens/product_detail_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:async';
 
-final dailyWisdomProvider = FutureProvider.autoDispose<DailyWisdom?>((
+final dailyWisdomProvider = FutureProvider<DailyWisdom?>((
   ref,
 ) async {
   return ref.read(searchServiceProvider).getDailyWisdom();

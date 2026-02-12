@@ -73,22 +73,27 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
 
         // Find the next ritual
         Ritual? nextRitual;
+        bool isTomorrow = false;
+
         for (final ritual in dailyRituals) {
           if (!ritual.isPast) {
             nextRitual = ritual;
             break;
           }
         }
-        
-        // If all are past, use the first one of "tomorrow" or just show the last one?
-        // To match the image, if we find one, we show the countdown.
+
+        // If all are past, use the first one of "tomorrow"
+        if (nextRitual == null && dailyRituals.isNotEmpty) {
+          nextRitual = dailyRituals.first;
+          isTomorrow = true;
+        }
         
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeader(context, "Sacred Rituals", "${dailyRituals.length} daily prayers"),
             const SizedBox(height: 16),
-            if (nextRitual != null) _buildNextRitualCard(context, nextRitual),
+            if (nextRitual != null) _buildNextRitualCard(context, nextRitual, isTomorrow: isTomorrow),
             const SizedBox(height: 24),
             ...dailyRituals.map((r) => _buildRitualListItem(context, r)),
           ],
@@ -311,12 +316,16 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
     }
   }
 
-  Widget _buildNextRitualCard(BuildContext context, Ritual ritual) {
+  Widget _buildNextRitualCard(BuildContext context, Ritual ritual, {bool isTomorrow = false}) {
     final theme = Theme.of(context);
     final scheduled = ritual.scheduledTime;
     Duration? diff;
     if (scheduled != null) {
-      diff = scheduled.difference(_now);
+      var targetTime = scheduled;
+      if (isTomorrow) {
+        targetTime = scheduled.add(const Duration(days: 1));
+      }
+      diff = targetTime.difference(_now);
     }
 
     final hours = diff?.inHours ?? 0;
@@ -396,7 +405,7 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
                   Icon(backgroundIcon, color: Colors.white.withOpacity(0.9), size: 18),
                   const SizedBox(width: 8),
                   Text(
-                    timeLabel,
+                    isTomorrow ? "Next Ritual (Tomorrow)" : timeLabel,
                     style: TextStyle(color: Colors.white.withOpacity(0.9), fontWeight: FontWeight.w500),
                   ),
                 ],
@@ -420,9 +429,11 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
                   const SizedBox(width: 8),
                   _buildTimeUnit("${secs < 0 ? 0 : secs}", "sec"),
                   const SizedBox(width: 12),
-                  Text(
-                    "until ${ritual.timeOfDay}",
-                    style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 16),
+                  Expanded(
+                    child: Text(
+                      isTomorrow ? "until tomorrow at ${ritual.timeOfDay}" : "until ${ritual.timeOfDay}",
+                      style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 14),
+                    ),
                   ),
                 ],
               ),

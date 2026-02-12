@@ -25,7 +25,7 @@ mixin _$Video {
   String get title => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   @JsonKey(name: 'youtube_url')
-  String get youtubeUrl => throw _privateConstructorUsedError;
+  String? get youtubeUrl => throw _privateConstructorUsedError;
   @JsonKey(name: 'storage_url')
   String? get storageUrl => throw _privateConstructorUsedError;
   @JsonKey(name: 'video_type')
@@ -36,7 +36,7 @@ mixin _$Video {
   @JsonKey(name: 'published_at')
   DateTime? get publishedAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'tradition_id')
-  int get traditionId => throw _privateConstructorUsedError;
+  int? get traditionId => throw _privateConstructorUsedError;
   @JsonKey(name: 'is_active')
   bool get isActive => throw _privateConstructorUsedError;
   @JsonKey(name: 'is_featured')
@@ -70,13 +70,13 @@ abstract class $VideoCopyWith<$Res> {
     int id,
     String title,
     String? description,
-    @JsonKey(name: 'youtube_url') String youtubeUrl,
+    @JsonKey(name: 'youtube_url') String? youtubeUrl,
     @JsonKey(name: 'storage_url') String? storageUrl,
     @JsonKey(name: 'video_type') String videoType,
     @JsonKey(name: 'thumbnail_url') String? thumbnailUrl,
     String? duration,
     @JsonKey(name: 'published_at') DateTime? publishedAt,
-    @JsonKey(name: 'tradition_id') int traditionId,
+    @JsonKey(name: 'tradition_id') int? traditionId,
     @JsonKey(name: 'is_active') bool isActive,
     @JsonKey(name: 'is_featured') bool isFeatured,
     @JsonKey(name: 'is_liked') bool isLiked,
@@ -107,13 +107,13 @@ class _$VideoCopyWithImpl<$Res, $Val extends Video>
     Object? id = null,
     Object? title = null,
     Object? description = freezed,
-    Object? youtubeUrl = null,
+    Object? youtubeUrl = freezed,
     Object? storageUrl = freezed,
     Object? videoType = null,
     Object? thumbnailUrl = freezed,
     Object? duration = freezed,
     Object? publishedAt = freezed,
-    Object? traditionId = null,
+    Object? traditionId = freezed,
     Object? isActive = null,
     Object? isFeatured = null,
     Object? isLiked = null,
@@ -138,10 +138,10 @@ class _$VideoCopyWithImpl<$Res, $Val extends Video>
                 ? _value.description
                 : description // ignore: cast_nullable_to_non_nullable
                       as String?,
-            youtubeUrl: null == youtubeUrl
+            youtubeUrl: freezed == youtubeUrl
                 ? _value.youtubeUrl
                 : youtubeUrl // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as String?,
             storageUrl: freezed == storageUrl
                 ? _value.storageUrl
                 : storageUrl // ignore: cast_nullable_to_non_nullable
@@ -162,10 +162,10 @@ class _$VideoCopyWithImpl<$Res, $Val extends Video>
                 ? _value.publishedAt
                 : publishedAt // ignore: cast_nullable_to_non_nullable
                       as DateTime?,
-            traditionId: null == traditionId
+            traditionId: freezed == traditionId
                 ? _value.traditionId
                 : traditionId // ignore: cast_nullable_to_non_nullable
-                      as int,
+                      as int?,
             isActive: null == isActive
                 ? _value.isActive
                 : isActive // ignore: cast_nullable_to_non_nullable
@@ -220,13 +220,13 @@ abstract class _$$VideoImplCopyWith<$Res> implements $VideoCopyWith<$Res> {
     int id,
     String title,
     String? description,
-    @JsonKey(name: 'youtube_url') String youtubeUrl,
+    @JsonKey(name: 'youtube_url') String? youtubeUrl,
     @JsonKey(name: 'storage_url') String? storageUrl,
     @JsonKey(name: 'video_type') String videoType,
     @JsonKey(name: 'thumbnail_url') String? thumbnailUrl,
     String? duration,
     @JsonKey(name: 'published_at') DateTime? publishedAt,
-    @JsonKey(name: 'tradition_id') int traditionId,
+    @JsonKey(name: 'tradition_id') int? traditionId,
     @JsonKey(name: 'is_active') bool isActive,
     @JsonKey(name: 'is_featured') bool isFeatured,
     @JsonKey(name: 'is_liked') bool isLiked,
@@ -256,13 +256,13 @@ class __$$VideoImplCopyWithImpl<$Res>
     Object? id = null,
     Object? title = null,
     Object? description = freezed,
-    Object? youtubeUrl = null,
+    Object? youtubeUrl = freezed,
     Object? storageUrl = freezed,
     Object? videoType = null,
     Object? thumbnailUrl = freezed,
     Object? duration = freezed,
     Object? publishedAt = freezed,
-    Object? traditionId = null,
+    Object? traditionId = freezed,
     Object? isActive = null,
     Object? isFeatured = null,
     Object? isLiked = null,
@@ -287,10 +287,10 @@ class __$$VideoImplCopyWithImpl<$Res>
             ? _value.description
             : description // ignore: cast_nullable_to_non_nullable
                   as String?,
-        youtubeUrl: null == youtubeUrl
+        youtubeUrl: freezed == youtubeUrl
             ? _value.youtubeUrl
             : youtubeUrl // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as String?,
         storageUrl: freezed == storageUrl
             ? _value.storageUrl
             : storageUrl // ignore: cast_nullable_to_non_nullable
@@ -311,10 +311,10 @@ class __$$VideoImplCopyWithImpl<$Res>
             ? _value.publishedAt
             : publishedAt // ignore: cast_nullable_to_non_nullable
                   as DateTime?,
-        traditionId: null == traditionId
+        traditionId: freezed == traditionId
             ? _value.traditionId
             : traditionId // ignore: cast_nullable_to_non_nullable
-                  as int,
+                  as int?,
         isActive: null == isActive
             ? _value.isActive
             : isActive // ignore: cast_nullable_to_non_nullable
@@ -363,14 +363,14 @@ class _$VideoImpl implements _Video {
     required this.id,
     required this.title,
     this.description,
-    @JsonKey(name: 'youtube_url') required this.youtubeUrl,
+    @JsonKey(name: 'youtube_url') this.youtubeUrl,
     @JsonKey(name: 'storage_url') this.storageUrl,
     @JsonKey(name: 'video_type') this.videoType = 'youtube',
     @JsonKey(name: 'thumbnail_url') this.thumbnailUrl,
     this.duration,
     @JsonKey(name: 'published_at') this.publishedAt,
-    @JsonKey(name: 'tradition_id') required this.traditionId,
-    @JsonKey(name: 'is_active') required this.isActive,
+    @JsonKey(name: 'tradition_id') this.traditionId,
+    @JsonKey(name: 'is_active') this.isActive = true,
     @JsonKey(name: 'is_featured') this.isFeatured = false,
     @JsonKey(name: 'is_liked') this.isLiked = false,
     @JsonKey(name: 'likes_count') this.likesCount,
@@ -392,7 +392,7 @@ class _$VideoImpl implements _Video {
   final String? description;
   @override
   @JsonKey(name: 'youtube_url')
-  final String youtubeUrl;
+  final String? youtubeUrl;
   @override
   @JsonKey(name: 'storage_url')
   final String? storageUrl;
@@ -410,7 +410,7 @@ class _$VideoImpl implements _Video {
   final DateTime? publishedAt;
   @override
   @JsonKey(name: 'tradition_id')
-  final int traditionId;
+  final int? traditionId;
   @override
   @JsonKey(name: 'is_active')
   final bool isActive;
@@ -533,14 +533,14 @@ abstract class _Video implements Video {
     required final int id,
     required final String title,
     final String? description,
-    @JsonKey(name: 'youtube_url') required final String youtubeUrl,
+    @JsonKey(name: 'youtube_url') final String? youtubeUrl,
     @JsonKey(name: 'storage_url') final String? storageUrl,
     @JsonKey(name: 'video_type') final String videoType,
     @JsonKey(name: 'thumbnail_url') final String? thumbnailUrl,
     final String? duration,
     @JsonKey(name: 'published_at') final DateTime? publishedAt,
-    @JsonKey(name: 'tradition_id') required final int traditionId,
-    @JsonKey(name: 'is_active') required final bool isActive,
+    @JsonKey(name: 'tradition_id') final int? traditionId,
+    @JsonKey(name: 'is_active') final bool isActive,
     @JsonKey(name: 'is_featured') final bool isFeatured,
     @JsonKey(name: 'is_liked') final bool isLiked,
     @JsonKey(name: 'likes_count') final int? likesCount,
@@ -561,7 +561,7 @@ abstract class _Video implements Video {
   String? get description;
   @override
   @JsonKey(name: 'youtube_url')
-  String get youtubeUrl;
+  String? get youtubeUrl;
   @override
   @JsonKey(name: 'storage_url')
   String? get storageUrl;
@@ -578,7 +578,7 @@ abstract class _Video implements Video {
   DateTime? get publishedAt;
   @override
   @JsonKey(name: 'tradition_id')
-  int get traditionId;
+  int? get traditionId;
   @override
   @JsonKey(name: 'is_active')
   bool get isActive;
