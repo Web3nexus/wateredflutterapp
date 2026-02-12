@@ -48,8 +48,9 @@ class TempleScreen extends ConsumerWidget {
               final temple = temples[index];
               return Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E293B),
+                  color: theme.cardTheme.color ?? theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: theme.dividerColor.withOpacity(0.05)),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.3),
@@ -75,12 +76,12 @@ class TempleScreen extends ConsumerWidget {
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) =>
                                     Shimmer.fromColors(
-                                      baseColor: const Color(0xFF1E293B),
-                                      highlightColor: const Color(0xFF0F172A),
+                                      baseColor: (theme.cardTheme.color ?? theme.colorScheme.surface).withOpacity(0.1),
+                                      highlightColor: (theme.cardTheme.color ?? theme.colorScheme.surface).withOpacity(0.2),
                                       child: Container(color: Colors.white),
                                     ),
                                 errorWidget: (context, url, error) => Container(
-                                  color: const Color(0xFF1E293B),
+                                  color: (theme.cardTheme.color ?? theme.colorScheme.surface).withOpacity(0.05),
                                   child: const Center(
                                     child: Icon(
                                       Icons.broken_image_rounded,

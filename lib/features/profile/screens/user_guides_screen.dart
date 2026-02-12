@@ -36,10 +36,12 @@ class _GuideCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
+        color: theme.cardTheme.color ?? theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: theme.dividerColor.withOpacity(0.05)),
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.all(16),
@@ -63,10 +65,10 @@ class _GuideCard extends StatelessWidget {
                 guide.content!,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: Colors.white.withOpacity(0.6)),
+                style: TextStyle(color: theme.textTheme.bodySmall?.color?.withOpacity(0.7)),
               )
             : null,
-        trailing: const Icon(Icons.chevron_right, color: Colors.white24),
+        trailing: Icon(Icons.chevron_right, color: theme.dividerColor.withOpacity(0.2)),
         onTap: () async {
           if (guide.type == 'video' && guide.videoUrl != null) {
             final url = Uri.parse(guide.videoUrl!);
@@ -79,7 +81,7 @@ class _GuideCard extends StatelessWidget {
              showDialog(
                context: context,
                builder: (_) => AlertDialog(
-                 backgroundColor: const Color(0xFF0F172A),
+                 backgroundColor: theme.dialogBackgroundColor,
                  title: Text(guide.title),
                  content: SingleChildScrollView(child: Text(guide.content ?? '')),
                  actions: [

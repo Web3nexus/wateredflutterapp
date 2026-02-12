@@ -22,7 +22,22 @@ class HolidayService {
     // 1. Fetch backend holidays
     final response = await _client.get('holidays');
     final data = response.data['data'] as List;
-    final List<Holiday> holidays = data.map((e) => Holiday.fromJson(e)).toList();
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    final List<Holiday> holidays = data.map((e) {
+      final h = Holiday.fromJson(e);
+      var holidayDate = DateTime(h.date.year, h.date.month, h.date.day);
+      
+      // If the holiday is from a past year, or passed earlier this year, 
+      // project it to this year or next year to maintain visibility.
+      var projectedDate = DateTime(now.year, holidayDate.month, holidayDate.day);
+      if (projectedDate.isBefore(today)) {
+        projectedDate = DateTime(now.year + 1, holidayDate.month, holidayDate.day);
+      }
+      
+      return h.copyWith(date: projectedDate);
+    }).toList();
 
     // 2. Fetch sacred calendar days
     try {

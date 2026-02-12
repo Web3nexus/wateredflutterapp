@@ -13,6 +13,22 @@ class Holiday {
     this.description,
   });
 
+  Holiday copyWith({
+    int? id,
+    String? name,
+    String? theme,
+    DateTime? date,
+    String? description,
+  }) {
+    return Holiday(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      theme: theme ?? this.theme,
+      date: date ?? this.date,
+      description: description ?? this.description,
+    );
+  }
+
   factory Holiday.fromJson(Map<String, dynamic> json) {
     return Holiday(
       id: json['id'],

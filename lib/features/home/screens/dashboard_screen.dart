@@ -250,6 +250,9 @@ class DashboardScreen extends ConsumerWidget {
                 ],
               ),
 
+              // Upcoming Holidays
+              const UpcomingHolidayWidget(),
+
               const SizedBox(height: 32),
 
               // Sacred Rituals Reminder Widget

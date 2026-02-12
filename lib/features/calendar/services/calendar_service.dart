@@ -3,6 +3,7 @@ import 'package:Watered/core/network/api_client.dart';
 import 'package:Watered/features/calendar/models/calendar_month.dart';
 import 'package:Watered/features/calendar/models/calendar_day.dart';
 import 'package:Watered/features/events/models/event.dart';
+import 'package:Watered/features/reminders/models/holiday.dart';
 
 final calendarServiceProvider = Provider<CalendarService>((ref) {
   return CalendarService(ref.read(apiClientProvider));
@@ -36,8 +37,43 @@ class CalendarService {
   }
 
   Future<List<Event>> getUpcomingEvents() async {
-    final response = await _client.get('events');
-    final List data = response.data['data'];
-    return data.map((e) => Event.fromJson(e)).toList();
+    // 1. Fetch backend events
+    final eventResponse = await _client.get('events');
+    final List eventData = eventResponse.data['data'];
+    final List<Event> events = eventData.map((e) => Event.fromJson(e)).toList();
+
+    // 2. Fetch backend holidays and map them to Events
+    try {
+      final holidayResponse = await _client.get('holidays');
+      final List holidayData = holidayResponse.data['data'];
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+
+      for (var json in holidayData) {
+        final holiday = Holiday.fromJson(json);
+        
+        // Project holiday to current or next year
+        var holidayDate = DateTime(holiday.date.year, holiday.date.month, holiday.date.day);
+        var projectedDate = DateTime(now.year, holidayDate.month, holidayDate.day);
+        if (projectedDate.isBefore(today)) {
+          projectedDate = DateTime(now.year + 1, holidayDate.month, holidayDate.day);
+        }
+
+        events.add(Event(
+          id: -holiday.id, // Use negative ID for holidays
+          title: holiday.name,
+          description: holiday.description,
+          startTime: projectedDate,
+          category: 'Holiday',
+        ));
+      }
+    } catch (e) {
+      print('Error fetching holidays for calendar: $e');
+    }
+
+    // Sort combined list by date
+    events.sort((a, b) => a.startTime.compareTo(b.startTime));
+
+    return events;
   }
 }

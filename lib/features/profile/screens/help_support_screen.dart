@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/profile/screens/faq_screen.dart';
 import 'package:Watered/features/profile/screens/user_guides_screen.dart';
+import 'package:Watered/features/config/providers/global_settings_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class HelpSupportScreen extends StatelessWidget {
+class HelpSupportScreen extends ConsumerWidget {
   const HelpSupportScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final settings = ref.watch(globalSettingsNotifierProvider).asData?.value;
+    final supportEmail = settings?.contactEmail ?? 'support@mywatered.com';
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(title: const Text('Help & Support')),
@@ -23,7 +29,26 @@ class HelpSupportScreen extends StatelessWidget {
              context,
              icon: Icons.email_outlined,
              title: 'Contact Us',
-             subtitle: 'support@watered.app',
+             subtitle: supportEmail,
+             onTap: () async {
+               final Uri emailLaunchUri = Uri(
+                 scheme: 'mailto',
+                 path: supportEmail,
+                 query: encodeQueryParameters(<String, String>{
+                   'subject': 'Watered App Support Request',
+                 }),
+               );
+
+               if (await canLaunchUrl(emailLaunchUri)) {
+                 await launchUrl(emailLaunchUri);
+               } else {
+                 if (context.mounted) {
+                   ScaffoldMessenger.of(context).showSnackBar(
+                     const SnackBar(content: Text('Could not open email app')),
+                   );
+                 }
+               }
+             },
            ),
            _buildHelpItem(
              context,
@@ -46,6 +71,13 @@ class HelpSupportScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String? encodeQueryParameters(Map<String, String> params) {
+    return params.entries
+        .map((MapEntry<String, String> e) =>
+            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .join('&');
   }
 
   Widget _buildHelpItem(BuildContext context, {required IconData icon, required String title, required String subtitle, VoidCallback? onTap}) {

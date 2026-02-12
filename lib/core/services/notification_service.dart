@@ -39,16 +39,29 @@ class NotificationService {
       // 5. Initialize Local Notifications
       const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
       const iosSettings = DarwinInitializationSettings();
+      
       await _localNotifications.initialize(
         const InitializationSettings(android: androidSettings, iOS: iosSettings),
         onDidReceiveNotificationResponse: (details) {
           final payload = details.payload;
           if (payload != null) {
             // TODO: Route to specific screen based on payload
-            // e.g. 'ritual', 'event', 'audio', 'collection'
           }
         },
       );
+
+      // 6. Create High Importance Channel for Android
+      const androidChannel = AndroidNotificationChannel(
+        'watered_notifications', // id
+        'Watered Notifications', // title
+        description: 'General notifications for rituals and holy days.', // description
+        importance: Importance.max,
+        playSound: true,
+      );
+
+      await _localNotifications
+          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+          ?.createNotificationChannel(androidChannel);
     }
   }
 
@@ -75,12 +88,20 @@ class NotificationService {
         android: AndroidNotificationDetails(
           'watered_notifications',
           'Watered Notifications',
+          channelDescription: 'General notifications for rituals and holy days.',
           importance: Importance.max,
           priority: Priority.high,
+          ticker: 'ticker',
+          playSound: true,
+          // sound: RawResourceAndroidNotificationSound('notification_sound'), // Optional: if we add assets
         ),
-        iOS: DarwinNotificationDetails(),
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
       ),
-      payload: message.data['screen'], // Example payload for deep linking
+      payload: message.data['screen'], 
     );
   }
 }

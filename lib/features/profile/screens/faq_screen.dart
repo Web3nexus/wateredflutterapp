@@ -55,13 +55,17 @@ class _FaqExpansionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
-        borderRadius: BorderRadius.circular(12),
+        color: theme.cardTheme.color ?? theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: theme.dividerColor.withOpacity(0.05)),
       ),
-      child: ExpansionTile(
+      child: Theme(
+        data: theme.copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
         title: Text(
           faq.question,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
@@ -71,7 +75,10 @@ class _FaqExpansionTile extends StatelessWidget {
         children: [
           Text(
             faq.answer,
-            style: TextStyle(color: Colors.white.withOpacity(0.8), height: 1.5),
+            style: TextStyle(
+              color: theme.textTheme.bodyMedium?.color?.withOpacity(0.8),
+              height: 1.5,
+            ),
           ),
         ],
       ),

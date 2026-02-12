@@ -22,8 +22,15 @@ import 'package:Watered/core/services/ad_service.dart';
 import 'package:Watered/core/services/notification_service.dart';
 import 'package:Watered/features/home/providers/tab_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:Watered/core/services/navigation_service.dart';
 import 'package:Watered/features/auth/screens/verification_pending_screen.dart';
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Handling a background message: ${message.messageId}");
+}
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +39,7 @@ Future<void> main() async {
   // 1. Initialize Firebase first
   try {
     await Firebase.initializeApp();
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   } catch (e) {
     print('Firebase initialization error: $e');
   }
