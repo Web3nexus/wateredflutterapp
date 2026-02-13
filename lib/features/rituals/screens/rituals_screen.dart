@@ -4,7 +4,6 @@ import 'package:Watered/core/widgets/premium_gate.dart';
 import 'package:Watered/features/activity/widgets/activity_tracker.dart';
 import 'package:Watered/features/rituals/providers/ritual_providers.dart';
 import 'package:Watered/features/rituals/screens/ritual_detail_screen.dart';
-import 'package:Watered/features/rituals/widgets/sacred_schedule_widget.dart';
 
 class RitualsScreen extends ConsumerStatefulWidget {
   const RitualsScreen({super.key});
@@ -43,11 +42,6 @@ class _RitualsScreenState extends ConsumerState<RitualsScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: SacredScheduleWidget(),
-              ),
-              const Divider(height: 32),
             // Category Filter
             SizedBox(
               height: 60,

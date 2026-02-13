@@ -118,6 +118,18 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
       appBar: AppBar(title: const Text('Sacred Reminders')),
       body: CustomScrollView(
         slivers: [
+          // Sacred Schedule Widget at the top
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SacredScheduleWidget(),
+            ),
+          ),
+          
+          const SliverToBoxAdapter(
+            child: Divider(height: 32),
+          ),
+          
           // Countdown Section Removed
           SliverToBoxAdapter(
             child: Padding(
@@ -125,7 +137,6 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 24),
                   Text(
                     'UPCOMING HOLIDAYS',
                     style: theme.textTheme.titleSmall?.copyWith(
