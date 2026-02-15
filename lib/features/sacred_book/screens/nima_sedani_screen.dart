@@ -7,14 +7,14 @@ import 'package:Watered/features/traditions/models/chapter.dart';
 import 'package:Watered/features/traditions/models/text_collection.dart';
 import 'package:Watered/features/activity/widgets/activity_tracker.dart';
 
-class SacredBookScreen extends ConsumerStatefulWidget {
-  const SacredBookScreen({super.key});
+class NimaSedaniScreen extends ConsumerStatefulWidget {
+  const NimaSedaniScreen({super.key});
 
   @override
-  ConsumerState<SacredBookScreen> createState() => _SacredBookScreenState();
+  ConsumerState<NimaSedaniScreen> createState() => _NimaSedaniScreenState();
 }
 
-class _SacredBookScreenState extends ConsumerState<SacredBookScreen> {
+class _NimaSedaniScreenState extends ConsumerState<NimaSedaniScreen> {
   final ScrollController _scrollController = ScrollController();
   Chapter? _currentChapter;
   TextCollection? _currentCollection;
@@ -198,7 +198,7 @@ class _SacredBookScreenState extends ConsumerState<SacredBookScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Sacred texts are being prepared...',
+                    'The Nima Sedani is being prepared...',
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.textTheme.bodyLarge?.color?.withOpacity(0.5),
                     ),
@@ -273,7 +273,7 @@ class _SacredBookScreenState extends ConsumerState<SacredBookScreen> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
-                                      // Sacred Book Icon
+                                      // Nima Sedani Icon
                                       Container(
                                         padding: const EdgeInsets.all(20),
                                         decoration: BoxDecoration(

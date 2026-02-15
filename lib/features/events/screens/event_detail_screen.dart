@@ -4,6 +4,7 @@ import 'package:Watered/features/events/models/event.dart';
 import 'package:Watered/features/events/providers/events_providers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EventDetailScreen extends ConsumerWidget {
   final Event event;
@@ -47,7 +48,7 @@ class EventDetailScreen extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          event.isPaid ? '\$${event.price?.toStringAsFixed(2)}' : 'FREE',
+                          event.isPaid ? '₦${event.price?.toStringAsFixed(2)}' : 'FREE',
                           style: TextStyle(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,
@@ -55,13 +56,28 @@ class EventDetailScreen extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      if (event.isRegistered)
-                         Chip(
-                           label: const Text('Registered'),
-                           backgroundColor: Colors.green.withOpacity(0.2),
-                           labelStyle: const TextStyle(color: Colors.green),
-                           avatar: const Icon(Icons.check, color: Colors.green, size: 18),
-                         ),
+                      Row(
+                        children: [
+                          if (event.isRegistered)
+                             Chip(
+                               label: const Text('Registered'),
+                               backgroundColor: Colors.green.withOpacity(0.2),
+                               labelStyle: const TextStyle(color: Colors.green),
+                               avatar: const Icon(Icons.check, color: Colors.green, size: 18),
+                             ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            onPressed: controller.isLoading 
+                                ? null 
+                                : () => ref.read(eventControllerProvider.notifier).toggleReminder(event.id, event.hasReminder),
+                            icon: Icon(
+                              event.hasReminder ? Icons.notifications_active : Icons.notifications_none,
+                              color: event.hasReminder ? theme.colorScheme.primary : theme.textTheme.bodyMedium?.color?.withOpacity(0.5),
+                            ),
+                            tooltip: event.hasReminder ? 'Remove Reminder' : 'Set Reminder',
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                   const SizedBox(height: 16),
@@ -70,8 +86,12 @@ class EventDetailScreen extends ConsumerWidget {
                     style: theme.textTheme.headlineLarge?.copyWith(
                       color: theme.textTheme.bodyMedium?.color,
                       fontSize: 28,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
+                  const SizedBox(height: 8),
+                  if (!event.startTime.isBefore(DateTime.now()))
+                    _CountdownTimer(startTime: event.startTime),
                   const SizedBox(height: 16),
                   _InfoRow(
                     icon: Icons.calendar_today_outlined,
@@ -96,14 +116,15 @@ class EventDetailScreen extends ConsumerWidget {
                   if (event.description != null) ...[
                     Text(
                       'About this Event',
-                      style: theme.textTheme.titleLarge,
+                      style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 12),
                     Text(
                       event.description!,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         height: 1.6,
                         color: theme.textTheme.bodyMedium?.color?.withOpacity(0.8),
+                        fontSize: 15,
                       ),
                     ),
                   ],
@@ -127,10 +148,21 @@ class EventDetailScreen extends ConsumerWidget {
                 : () async {
                     if (event.isRegistered) {
                         await ref.read(eventControllerProvider.notifier).cancelRegistration(event.id);
-                        if (context.mounted) Navigator.of(context).pop(); // Simple UX: close or refresh
+                    } else if (event.isPaid) {
+                        // Payment flow
+                        final paymentData = await ref.read(eventControllerProvider.notifier).initiateEventPayment(event.id);
+                        if (paymentData != null && paymentData['authorization_url'] != null) {
+                           final url = Uri.parse(paymentData['authorization_url']);
+                           if (await canLaunchUrl(url)) {
+                             await launchUrl(url, mode: LaunchMode.externalApplication);
+                           } else {
+                             ScaffoldMessenger.of(context).showSnackBar(
+                               const SnackBar(content: Text('Could not open payment page.'))
+                             );
+                           }
+                        }
                     } else {
                         await ref.read(eventControllerProvider.notifier).registerForEvent(event.id);
-                        if (context.mounted) Navigator.of(context).pop();
                     }
                 },
             style: ElevatedButton.styleFrom(
@@ -142,7 +174,9 @@ class EventDetailScreen extends ConsumerWidget {
             child: controller.isLoading
                 ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
                 : Text(
-                    event.isRegistered ? 'CANCEL REGISTRATION' : 'REGISTER NOW',
+                    event.isRegistered 
+                        ? 'CANCEL REGISTRATION' 
+                        : (event.isPaid ? 'REGISTER & PAY' : 'REGISTER NOW'),
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
           ),
@@ -150,6 +184,80 @@ class EventDetailScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+class _CountdownTimer extends StatefulWidget {
+  final DateTime startTime;
+  const _CountdownTimer({required this.startTime});
+
+  @override
+  State<_CountdownTimer> createState() => _CountdownTimerState();
+}
+
+class _CountdownTimerState extends State<_CountdownTimer> {
+  late Duration _remaining;
+  late final Stream<Duration> _stream;
+
+  @override
+  void initState() {
+    super.initState();
+    _remaining = widget.startTime.difference(DateTime.now());
+    _stream = Stream.periodic(const Duration(seconds: 1), (_) => widget.startTime.difference(DateTime.now()));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<Duration>(
+      stream: _stream,
+      initialData: _remaining,
+      builder: (context, snapshot) {
+        final duration = snapshot.data ?? Duration.zero;
+        if (duration.isNegative) return const SizedBox.shrink();
+
+        final days = duration.inDays;
+        final hours = duration.inHours % 24;
+        final minutes = duration.inMinutes % 60;
+        final seconds = duration.inSeconds % 60;
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.1)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.timer_outlined, size: 18),
+              const SizedBox(width: 12),
+              _buildTimeUnit(days.toString().padLeft(2, '0'), 'Days'),
+              _buildDivider(),
+              _buildTimeUnit(hours.toString().padLeft(2, '0'), 'Hrs'),
+              _buildDivider(),
+              _buildTimeUnit(minutes.toString().padLeft(2, '0'), 'Min'),
+              _buildDivider(),
+              _buildTimeUnit(seconds.toString().padLeft(2, '0'), 'Sec'),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTimeUnit(String value, String label) {
+    return Column(
+      children: [
+        Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        Text(label, style: TextStyle(fontSize: 10, color: Theme.of(context).textTheme.bodySmall?.color)),
+      ],
+    );
+  }
+
+  Widget _buildDivider() => const Padding(
+    padding: EdgeInsets.symmetric(horizontal: 12),
+    child: Text(':', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+  );
 }
 
 class _InfoRow extends StatelessWidget {

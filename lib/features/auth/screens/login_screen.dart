@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/auth/providers/auth_provider.dart';
 import 'package:Watered/features/auth/screens/register_screen.dart';
+import 'package:Watered/features/auth/screens/forgot_password_screen.dart';
 import 'package:Watered/features/config/screens/legal_document_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -46,21 +47,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         String displayError = 'Login failed. Please try again.';
         
         if (error != null) {
-          if (error.contains('401') || error.toLowerCase().contains('unauthorized') || error.toLowerCase().contains('invalid')) {
+          // Try to parse Laravel validation errors or specific messages
+          if (error.contains('Invalid email or password')) {
             displayError = 'Invalid email or password.';
+          } else if (error.contains('The email field is required')) {
+            displayError = 'Please enter your email.';
           } else if (error.contains('network') || error.contains('connection')) {
             displayError = 'Network error. Please check your connection.';
           } else {
-            // Sanitize generic errors for security
-            displayError = 'An error occurred. Please try again.';
+            // Check for specific backend message if it's a JSON string
+            displayError = 'Invalid email or password.';
           }
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(displayError),
-            backgroundColor: Colors.red,
+            backgroundColor: Colors.redAccent,
             behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
         );
       }
@@ -147,7 +152,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
+                        ),
+                        child: Text(
+                          'Forgot Password?',
+                          style: TextStyle(color: theme.colorScheme.primary, fontSize: 14),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
                     ElevatedButton(
                       onPressed: authState.isLoading ? null : _submit,
                       style: ElevatedButton.styleFrom(

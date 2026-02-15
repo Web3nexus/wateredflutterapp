@@ -31,7 +31,7 @@ class BookmarkService {
 
   Future<void> addBookmark({
     required String
-    type, // 'App\Models\Video', 'App\Models\Audio' etc, or short names 'video', 'audio'
+    type, // 'App\Models\Audio' etc, or short name 'audio'
     required int id,
   }) async {
     try {

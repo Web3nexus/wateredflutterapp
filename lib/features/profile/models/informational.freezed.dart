@@ -263,9 +263,6 @@ mixin _$UserGuide {
   int get id => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   String? get content => throw _privateConstructorUsedError;
-  String get type => throw _privateConstructorUsedError; // 'text' or 'video'
-  @JsonKey(name: 'video_url')
-  String? get videoUrl => throw _privateConstructorUsedError;
   @JsonKey(name: 'sort_order')
   int get sortOrder => throw _privateConstructorUsedError;
 
@@ -288,8 +285,6 @@ abstract class $UserGuideCopyWith<$Res> {
     int id,
     String title,
     String? content,
-    String type,
-    @JsonKey(name: 'video_url') String? videoUrl,
     @JsonKey(name: 'sort_order') int sortOrder,
   });
 }
@@ -312,8 +307,6 @@ class _$UserGuideCopyWithImpl<$Res, $Val extends UserGuide>
     Object? id = null,
     Object? title = null,
     Object? content = freezed,
-    Object? type = null,
-    Object? videoUrl = freezed,
     Object? sortOrder = null,
   }) {
     return _then(
@@ -329,14 +322,6 @@ class _$UserGuideCopyWithImpl<$Res, $Val extends UserGuide>
             content: freezed == content
                 ? _value.content
                 : content // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            type: null == type
-                ? _value.type
-                : type // ignore: cast_nullable_to_non_nullable
-                      as String,
-            videoUrl: freezed == videoUrl
-                ? _value.videoUrl
-                : videoUrl // ignore: cast_nullable_to_non_nullable
                       as String?,
             sortOrder: null == sortOrder
                 ? _value.sortOrder
@@ -361,8 +346,6 @@ abstract class _$$UserGuideImplCopyWith<$Res>
     int id,
     String title,
     String? content,
-    String type,
-    @JsonKey(name: 'video_url') String? videoUrl,
     @JsonKey(name: 'sort_order') int sortOrder,
   });
 }
@@ -384,8 +367,6 @@ class __$$UserGuideImplCopyWithImpl<$Res>
     Object? id = null,
     Object? title = null,
     Object? content = freezed,
-    Object? type = null,
-    Object? videoUrl = freezed,
     Object? sortOrder = null,
   }) {
     return _then(
@@ -401,14 +382,6 @@ class __$$UserGuideImplCopyWithImpl<$Res>
         content: freezed == content
             ? _value.content
             : content // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        type: null == type
-            ? _value.type
-            : type // ignore: cast_nullable_to_non_nullable
-                  as String,
-        videoUrl: freezed == videoUrl
-            ? _value.videoUrl
-            : videoUrl // ignore: cast_nullable_to_non_nullable
                   as String?,
         sortOrder: null == sortOrder
             ? _value.sortOrder
@@ -426,8 +399,6 @@ class _$UserGuideImpl implements _UserGuide {
     required this.id,
     required this.title,
     this.content,
-    required this.type,
-    @JsonKey(name: 'video_url') this.videoUrl,
     @JsonKey(name: 'sort_order') required this.sortOrder,
   });
 
@@ -441,18 +412,12 @@ class _$UserGuideImpl implements _UserGuide {
   @override
   final String? content;
   @override
-  final String type;
-  // 'text' or 'video'
-  @override
-  @JsonKey(name: 'video_url')
-  final String? videoUrl;
-  @override
   @JsonKey(name: 'sort_order')
   final int sortOrder;
 
   @override
   String toString() {
-    return 'UserGuide(id: $id, title: $title, content: $content, type: $type, videoUrl: $videoUrl, sortOrder: $sortOrder)';
+    return 'UserGuide(id: $id, title: $title, content: $content, sortOrder: $sortOrder)';
   }
 
   @override
@@ -463,17 +428,13 @@ class _$UserGuideImpl implements _UserGuide {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.content, content) || other.content == content) &&
-            (identical(other.type, type) || other.type == type) &&
-            (identical(other.videoUrl, videoUrl) ||
-                other.videoUrl == videoUrl) &&
             (identical(other.sortOrder, sortOrder) ||
                 other.sortOrder == sortOrder));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, title, content, type, videoUrl, sortOrder);
+  int get hashCode => Object.hash(runtimeType, id, title, content, sortOrder);
 
   /// Create a copy of UserGuide
   /// with the given fields replaced by the non-null parameter values.
@@ -494,8 +455,6 @@ abstract class _UserGuide implements UserGuide {
     required final int id,
     required final String title,
     final String? content,
-    required final String type,
-    @JsonKey(name: 'video_url') final String? videoUrl,
     @JsonKey(name: 'sort_order') required final int sortOrder,
   }) = _$UserGuideImpl;
 
@@ -508,11 +467,6 @@ abstract class _UserGuide implements UserGuide {
   String get title;
   @override
   String? get content;
-  @override
-  String get type; // 'text' or 'video'
-  @override
-  @JsonKey(name: 'video_url')
-  String? get videoUrl;
   @override
   @JsonKey(name: 'sort_order')
   int get sortOrder;

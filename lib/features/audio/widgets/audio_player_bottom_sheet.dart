@@ -5,13 +5,33 @@ import 'package:Watered/features/audio/services/audio_service.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:Watered/core/services/interaction_service.dart';
+import 'package:Watered/core/network/api_client.dart';
+import 'package:share_plus/share_plus.dart';
 
-class AudioPlayerBottomSheet extends ConsumerWidget {
+class AudioPlayerBottomSheet extends ConsumerStatefulWidget {
   final Audio audio;
   const AudioPlayerBottomSheet({super.key, required this.audio});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AudioPlayerBottomSheet> createState() => _AudioPlayerBottomSheetState();
+}
+
+class _AudioPlayerBottomSheetState extends ConsumerState<AudioPlayerBottomSheet> {
+  late bool _isLiked;
+  late int _likesCount;
+  late bool _isSaved;
+
+  @override
+  void initState() {
+    super.initState();
+    _isLiked = widget.audio.isLiked;
+    _likesCount = widget.audio.likesCount ?? 0;
+    _isSaved = false; // TODO: Fetch from bookmarks API
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final audioService = ref.watch(audioServiceProvider);
 
     return Container(
@@ -44,9 +64,9 @@ class AudioPlayerBottomSheet extends ConsumerWidget {
           // Artwork
           ClipRRect(
             borderRadius: BorderRadius.circular(32),
-            child: audio.thumbnailUrl != null
+            child: widget.audio.thumbnailUrl != null
                 ? CachedNetworkImage(
-                    imageUrl: audio.thumbnailUrl!,
+                    imageUrl: widget.audio.thumbnailUrl!,
                     width: 240,
                     height: 240,
                     fit: BoxFit.cover,
@@ -61,7 +81,7 @@ class AudioPlayerBottomSheet extends ConsumerWidget {
           const SizedBox(height: 32),
           // Title & Author
           Text(
-            audio.title,
+            widget.audio.title,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 24,
@@ -72,13 +92,34 @@ class AudioPlayerBottomSheet extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            audio.author ?? 'Watered Scholar',
+            widget.audio.author ?? 'Watered Scholar',
             style: TextStyle(
-              fontSize: 16,
-              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.8),
               fontFamily: 'Outfit',
             ),
           ),
+          if (widget.audio.category != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Text(
+                  widget.audio.category!.toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.0,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ),
+            ),
           const SizedBox(height: 32),
           // Progress Bar
           StreamBuilder<Duration>(
@@ -145,16 +186,106 @@ class AudioPlayerBottomSheet extends ConsumerWidget {
               ),
             ],
           ),
+          const SizedBox(height: 24),
+          // Interaction Buttons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: Icon(
+                  _isLiked ? Icons.favorite : Icons.favorite_border_rounded,
+                  color: _isLiked ? Colors.redAccent : Theme.of(context).iconTheme.color,
+                  size: 28,
+                ),
+                onPressed: _toggleLike,
+              ),
+              const SizedBox(width: 16),
+              IconButton(
+                icon: Icon(
+                  _isSaved ? Icons.bookmark : Icons.bookmark_border_rounded,
+                  color: _isSaved ? Theme.of(context).colorScheme.primary : Theme.of(context).iconTheme.color,
+                  size: 28,
+                ),
+                onPressed: _toggleSave,
+              ),
+              const SizedBox(width: 16),
+              IconButton(
+                icon: Icon(
+                  Icons.share_rounded,
+                  color: Theme.of(context).iconTheme.color,
+                  size: 28,
+                ),
+                onPressed: _shareAudio,
+              ),
+            ],
+          ),
           const SizedBox(height: 16),
-          if (audio.audioUrl.contains('audiomack.com') || audio.audioUrl.contains('spotify.com') || audio.audioUrl.contains('youtube.com'))
+          if (widget.audio.audioUrl.contains('audiomack.com') || widget.audio.audioUrl.contains('spotify.com') || widget.audio.audioUrl.contains('youtube.com'))
             TextButton.icon(
-              onPressed: () => launchUrl(Uri.parse(audio.audioUrl), mode: LaunchMode.externalApplication),
+              onPressed: () => launchUrl(Uri.parse(widget.audio.audioUrl), mode: LaunchMode.externalApplication),
               icon: Icon(Icons.open_in_new_rounded, color: Theme.of(context).colorScheme.primary, size: 16),
               label: Text('OPEN IN STREAMING PLATFORM', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 12, fontWeight: FontWeight.bold)),
             ),
           const SizedBox(height: 24),
         ],
       ),
+    );
+  }
+
+  Future<void> _toggleLike() async {
+    try {
+      final interactionService = ref.read(interactionServiceProvider);
+      final result = await interactionService.toggleLike('audio', widget.audio.id);
+      
+      if (mounted) {
+        setState(() {
+          _isLiked = result['liked'] ?? !_isLiked;
+          _likesCount = result['likes_count'] ?? _likesCount;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update like: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _toggleSave() async {
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      
+      if (_isSaved) {
+        await apiClient.delete('bookmarks/item', data: {
+          'bookmarkable_id': widget.audio.id,
+          'bookmarkable_type': 'App\\Models\\Audio',
+        });
+      } else {
+        await apiClient.post('bookmarks', data: {
+          'bookmarkable_id': widget.audio.id,
+          'bookmarkable_type': 'App\\Models\\Audio',
+        });
+      }
+      
+      if (mounted) {
+        setState(() {
+          _isSaved = !_isSaved;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update bookmark: $e')),
+        );
+      }
+    }
+  }
+
+  void _shareAudio() {
+    Share.share(
+      '${widget.audio.title} by ${widget.audio.author ?? "Unknown Artist"}\n\nListen on Watered',
+      subject: widget.audio.title,
     );
   }
 }

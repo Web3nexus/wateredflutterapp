@@ -35,4 +35,20 @@ class EventService {
   Future<void> cancelRegistration(int eventId) async {
     await _client.delete('events/$eventId/register');
   }
+
+  Future<void> saveReminder(int eventId, {DateTime? reminderTime}) async {
+    await _client.post(
+      'events/$eventId/reminder',
+      data: reminderTime != null ? {'reminder_time': reminderTime.toIso8601String()} : null,
+    );
+  }
+
+  Future<void> removeReminder(int eventId) async {
+    await _client.delete('events/$eventId/reminder');
+  }
+
+  Future<Map<String, dynamic>> initiatePayment(int eventId) async {
+    final response = await _client.post('events/$eventId/payment');
+    return response.data['data'];
+  }
 }

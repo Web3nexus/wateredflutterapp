@@ -4,8 +4,6 @@ import 'package:Watered/features/traditions/models/tradition.dart';
 import 'package:Watered/features/traditions/models/text_collection.dart';
 import 'package:Watered/features/traditions/providers/collection_provider.dart';
 import 'package:Watered/features/traditions/screens/collection_detail_screen.dart';
-import 'package:Watered/features/videos/providers/video_provider.dart';
-import 'package:Watered/features/videos/screens/video_player_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class TraditionDetailScreen extends ConsumerWidget {
@@ -15,7 +13,6 @@ class TraditionDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final collectionsState = ref.watch(collectionListProvider(traditionId: tradition.id));
-    final videosState = ref.watch(videoListProvider(traditionId: tradition.id, perPage: 5));
     final theme = Theme.of(context);
 
     return Scaffold(

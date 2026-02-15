@@ -40,13 +40,6 @@ class NotificationSettingsScreen extends ConsumerWidget {
               settings.eventUpdates,
               (val) => ref.read(notificationSettingsNotifierProvider.notifier).toggleEvents(val),
             ),
-            _buildToggleTile(
-              context,
-              'Community Activity',
-              'Notifications for likes and comments on your posts.',
-              settings.communityActivity,
-              (val) => ref.read(notificationSettingsNotifierProvider.notifier).toggleCommunity(val),
-            ),
           ],
         ),
         loading: () => const Center(child: CircularProgressIndicator()),

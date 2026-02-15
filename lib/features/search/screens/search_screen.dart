@@ -59,7 +59,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           onChanged: _onSearchChanged,
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
-            hintText: 'Search wisdom, products, videos...',
+            hintText: 'Search wisdom, products, teachings...',
             hintStyle: const TextStyle(color: Colors.white54),
             border: InputBorder.none,
             prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.primary),
@@ -143,8 +143,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
     return resultsAsync.when(
       data: (results) {
-        if (results.videos.isEmpty &&
-            results.products.isEmpty &&
+        if (results.products.isEmpty &&
             results.temples.isEmpty) {
           return const Center(
             child: Text(
@@ -153,29 +152,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             ),
           );
         }
-
         return ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            if (results.videos.isNotEmpty) ...[
-              const _SectionHeader(title: 'VIDEOS'),
-              ...results.videos.map(
-                (v) => ListTile(
-                  title: Text(
-                    v.title,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  leading: const Icon(
-                    Icons.play_circle_outline,
-                    color: Colors.white54,
-                  ),
-                  onTap: () {
-                    // Nav to player
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
             if (results.products.isNotEmpty) ...[
               const _SectionHeader(title: 'SACRED OBJECTS'),
               ...results.products.map(

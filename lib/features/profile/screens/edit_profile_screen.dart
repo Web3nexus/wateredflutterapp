@@ -118,11 +118,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       radius: 50,
                       backgroundImage: _selectedImage != null
                           ? FileImage(_selectedImage!)
-                          : (ref.read(authProvider).user?.profilePhotoUrl != null
-                              ? CachedNetworkImageProvider(ref.read(authProvider).user!.profilePhotoUrl!)
-                              : null) as ImageProvider?,
+                          : (ref.read(authProvider).user?.profileImage != null
+                              ? CachedNetworkImageProvider(ref.read(authProvider).user!.profileImage!)
+                              : null),
                       backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
-                      child: (_selectedImage == null && ref.read(authProvider).user?.profilePhotoUrl == null)
+                      child: (_selectedImage == null && ref.read(authProvider).user?.profileImage == null)
                           ? Icon(Icons.person, size: 50, color: theme.colorScheme.primary)
                           : null,
                     ),

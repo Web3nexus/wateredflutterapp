@@ -24,8 +24,8 @@ mixin _$User {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
-  @JsonKey(name: 'profile_photo_url')
-  String? get profilePhotoUrl => throw _privateConstructorUsedError;
+  @JsonKey(name: 'profile_image')
+  String? get profileImage => throw _privateConstructorUsedError;
   @JsonKey(name: 'is_premium')
   bool get isPremium => throw _privateConstructorUsedError;
   @JsonKey(name: 'email_verified_at')
@@ -53,7 +53,7 @@ abstract class $UserCopyWith<$Res> {
     int id,
     String name,
     String email,
-    @JsonKey(name: 'profile_photo_url') String? profilePhotoUrl,
+    @JsonKey(name: 'profile_image') String? profileImage,
     @JsonKey(name: 'is_premium') bool isPremium,
     @JsonKey(name: 'email_verified_at') DateTime? emailVerifiedAt,
     @JsonKey(name: 'created_at') DateTime? createdAt,
@@ -79,7 +79,7 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? id = null,
     Object? name = null,
     Object? email = null,
-    Object? profilePhotoUrl = freezed,
+    Object? profileImage = freezed,
     Object? isPremium = null,
     Object? emailVerifiedAt = freezed,
     Object? createdAt = freezed,
@@ -99,9 +99,9 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
                 ? _value.email
                 : email // ignore: cast_nullable_to_non_nullable
                       as String,
-            profilePhotoUrl: freezed == profilePhotoUrl
-                ? _value.profilePhotoUrl
-                : profilePhotoUrl // ignore: cast_nullable_to_non_nullable
+            profileImage: freezed == profileImage
+                ? _value.profileImage
+                : profileImage // ignore: cast_nullable_to_non_nullable
                       as String?,
             isPremium: null == isPremium
                 ? _value.isPremium
@@ -137,7 +137,7 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
     int id,
     String name,
     String email,
-    @JsonKey(name: 'profile_photo_url') String? profilePhotoUrl,
+    @JsonKey(name: 'profile_image') String? profileImage,
     @JsonKey(name: 'is_premium') bool isPremium,
     @JsonKey(name: 'email_verified_at') DateTime? emailVerifiedAt,
     @JsonKey(name: 'created_at') DateTime? createdAt,
@@ -160,7 +160,7 @@ class __$$UserImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? email = null,
-    Object? profilePhotoUrl = freezed,
+    Object? profileImage = freezed,
     Object? isPremium = null,
     Object? emailVerifiedAt = freezed,
     Object? createdAt = freezed,
@@ -180,9 +180,9 @@ class __$$UserImplCopyWithImpl<$Res>
             ? _value.email
             : email // ignore: cast_nullable_to_non_nullable
                   as String,
-        profilePhotoUrl: freezed == profilePhotoUrl
-            ? _value.profilePhotoUrl
-            : profilePhotoUrl // ignore: cast_nullable_to_non_nullable
+        profileImage: freezed == profileImage
+            ? _value.profileImage
+            : profileImage // ignore: cast_nullable_to_non_nullable
                   as String?,
         isPremium: null == isPremium
             ? _value.isPremium
@@ -212,7 +212,7 @@ class _$UserImpl implements _User {
     required this.id,
     required this.name,
     required this.email,
-    @JsonKey(name: 'profile_photo_url') this.profilePhotoUrl,
+    @JsonKey(name: 'profile_image') this.profileImage,
     @JsonKey(name: 'is_premium') this.isPremium = false,
     @JsonKey(name: 'email_verified_at') this.emailVerifiedAt,
     @JsonKey(name: 'created_at') this.createdAt,
@@ -229,8 +229,8 @@ class _$UserImpl implements _User {
   @override
   final String email;
   @override
-  @JsonKey(name: 'profile_photo_url')
-  final String? profilePhotoUrl;
+  @JsonKey(name: 'profile_image')
+  final String? profileImage;
   @override
   @JsonKey(name: 'is_premium')
   final bool isPremium;
@@ -246,7 +246,7 @@ class _$UserImpl implements _User {
 
   @override
   String toString() {
-    return 'User(id: $id, name: $name, email: $email, profilePhotoUrl: $profilePhotoUrl, isPremium: $isPremium, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'User(id: $id, name: $name, email: $email, profileImage: $profileImage, isPremium: $isPremium, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -257,8 +257,8 @@ class _$UserImpl implements _User {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.email, email) || other.email == email) &&
-            (identical(other.profilePhotoUrl, profilePhotoUrl) ||
-                other.profilePhotoUrl == profilePhotoUrl) &&
+            (identical(other.profileImage, profileImage) ||
+                other.profileImage == profileImage) &&
             (identical(other.isPremium, isPremium) ||
                 other.isPremium == isPremium) &&
             (identical(other.emailVerifiedAt, emailVerifiedAt) ||
@@ -276,7 +276,7 @@ class _$UserImpl implements _User {
     id,
     name,
     email,
-    profilePhotoUrl,
+    profileImage,
     isPremium,
     emailVerifiedAt,
     createdAt,
@@ -302,7 +302,7 @@ abstract class _User implements User {
     required final int id,
     required final String name,
     required final String email,
-    @JsonKey(name: 'profile_photo_url') final String? profilePhotoUrl,
+    @JsonKey(name: 'profile_image') final String? profileImage,
     @JsonKey(name: 'is_premium') final bool isPremium,
     @JsonKey(name: 'email_verified_at') final DateTime? emailVerifiedAt,
     @JsonKey(name: 'created_at') final DateTime? createdAt,
@@ -318,8 +318,8 @@ abstract class _User implements User {
   @override
   String get email;
   @override
-  @JsonKey(name: 'profile_photo_url')
-  String? get profilePhotoUrl;
+  @JsonKey(name: 'profile_image')
+  String? get profileImage;
   @override
   @JsonKey(name: 'is_premium')
   bool get isPremium;

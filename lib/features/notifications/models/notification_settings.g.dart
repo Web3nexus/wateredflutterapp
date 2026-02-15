@@ -12,7 +12,6 @@ _$NotificationSettingsImpl _$$NotificationSettingsImplFromJson(
   pushNotifications: json['push_notifications'] as bool? ?? true,
   ritualReminders: json['ritual_reminders'] as bool? ?? true,
   eventUpdates: json['event_updates'] as bool? ?? true,
-  communityActivity: json['community_activity'] as bool? ?? true,
 );
 
 Map<String, dynamic> _$$NotificationSettingsImplToJson(
@@ -21,5 +20,4 @@ Map<String, dynamic> _$$NotificationSettingsImplToJson(
   'push_notifications': instance.pushNotifications,
   'ritual_reminders': instance.ritualReminders,
   'event_updates': instance.eventUpdates,
-  'community_activity': instance.communityActivity,
 };

@@ -48,12 +48,12 @@ class _GuideCard extends StatelessWidget {
         leading: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: (guide.type == 'video' ? Colors.redAccent : Theme.of(context).colorScheme.primary).withOpacity(0.1),
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(
-            guide.type == 'video' ? Icons.play_circle_fill_rounded : Icons.menu_book_rounded,
-            color: guide.type == 'video' ? Colors.redAccent : Theme.of(context).colorScheme.primary,
+            Icons.menu_book_rounded,
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
         title: Text(
@@ -70,26 +70,17 @@ class _GuideCard extends StatelessWidget {
             : null,
         trailing: Icon(Icons.chevron_right, color: theme.dividerColor.withOpacity(0.2)),
         onTap: () async {
-          if (guide.type == 'video' && guide.videoUrl != null) {
-            final url = Uri.parse(guide.videoUrl!);
-            if (await canLaunchUrl(url)) {
-              await launchUrl(url, mode: LaunchMode.externalApplication);
-            }
-          } else {
-             // For text guides, we could navigate to a detail screen
-             // Simplified: just show a dialog for now or TODO
-             showDialog(
-               context: context,
-               builder: (_) => AlertDialog(
-                 backgroundColor: theme.dialogBackgroundColor,
-                 title: Text(guide.title),
-                 content: SingleChildScrollView(child: Text(guide.content ?? '')),
-                 actions: [
-                   TextButton(onPressed: () => Navigator.pop(context), child: const Text('CLOSE')),
-                 ],
-               ),
-             );
-          }
+          showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+              backgroundColor: theme.dialogBackgroundColor,
+              title: Text(guide.title),
+              content: SingleChildScrollView(child: Text(guide.content ?? '')),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(context), child: const Text('CLOSE')),
+              ],
+            ),
+          );
         },
       ),
     );

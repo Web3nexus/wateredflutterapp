@@ -5,7 +5,6 @@ import 'package:Watered/features/traditions/providers/tradition_provider.dart';
 import 'package:Watered/features/traditions/screens/tradition_detail_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Watered/features/audio/screens/audio_player_screen.dart';
-import 'package:Watered/features/videos/screens/feed_screen.dart';
 
 class UserLibraryScreen extends ConsumerStatefulWidget {
   const UserLibraryScreen({super.key});
@@ -20,7 +19,7 @@ class _UserLibraryScreenState extends ConsumerState<UserLibraryScreen> with Sing
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -85,7 +84,6 @@ class _UserLibraryScreenState extends ConsumerState<UserLibraryScreen> with Sing
                 tabs: const [
                   Tab(text: 'All'),
                   Tab(text: 'Audio'),
-                  Tab(text: 'Video'),
                 ],
               ),
             ),
@@ -100,15 +98,6 @@ class _UserLibraryScreenState extends ConsumerState<UserLibraryScreen> with Sing
                 children: [
                    const _BookmarkList(type: null), // All
                    const _BookmarkList(type: 'audio'), // Audio Only
-                   const _BookmarkList(type: 'video'), // Video Only (Reels or List? User said "fetch what user saved/bookmarked")
-                   // User previously said Video tab should look like Reels (TikTok). 
-                   // But here they say "fetch what user saved". 
-                   // If I use FeedScreen(), it fetches *Feed* videos, not *Bookmarked* videos unless I filter/pass content.
-                   // The user said "fix the wrong data loading... fetch what user saved". 
-                   // So I MUST use _BookmarkList for Video too, but maybe styled as Reels? 
-                   // For now, I will use _BookmarkList to guarantee DATA CORRECTNESS (Saved Items). 
-                   // If they want Reel *View* for saved items, I'd need to adapt FeedScreen to accept a List<Video>.
-                   // I will stick to _BookmarkList to ensure correct data first, as data correctness > style in this specific error report.
                 ],
               ),
             ),
@@ -146,7 +135,6 @@ class _BookmarkList extends ConsumerWidget {
             : bookmarks.where((b) {
                 final bType = b.bookmarkableType.toLowerCase();
                 if (type == 'audio') return bType.contains('audio') || bType.contains('song');
-                if (type == 'video') return bType.contains('video') || bType.contains('reel');
                 if (type == 'text') return bType.contains('text') || bType.contains('chapter');
                 return bType.contains(type!);
               }).toList();
@@ -215,18 +203,9 @@ class _BookmarkList extends ConsumerWidget {
                 onTap: () {
                    // Navigate based on type
                    final bType = bookmark.bookmarkableType.toLowerCase();
-                   if (bType.contains('video')) {
-                      // Navigate to Reel
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => FeedScreen(initialVideoId: bookmark.bookmarkableId)
-                      ));
-                   } else if (bType.contains('audio')) {
-                      // We need an Audio object. Construct simplistically:
-                      // In real app, maybe fetch full object or ensure bookmarkable has all fields.
-                      // For now, assuming bookmarkable has data.
-                      // if data is insufficient, we might need to fetch. 
-                      // But let's try to pass what we have.
-                      // Error handling: if AudioPlayerScreen fails, it handles it.
+                   if (bType.contains('audio')) {
+                      // Navigate to audio player
+                      // Audio navigation logic here
                    }
                 },
               ),
@@ -240,7 +219,6 @@ class _BookmarkList extends ConsumerWidget {
   }
 
   IconData _getIconForType(String type) {
-    if (type.toLowerCase().contains('video')) return Icons.play_arrow_rounded;
     if (type.toLowerCase().contains('audio')) return Icons.mic_none_rounded;
     return Icons.menu_book_rounded;
   }

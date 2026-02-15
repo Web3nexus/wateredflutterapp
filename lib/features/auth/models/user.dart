@@ -9,7 +9,7 @@ class User with _$User {
     required int id,
     required String name,
     required String email,
-    @JsonKey(name: 'profile_photo_url') String? profilePhotoUrl,
+    @JsonKey(name: 'profile_image') String? profileImage,
     @JsonKey(name: 'is_premium') @Default(false) bool isPremium,
     @JsonKey(name: 'email_verified_at') DateTime? emailVerifiedAt,
     @JsonKey(name: 'created_at') DateTime? createdAt,

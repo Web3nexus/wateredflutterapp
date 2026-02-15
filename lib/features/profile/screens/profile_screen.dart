@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:Watered/core/widgets/premium_gate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/auth/providers/auth_provider.dart';
-import 'package:Watered/features/community/screens/community_feed_screen.dart'; // Added import
+// import 'package:Watered/features/community/screens/community_feed_screen.dart'; // Removed
 import 'package:Watered/features/auth/screens/login_screen.dart';
 import 'package:Watered/features/library/screens/user_library_screen.dart';
 import 'package:Watered/features/commerce/screens/shop_screen.dart';
@@ -12,6 +12,7 @@ import 'package:Watered/features/search/screens/search_screen.dart';
 import 'package:Watered/features/events/screens/events_screen.dart'; 
 import 'package:Watered/features/rituals/screens/rituals_screen.dart';
 import 'package:Watered/features/incantations/screens/incantations_screen.dart';
+import 'package:Watered/features/audio/screens/audio_feed_screen.dart';
 import 'package:Watered/features/subscription/screens/subscription_screen.dart';
 import 'package:Watered/features/reminders/screens/reminders_screen.dart';
 import 'package:Watered/features/profile/screens/settings_screen.dart';
@@ -121,10 +122,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         child: CircleAvatar(
                           radius: 60,
                           backgroundColor: theme.cardTheme.color,
-                          backgroundImage: user.profilePhotoUrl != null
-                              ? CachedNetworkImageProvider(user.profilePhotoUrl!)
+                          backgroundImage: user.profileImage != null
+                              ? CachedNetworkImageProvider('${user.profileImage}?t=${DateTime.now().millisecondsSinceEpoch}')
                               : null,
-                          child: user.profilePhotoUrl == null
+                          child: user.profileImage == null
                               ? Text(
                                   user.name.substring(0, 1).toUpperCase(),
                                   style: TextStyle(
@@ -250,10 +251,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final List<Map<String, dynamic>> items = [
       {'icon': Icons.spa_outlined, 'title': 'Rituals', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RitualsScreen()))},
       {'icon': Icons.record_voice_over_outlined, 'title': 'Incantations', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const IncantationsScreen()))},
+      {'icon': Icons.headphones_rounded, 'title': 'Audio Teachings', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AudioFeedScreen()))},
       {'icon': Icons.diamond_outlined, 'title': 'Sacred Shop', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ShopScreen()))},
       {'icon': Icons.event_available_rounded, 'title': 'Upcoming Events', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EventsScreen()))},
       {'icon': Icons.alarm_rounded, 'title': 'Reminders', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RemindersScreen()))},
-      {'icon': Icons.people_outline_rounded, 'title': 'Community', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CommunityFeedScreen()))},
+      // {'icon': Icons.people_outline_rounded, 'title': 'Community', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CommunityFeedScreen()))},
       {'icon': Icons.bookmark_border_rounded, 'title': 'My Collection', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UserLibraryScreen()))},
       {'icon': Icons.map_outlined, 'title': 'Temple Discovery', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TempleScreen()))},
       {'icon': Icons.calendar_month_outlined, 'title': 'Book Consultation', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ConsultationScreen()))},

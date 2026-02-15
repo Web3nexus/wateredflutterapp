@@ -18,6 +18,8 @@ class Audio with _$Audio {
     @JsonKey(name: 'is_active') @Default(true) bool isActive,
     @JsonKey(name: 'is_featured') @Default(false) bool isFeatured,
     @JsonKey(name: 'is_liked') @Default(false) bool isLiked,
+    @JsonKey(name: 'likes_count') int? likesCount,
+    @JsonKey(name: 'comments_count') int? commentsCount,
     String? category,
     @JsonKey(name: 'created_at') DateTime? createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,

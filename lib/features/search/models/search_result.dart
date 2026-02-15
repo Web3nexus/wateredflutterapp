@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:Watered/features/videos/models/video.dart';
 import 'package:Watered/features/commerce/models/product.dart';
 import 'package:Watered/features/temples/models/temple.dart';
 
@@ -9,7 +8,6 @@ part 'search_result.g.dart';
 @freezed
 class SearchResult with _$SearchResult {
   const factory SearchResult({
-    @Default([]) List<Video> videos,
     @Default([]) List<dynamic> audio, // Placeholder until Audio model imported/created
     @Default([]) List<Product> products,
     @Default([]) List<Temple> temples,

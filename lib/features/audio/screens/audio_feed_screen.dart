@@ -25,10 +25,10 @@ class AudioFeedScreen extends ConsumerStatefulWidget {
 
 class _AudioFeedScreenState extends ConsumerState<AudioFeedScreen> {
   String _selectedCategory = 'All';
-  final List<String> _categories = ['All', 'Incantation', 'Music', 'Sermons', 'Meditation'];
 
   @override
   Widget build(BuildContext context) {
+    final categoriesAsync = ref.watch(audioCategoriesProvider);
     final audioState = ref.watch(audioListProvider(category: _selectedCategory == 'All' ? null : _selectedCategory));
     final isPremium = ref.watch(authProvider).user?.isPremium ?? false;
 
@@ -46,39 +46,43 @@ class _AudioFeedScreenState extends ConsumerState<AudioFeedScreen> {
         ],
       ) : null,
       body: ActivityTracker(
-        pageName: 'music',
+        pageName: 'audio_teachings',
         child: Column(
         children: [
           const AdBanner(screenKey: 'audio'),
           // Category Filters
-          SizedBox(
-            height: 60,
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              scrollDirection: Axis.horizontal,
-              itemCount: _categories.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
-              itemBuilder: (context, index) {
-                final category = _categories[index];
-                final isSelected = _selectedCategory == category;
-                return FilterChip(
-                  label: Text(category),
-                  selected: isSelected,
-                  onSelected: (selected) {
-                    setState(() {
-                      _selectedCategory = category;
-                    });
-                  },
-                  backgroundColor: Theme.of(context).cardTheme.color,
-                  selectedColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                  checkmarkColor: Theme.of(context).colorScheme.primary,
-                  labelStyle: TextStyle(
-                    color: isSelected ? Theme.of(context).colorScheme.primary : null,
-                    fontWeight: isSelected ? FontWeight.bold : null,
-                  ),
-                );
-              },
+          categoriesAsync.when(
+            data: (categories) => SizedBox(
+              height: 60,
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                scrollDirection: Axis.horizontal,
+                itemCount: categories.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                itemBuilder: (context, index) {
+                  final category = categories[index];
+                  final isSelected = _selectedCategory == category;
+                  return FilterChip(
+                    label: Text(category),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      setState(() {
+                        _selectedCategory = category;
+                      });
+                    },
+                    backgroundColor: Theme.of(context).cardTheme.color,
+                    selectedColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                    checkmarkColor: Theme.of(context).colorScheme.primary,
+                    labelStyle: TextStyle(
+                      color: isSelected ? Theme.of(context).colorScheme.primary : null,
+                      fontWeight: isSelected ? FontWeight.bold : null,
+                    ),
+                  );
+                },
+              ),
             ),
+            loading: () => const SizedBox(height: 60),
+            error: (_, __) => const SizedBox(height: 60),
           ),
           Expanded(
             child: RefreshIndicator(
@@ -123,9 +127,15 @@ class _AudioCard extends ConsumerWidget {
       ),
       child: InkWell(
         onTap: () async {
+          final audioService = ref.read(audioServiceProvider);
+          final isStreamable = audioService.isStreamable(audio.audioUrl);
+
           ref.read(currentAudioProvider.notifier).state = audio;
-          await ref.read(audioServiceProvider).loadAudio(audio);
-          await ref.read(audioServiceProvider).play();
+          
+          if (isStreamable) {
+            await audioService.loadAudio(audio);
+            await audioService.play();
+          }
 
           if (context.mounted) {
             showModalBottomSheet(

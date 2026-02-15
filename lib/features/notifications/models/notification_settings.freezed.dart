@@ -27,8 +27,6 @@ mixin _$NotificationSettings {
   bool get ritualReminders => throw _privateConstructorUsedError;
   @JsonKey(name: 'event_updates')
   bool get eventUpdates => throw _privateConstructorUsedError;
-  @JsonKey(name: 'community_activity')
-  bool get communityActivity => throw _privateConstructorUsedError;
 
   /// Serializes this NotificationSettings to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -51,7 +49,6 @@ abstract class $NotificationSettingsCopyWith<$Res> {
     @JsonKey(name: 'push_notifications') bool pushNotifications,
     @JsonKey(name: 'ritual_reminders') bool ritualReminders,
     @JsonKey(name: 'event_updates') bool eventUpdates,
-    @JsonKey(name: 'community_activity') bool communityActivity,
   });
 }
 
@@ -76,7 +73,6 @@ class _$NotificationSettingsCopyWithImpl<
     Object? pushNotifications = null,
     Object? ritualReminders = null,
     Object? eventUpdates = null,
-    Object? communityActivity = null,
   }) {
     return _then(
       _value.copyWith(
@@ -91,10 +87,6 @@ class _$NotificationSettingsCopyWithImpl<
             eventUpdates: null == eventUpdates
                 ? _value.eventUpdates
                 : eventUpdates // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            communityActivity: null == communityActivity
-                ? _value.communityActivity
-                : communityActivity // ignore: cast_nullable_to_non_nullable
                       as bool,
           )
           as $Val,
@@ -115,7 +107,6 @@ abstract class _$$NotificationSettingsImplCopyWith<$Res>
     @JsonKey(name: 'push_notifications') bool pushNotifications,
     @JsonKey(name: 'ritual_reminders') bool ritualReminders,
     @JsonKey(name: 'event_updates') bool eventUpdates,
-    @JsonKey(name: 'community_activity') bool communityActivity,
   });
 }
 
@@ -136,7 +127,6 @@ class __$$NotificationSettingsImplCopyWithImpl<$Res>
     Object? pushNotifications = null,
     Object? ritualReminders = null,
     Object? eventUpdates = null,
-    Object? communityActivity = null,
   }) {
     return _then(
       _$NotificationSettingsImpl(
@@ -152,10 +142,6 @@ class __$$NotificationSettingsImplCopyWithImpl<$Res>
             ? _value.eventUpdates
             : eventUpdates // ignore: cast_nullable_to_non_nullable
                   as bool,
-        communityActivity: null == communityActivity
-            ? _value.communityActivity
-            : communityActivity // ignore: cast_nullable_to_non_nullable
-                  as bool,
       ),
     );
   }
@@ -168,7 +154,6 @@ class _$NotificationSettingsImpl implements _NotificationSettings {
     @JsonKey(name: 'push_notifications') this.pushNotifications = true,
     @JsonKey(name: 'ritual_reminders') this.ritualReminders = true,
     @JsonKey(name: 'event_updates') this.eventUpdates = true,
-    @JsonKey(name: 'community_activity') this.communityActivity = true,
   });
 
   factory _$NotificationSettingsImpl.fromJson(Map<String, dynamic> json) =>
@@ -183,13 +168,10 @@ class _$NotificationSettingsImpl implements _NotificationSettings {
   @override
   @JsonKey(name: 'event_updates')
   final bool eventUpdates;
-  @override
-  @JsonKey(name: 'community_activity')
-  final bool communityActivity;
 
   @override
   String toString() {
-    return 'NotificationSettings(pushNotifications: $pushNotifications, ritualReminders: $ritualReminders, eventUpdates: $eventUpdates, communityActivity: $communityActivity)';
+    return 'NotificationSettings(pushNotifications: $pushNotifications, ritualReminders: $ritualReminders, eventUpdates: $eventUpdates)';
   }
 
   @override
@@ -202,9 +184,7 @@ class _$NotificationSettingsImpl implements _NotificationSettings {
             (identical(other.ritualReminders, ritualReminders) ||
                 other.ritualReminders == ritualReminders) &&
             (identical(other.eventUpdates, eventUpdates) ||
-                other.eventUpdates == eventUpdates) &&
-            (identical(other.communityActivity, communityActivity) ||
-                other.communityActivity == communityActivity));
+                other.eventUpdates == eventUpdates));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -214,7 +194,6 @@ class _$NotificationSettingsImpl implements _NotificationSettings {
     pushNotifications,
     ritualReminders,
     eventUpdates,
-    communityActivity,
   );
 
   /// Create a copy of NotificationSettings
@@ -240,7 +219,6 @@ abstract class _NotificationSettings implements NotificationSettings {
     @JsonKey(name: 'push_notifications') final bool pushNotifications,
     @JsonKey(name: 'ritual_reminders') final bool ritualReminders,
     @JsonKey(name: 'event_updates') final bool eventUpdates,
-    @JsonKey(name: 'community_activity') final bool communityActivity,
   }) = _$NotificationSettingsImpl;
 
   factory _NotificationSettings.fromJson(Map<String, dynamic> json) =
@@ -255,9 +233,6 @@ abstract class _NotificationSettings implements NotificationSettings {
   @override
   @JsonKey(name: 'event_updates')
   bool get eventUpdates;
-  @override
-  @JsonKey(name: 'community_activity')
-  bool get communityActivity;
 
   /// Create a copy of NotificationSettings
   /// with the given fields replaced by the non-null parameter values.

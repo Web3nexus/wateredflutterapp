@@ -7,15 +7,13 @@ import 'package:Watered/features/auth/providers/auth_provider.dart';
 import 'package:Watered/features/search/screens/search_screen.dart'; // Reuse dailyWisdomProvider
 import 'package:Watered/features/home/providers/featured_content_provider.dart';
 import 'package:Watered/features/home/providers/tab_provider.dart';
-import 'package:Watered/features/videos/models/video.dart';
 import 'package:Watered/features/audio/models/audio.dart';
-import 'package:Watered/features/community/screens/community_feed_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:Watered/features/rituals/screens/rituals_screen.dart';
 import 'package:Watered/features/incantations/screens/incantations_screen.dart';
 import 'package:Watered/features/events/screens/events_screen.dart';
-import 'package:Watered/features/videos/screens/feed_screen.dart';
+
 import 'package:Watered/features/audio/screens/audio_player_screen.dart';
 import 'package:Watered/features/calendar/screens/calendar_home_screen.dart';
 import 'package:Watered/features/reminders/widgets/upcoming_holiday_widget.dart';
@@ -64,11 +62,11 @@ class DashboardScreen extends ConsumerWidget {
                         },
                         child: CircleAvatar(
                           radius: 24,
-                          backgroundImage: user?.profilePhotoUrl != null
-                              ? CachedNetworkImageProvider(user!.profilePhotoUrl!)
+                          backgroundImage: user?.profileImage != null
+                              ? CachedNetworkImageProvider(user!.profileImage!)
                               : null,
                           backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
-                          child: user?.profilePhotoUrl == null
+                          child: user?.profileImage == null
                               ? Icon(Icons.person, color: theme.colorScheme.primary)
                               : null,
                         ),
@@ -296,11 +294,7 @@ class DashboardScreen extends ConsumerWidget {
                         String subtitle = '';
                         String? imageUrl;
                         
-                        if (item is Video) {
-                          title = item.title;
-                          subtitle = 'Video • ${item.duration ?? "Unknown"}';
-                          imageUrl = item.thumbnailUrl;
-                        } else if (item is Audio) {
+                        if (item is Audio) {
                           title = item.title;
                           subtitle = 'Audio • ${item.duration ?? "Unknown"}';
                           imageUrl = item.thumbnailUrl;
@@ -316,11 +310,7 @@ class DashboardScreen extends ConsumerWidget {
                           padding: const EdgeInsets.only(right: 16),
                           child: InkWell(
                             onTap: () {
-                              if (item is Video) {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (_) => FeedScreen(initialVideoId: item.id), // Open Reels View
-                                ));
-                              } else if (item is Audio) {
+                              if (item is Audio) {
                                 Navigator.of(context).push(MaterialPageRoute(
                                   builder: (_) => AudioPlayerScreen(audio: item),
                                 ));
@@ -334,71 +324,13 @@ class DashboardScreen extends ConsumerWidget {
                   );
                 },
                 loading: () => const SizedBox(height: 160, child: Center(child: CircularProgressIndicator())),
-                error: (e, s) => Text('Error loading featured content: $e'),
+                error: (e, s) => const SizedBox(
+                  height: 100,
+                  child: Center(child: Text("No featured content yet.", style: TextStyle(color: Colors.white54))),
+                ),
               ),
 
               const SizedBox(height: 32),
-              
-              // Community Plug
-              InkWell(
-                onTap: () {
-                   // Navigate to Community (via Profile index or direct push if needed, 
-                   // but instructions say "Leads users to Community via Profile menu". 
-                   // Actually, usually a plug acts as a shortcut. I'll push to CommunityFeedScreen directly for better UX)
-                   Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CommunityFeedScreen()));
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        theme.colorScheme.primary,
-                        theme.colorScheme.secondary,
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.people_rounded, color: Colors.white, size: 24),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Join the Community',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Connect with fellow seekers',
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.9),
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Icon(Icons.arrow_forward_ios_rounded, color: Colors.white.withOpacity(0.8), size: 16),
-                    ],
-                  ),
-                ),
-              ),
               
               const SizedBox(height: 100), // Bottom padding for nav bar
             ],
@@ -447,7 +379,7 @@ class DashboardScreen extends ConsumerWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(Icons.play_circle_filled_rounded, color: Colors.white.withOpacity(0.9), size: 16),
+                    Icon(Icons.temple_hindu_rounded, color: Colors.white.withOpacity(0.9), size: 16),
                     const SizedBox(width: 4),
                     Text(
                       subtitle,

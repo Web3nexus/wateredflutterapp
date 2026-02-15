@@ -6,14 +6,13 @@ import 'package:Watered/features/config/providers/global_settings_provider.dart'
 import 'package:Watered/features/auth/providers/auth_provider.dart';
 import 'package:Watered/features/home/screens/dashboard_screen.dart';
 import 'package:Watered/features/traditions/screens/library_screen.dart';
-import 'package:Watered/features/videos/screens/feed_screen.dart';
 import 'package:Watered/features/audio/screens/audio_feed_screen.dart';
 import 'package:Watered/features/audio/widgets/mini_player.dart';
 import 'package:Watered/features/profile/screens/profile_screen.dart';
-import 'package:Watered/features/community/screens/community_feed_screen.dart';
+// import 'package:Watered/features/community/screens/community_feed_screen.dart'; // Removed
 import 'package:Watered/features/auth/screens/login_screen.dart';
-import 'package:Watered/features/sacred_book/screens/sacred_book_screen.dart';
-import 'package:Watered/features/commerce/screens/shop_screen.dart';
+import 'package:Watered/features/sacred_book/screens/nima_sedani_screen.dart';
+import 'package:Watered/features/rituals/screens/rituals_screen.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:Watered/core/theme/theme_provider.dart';
 import 'package:Watered/core/widgets/premium_gate.dart';
@@ -25,6 +24,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:Watered/core/services/navigation_service.dart';
 import 'package:Watered/features/auth/screens/verification_pending_screen.dart';
+import 'package:Watered/core/widgets/splash_screen.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -222,12 +222,13 @@ class _RootGateState extends ConsumerState<RootGate> {
     final bootState = ref.watch(appBootProvider);
     final authState = ref.watch(authProvider);
 
-    // 1. Show nothing while booting or checking auth (Native splash stays visible)
+    // 1. Show custom splash while booting or checking auth
     if (bootState.isLoading || authState.isLoading) {
-      return const SizedBox.shrink();
+      FlutterNativeSplash.remove();
+      return const SplashScreen();
     }
 
-    // When we have data or error, remove the native splash
+    // When we have data or error, ensure native splash is removed
     FlutterNativeSplash.remove();
 
     // 2. Show Error Screen if boot failed
@@ -235,6 +236,11 @@ class _RootGateState extends ConsumerState<RootGate> {
       data: (status) {
         if (status == BootStatus.maintenance) {
           return const Scaffold(body: Center(child: Text('Under Maintenance')));
+        }
+
+        // Check for Email Verification
+        if (!authState.isAuthenticated) {
+          return const LoginScreen();
         }
 
         // Check for Email Verification
@@ -266,8 +272,8 @@ class _MainTabsScreenState extends ConsumerState<MainTabsScreen> {
   final List<Widget> _screens = [
     const DashboardScreen(),
     const LibraryScreen(),
-    const SacredBookScreen(),
-    const ShopScreen(),
+      const NimaSedaniScreen(),
+    const RitualsScreen(),
     const ProfileGate(),
   ];
 
@@ -309,8 +315,8 @@ class _MainTabsScreenState extends ConsumerState<MainTabsScreen> {
               label: 'Home',
             ),
             const BottomNavigationBarItem(
-              icon: Icon(Icons.play_circle_rounded),
-              label: 'Media',
+              icon: Icon(Icons.auto_awesome),
+              label: 'Deities',
             ),
             BottomNavigationBarItem(
               icon: Container(
@@ -331,18 +337,18 @@ class _MainTabsScreenState extends ConsumerState<MainTabsScreen> {
                   ),
                 ),
                 child: Image.asset(
-                  'assets/icon/sacred_book_nav_icon.png',
+                  'assets/icon/WateredAppicon.png',
                   width: 32,
                   height: 32,
                   // We might not want to tint the custom colorful icon too much, but let's see. 
                   // If it's a colorful PNG, maybe don't use color: ...
                 ),
               ),
-              label: 'Sacred Book',
+              label: 'Nima Sedani',
             ),
             const BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_bag_rounded),
-              label: 'Shop',
+              icon: Icon(Icons.auto_awesome_rounded),
+              label: 'Rituals',
             ),
             const BottomNavigationBarItem(
               icon: Icon(Icons.person_rounded),

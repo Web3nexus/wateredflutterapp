@@ -1,0 +1,23 @@
+  Generating the build script.
+  Reading the asset graph.
+  Checking for updates.
+  Updating the asset graph.
+  Building, incremental build.
+  0s riverpod_generator on 154 inputs; lib/core/models/base_response.dart
+  0s riverpod_generator on 154 inputs: 1 skipped; lib/core/network/api_client.dart
+W SDK language version 3.10.0 is newer than `analyzer` language version 3.9.0. Run `flutter packages upgrade`.
+  1s riverpod_generator on 154 inputs: 96 skipped, 1 no-op; lib/features/library/screens/user_library_screen.dart
+  89s riverpod_generator on 154 inputs: 151 skipped, 2 no-op; spent 67s analyzing, 12s resolving, 8s reading; test/widget_test.dart
+  89s riverpod_generator on 154 inputs: 152 skipped, 2 no-op; spent 67s analyzing, 12s resolving, 8s reading
+  0s freezed on 154 inputs; lib/core/models/base_response.dart
+  0s freezed on 154 inputs: 152 skipped, 2 no-op
+  0s json_serializable on 308 inputs; lib/core/models/base_response.dart
+  1s json_serializable on 308 inputs: 192 skipped, 1 no-op; lib/features/library/providers/library_providers.freezed.dart
+  2s json_serializable on 308 inputs: 302 skipped, 3 no-op; spent 1s analyzing; lib/main.freezed.dart
+  6s json_serializable on 308 inputs: 303 skipped, 4 no-op; spent 4s analyzing; test/widget_test.freezed.dart
+  6s json_serializable on 308 inputs: 304 skipped, 4 no-op; spent 4s analyzing
+  0s source_gen:combining_builder on 308 inputs; lib/core/models/base_response.dart
+  1s source_gen:combining_builder on 308 inputs: 308 skipped
+  Running the post build.
+  Writing the asset graph.
+  Built with build_runner in 116s; wrote 0 outputs.

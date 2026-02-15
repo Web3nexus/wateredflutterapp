@@ -3,21 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/core/theme/theme_provider.dart';
 import 'package:Watered/features/library/providers/library_providers.dart';
 import 'package:Watered/features/home/providers/featured_content_provider.dart';
-import 'package:Watered/features/videos/models/video.dart';
 import 'package:Watered/features/audio/models/audio.dart';
-import 'package:Watered/features/videos/screens/feed_screen.dart'; // For navigation? Or player
 import 'package:Watered/features/audio/screens/audio_feed_screen.dart'; // For navigation?
 // We need specific detail screens or players. 
 // For now, I'll use placeholders or existing navigations if possible.
 // Provide generic navigation or TODOs.
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Watered/core/widgets/notification_bell.dart';
-import 'package:Watered/features/videos/providers/video_feed_providers.dart';
 import 'package:Watered/features/subscription/screens/subscription_screen.dart';
 import 'package:Watered/features/auth/providers/auth_provider.dart';
 import 'package:Watered/features/traditions/providers/tradition_provider.dart';
 import 'package:Watered/features/traditions/screens/tradition_detail_screen.dart';
-import 'package:Watered/features/deities/screens/deities_screen.dart';import 'package:Watered/features/activity/widgets/activity_tracker.dart';
+import 'package:Watered/features/deities/screens/deities_screen.dart';
+import 'package:Watered/features/activity/widgets/activity_tracker.dart';
 
 class LibraryScreen extends ConsumerStatefulWidget {
   const LibraryScreen({super.key});
@@ -26,124 +24,36 @@ class LibraryScreen extends ConsumerStatefulWidget {
   ConsumerState<LibraryScreen> createState() => _LibraryScreenState();
 }
 
-class _LibraryScreenState extends ConsumerState<LibraryScreen> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(() {
-      if (_tabController.indexIsChanging) {
-        ref.read(videoHeaderVisibleProvider.notifier).state = true;
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    // Reset header visibility when leaving library screen
-    ref.read(videoHeaderVisibleProvider.notifier).state = true;
-    super.dispose();
-  }
-
+class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    final isHeaderVisible = ref.watch(videoHeaderVisibleProvider);
-
-    // If we are not on the video tab (index 2), ensure header is visible
-    if (_tabController.index != 2 && !isHeaderVisible) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(videoHeaderVisibleProvider.notifier).state = true;
-      });
-    }
 
     return ActivityTracker(
-      pageName: 'Media',
+      pageName: 'Deities',
       child: Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(isHeaderVisible ? 56 : 0),
-          child: AnimatedOpacity(
-            duration: const Duration(milliseconds: 300),
-            opacity: isHeaderVisible ? 1.0 : 0.0,
-            child: AppBar(
-              title: Text('Media', style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: theme.textTheme.headlineSmall?.color)),
-              backgroundColor: Colors.transparent,
-              centerTitle: false,
-              actions: [
-                IconButton(
-                  icon: Icon(Icons.search, color: theme.colorScheme.primary),
-                  onPressed: () {
-                    // TODO: Implement search navigation
-                  },
-                ),
-                const SizedBox(width: 8),
-              ],
+        appBar: AppBar(
+          title: Text('Deities', style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: theme.textTheme.headlineSmall?.color)),
+          backgroundColor: Colors.transparent,
+          centerTitle: false,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.search, color: theme.colorScheme.primary),
+              onPressed: () {
+                // TODO: Implement search navigation
+              },
             ),
-          ),
+            const SizedBox(width: 8),
+          ],
         ),
-        body: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) {
-            return [
-              SliverToBoxAdapter(
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  height: isHeaderVisible ? 68 : 0,
-                  child: SingleChildScrollView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      child: Container(
-                        height: 44,
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: theme.brightness == Brightness.dark ? const Color(0xFF1E293B) : Colors.grey.withOpacity(0.1), 
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: TabBar(
-                          controller: _tabController,
-                          indicator: BoxDecoration(
-                            color: theme.colorScheme.primary,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          indicatorSize: TabBarIndicatorSize.tab,
-                          labelColor: Colors.black, // Text on Gold
-                          unselectedLabelColor: Colors.grey,
-                          labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-                          tabs: const [
-                            Tab(text: 'All'),
-                            Tab(text: 'Audio'),
-                            Tab(text: 'Video'),
-                          ],
-                          dividerColor: Colors.transparent,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ];
+        body: RefreshIndicator(
+          color: theme.colorScheme.primary,
+          onRefresh: () async {
+            ref.invalidate(traditionListProvider());
+            ref.invalidate(libraryProvider);
           },
-          body: RefreshIndicator(
-            color: theme.colorScheme.primary,
-            onRefresh: () async {
-              ref.invalidate(traditionListProvider());
-              ref.invalidate(libraryProvider);
-            },
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _LibraryTabContent(filter: 'all'),
-                const AudioFeedScreen(showAppBar: false),
-                const FeedScreen(showAppBar: false),
-              ],
-            ),
-          ),
+          child: _LibraryTabContent(filter: 'all'),
         ),
       ),
     );
@@ -151,7 +61,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> with SingleTicker
 }
 
 class _LibraryTabContent extends ConsumerWidget {
-  final String filter; // 'all', 'audio', 'video'
+  final String filter; // 'all', 'audio'
 
   const _LibraryTabContent({required this.filter});
 
@@ -166,13 +76,12 @@ class _LibraryTabContent extends ConsumerWidget {
       content = libraryState.allContent;
     } else if (filter == 'audio') {
       content = libraryState.audios;
-    } else if (filter == 'video') {
-      content = libraryState.videos;
     }
 
     return CustomScrollView(
       slivers: [
         if (filter == 'all') ...[
+            const SliverToBoxAdapter(child: SizedBox(height: 16)),
             // Featured THE GODS Section
             SliverToBoxAdapter(
               child: Padding(
@@ -210,7 +119,7 @@ class _LibraryTabContent extends ConsumerWidget {
                           right: -20,
                           bottom: -20,
                           child: Icon(
-                            Icons.auto_awesome,
+                            Icons.temple_hindu_rounded,
                             size: 150,
                             color: Colors.white.withOpacity(0.1),
                           ),
@@ -234,7 +143,7 @@ class _LibraryTabContent extends ConsumerWidget {
                               ),
                               const SizedBox(height: 12),
                               const Text(
-                                'THE GODS',
+                                'DEITIES',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -279,9 +188,16 @@ class _LibraryTabContent extends ConsumerWidget {
                    // Exclude Nima Sedani and maybe Yoruba/Kemet if they are "wrong"
                    // But user said "I noticed two path which is Hemet and Yoruba whihc is worng"
                    // Maybe I should filter them out for now.
-                   final filteredTraditions = traditions.data.where((t) {
-                    return t.name.toLowerCase() != 'nima sedani';
-                  }).toList();
+                    final filteredTraditions = traditions.data.where((t) {
+                      return t.name.toLowerCase() != 'nima sedani';
+                    }).toList();
+                    
+                    // Prioritize "Watered" (formerly Four Witness) to be first
+                    filteredTraditions.sort((a, b) {
+                      if (a.name.toLowerCase() == 'watered') return -1;
+                      if (b.name.toLowerCase() == 'watered') return 1;
+                      return 0;
+                    });
                   
                   if (filteredTraditions.isEmpty) return const SizedBox.shrink();
 
@@ -390,9 +306,13 @@ class _LibraryTabContent extends ConsumerWidget {
                 error: (_, __) => const SizedBox.shrink(),
               ),
             ),
+            const SliverToBoxAdapter(child: SizedBox(height: 16)),
         ],
 
-
+        if (libraryState.isLoading)
+          const SliverFillRemaining(
+            child: Center(child: CircularProgressIndicator()),
+          ),
 
         const SliverToBoxAdapter(child: SizedBox(height: 100)),
       ],
@@ -413,15 +333,7 @@ class _LessonListItem extends StatelessWidget {
     IconData icon = Icons.article;
     VoidCallback? onTap;
     
-    if (item is Video) {
-      title = item.title;
-      subtitle = 'Video • ${item.duration ?? "Unknown"}';
-      imageUrl = item.thumbnailUrl;
-      icon = Icons.play_circle_outline_rounded;
-      onTap = () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (_) => FeedScreen(initialVideoId: item.id)));
-      };
-    } else if (item is Audio) {
+    if (item is Audio) {
       title = item.title;
       subtitle = 'Audio • ${item.duration ?? "Unknown"}';
       imageUrl = item.thumbnailUrl;

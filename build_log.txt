@@ -3,32 +3,32 @@
   Checking for updates.
   Updating the asset graph.
   Building, incremental build.
-  0s riverpod_generator on 115 inputs; lib/core/models/base_response.dart
-  0s riverpod_generator on 115 inputs: 1 skipped; lib/core/network/api_client.dart
-  1s riverpod_generator on 115 inputs: 67 skipped; spent 1s tracking; lib/features/library/providers/bookmark_provider.dart
-  2s riverpod_generator on 115 inputs: 115 skipped; spent 2s tracking
-  0s freezed on 115 inputs; lib/core/models/base_response.dart
-  0s freezed on 115 inputs: 115 skipped
-  0s json_serializable on 230 inputs; lib/core/models/base_response.dart
-  0s json_serializable on 230 inputs: 57 skipped; lib/features/commerce/providers/cart_provider.freezed.dart
-  2s json_serializable on 230 inputs: 143 skipped; spent 1s tracking; lib/features/profile/screens/profile_screen.freezed.dart
-  2s json_serializable on 230 inputs: 230 skipped; spent 2s tracking
-  0s source_gen:combining_builder on 230 inputs; lib/core/models/base_response.dart
-  0s source_gen:combining_builder on 230 inputs: 71 skipped; lib/features/community/models/post.freezed.dart
-  1s source_gen:combining_builder on 230 inputs: 230 skipped; spent 1s tracking
+  0s riverpod_generator on 154 inputs; lib/core/models/base_response.dart
+  0s riverpod_generator on 154 inputs: 1 skipped; lib/core/network/api_client.dart
+  1s riverpod_generator on 154 inputs: 154 skipped
+  0s freezed on 154 inputs; lib/core/models/base_response.dart
+  0s freezed on 154 inputs: 154 skipped
+  0s json_serializable on 308 inputs; lib/core/models/base_response.dart
+  0s json_serializable on 308 inputs: 308 skipped
+  0s source_gen:combining_builder on 308 inputs; lib/core/models/base_response.dart
+  0s source_gen:combining_builder on 308 inputs: 105 skipped; lib/features/community/models/group.freezed.dart
+  1s source_gen:combining_builder on 308 inputs: 308 skipped
   Running the post build.
   Writing the asset graph.
-E json_serializable on lib/features/consultation/models/booking.dart:
-  Could not generate `toJson` code for `consultationType`.
-  To support the type `ConsultationType` you can:
-  * Use `JsonConverter`
-    https://pub.dev/documentation/json_annotation/latest/json_annotation/JsonConverter-class.html
-  * Use `JsonKey` fields `fromJson` and `toJson`
-    https://pub.dev/documentation/json_annotation/latest/json_annotation/JsonKey/fromJson.html
-    https://pub.dev/documentation/json_annotation/latest/json_annotation/JsonKey/toJson.html
-  package:Watered/features/consultation/models/booking.freezed.dart:211:27
-      ╷
-  211 │   final ConsultationType? consultationType;
-      │                           ^^^^^^^^^^^^^^^^
-      ╵
-  Failed to build with build_runner in 29s; wrote 0 outputs.
+E riverpod_generator on lib/features/library/providers/library_providers.dart:
+  17:5: Expected to find ';'.
+  17:9: Operator declarations must be preceded by the keyword 'operator'.
+  17:9: The string '?' isn't a user-definable operator.
+  And 8 more.
+E freezed on lib/features/library/providers/library_providers.dart:
+  17:5: Expected to find ';'.
+  17:9: Operator declarations must be preceded by the keyword 'operator'.
+  17:9: The string '?' isn't a user-definable operator.
+  And 8 more.
+E json_serializable on lib/features/library/providers/library_providers.dart:
+  17:5: Expected to find ';'.
+  17:9: Operator declarations must be preceded by the keyword 'operator'.
+  17:9: The string '?' isn't a user-definable operator.
+  And 8 more.
+  Failed to build with build_runner in 20s; wrote 0 outputs.
+Failed to update packages.

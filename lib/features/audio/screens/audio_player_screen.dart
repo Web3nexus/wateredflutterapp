@@ -4,6 +4,9 @@ import 'package:just_audio/just_audio.dart';
 import 'package:Watered/features/audio/models/audio.dart';
 import 'package:Watered/features/audio/services/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:Watered/core/services/interaction_service.dart';
+import 'package:Watered/core/network/api_client.dart';
+import 'package:share_plus/share_plus.dart';
 
 class AudioPlayerScreen extends ConsumerStatefulWidget {
   final Audio audio;
@@ -17,15 +20,32 @@ class AudioPlayerScreen extends ConsumerStatefulWidget {
 class _AudioPlayerScreenState extends ConsumerState<AudioPlayerScreen> {
   bool _isLoading = true;
   String? _error;
+  bool _isLiked = false;
+  int _likesCount = 0;
+  bool _isSaved = false;
 
   @override
   void initState() {
     super.initState();
+    _isLiked = widget.audio.isLiked;
+    _likesCount = widget.audio.likesCount ?? 0;
     _initPlayer();
   }
 
   Future<void> _initPlayer() async {
     final audioService = ref.read(audioServiceProvider);
+    
+    // Check if streamable before loading
+    if (!audioService.isStreamable(widget.audio.audioUrl)) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = "This content is hosted on an external platform. Please use the button below to listen.";
+        });
+      }
+      return;
+    }
+
     try {
       await audioService.loadAudio(widget.audio);
       if (mounted) {
@@ -38,7 +58,7 @@ class _AudioPlayerScreenState extends ConsumerState<AudioPlayerScreen> {
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _error = e.toString();
+          _error = "Unable to play audio: ${e.toString()}";
         });
       }
     }
@@ -181,15 +201,34 @@ class _AudioPlayerScreenState extends ConsumerState<AudioPlayerScreen> {
                       ],
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(
-                      widget.audio.isLiked ? Icons.favorite : Icons.favorite_border_rounded,
-                      color: Colors.redAccent,
-                      size: 28,
-                    ),
-                    onPressed: () {
-                      // Toggle like logic
-                    },
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          _isLiked ? Icons.favorite : Icons.favorite_border_rounded,
+                          color: _isLiked ? Colors.redAccent : textColor,
+                          size: 28,
+                        ),
+                        onPressed: _toggleLike,
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          _isSaved ? Icons.bookmark : Icons.bookmark_border_rounded,
+                          color: _isSaved ? theme.colorScheme.primary : textColor,
+                          size: 28,
+                        ),
+                        onPressed: _toggleSave,
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.share_rounded,
+                          color: textColor,
+                          size: 28,
+                        ),
+                        onPressed: _shareAudio,
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -322,6 +361,65 @@ class _AudioPlayerScreenState extends ConsumerState<AudioPlayerScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _toggleLike() async {
+    try {
+      final interactionService = ref.read(interactionServiceProvider);
+      final result = await interactionService.toggleLike('audio', widget.audio.id);
+      
+      if (mounted) {
+        setState(() {
+          _isLiked = result['liked'] ?? !_isLiked;
+          _likesCount = result['likes_count'] ?? _likesCount;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update like: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _toggleSave() async {
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      
+      if (_isSaved) {
+        // Remove bookmark
+        await apiClient.delete('bookmarks/item', data: {
+          'bookmarkable_id': widget.audio.id,
+          'bookmarkable_type': 'App\\Models\\Audio',
+        });
+      } else {
+        // Add bookmark
+        await apiClient.post('bookmarks', data: {
+          'bookmarkable_id': widget.audio.id,
+          'bookmarkable_type': 'App\\Models\\Audio',
+        });
+      }
+      
+      if (mounted) {
+        setState(() {
+          _isSaved = !_isSaved;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update bookmark: $e')),
+        );
+      }
+    }
+  }
+
+  void _shareAudio() {
+    Share.share(
+      '${widget.audio.title} by ${widget.audio.author ?? "Unknown Artist"}\n\nListen on Watered',
+      subject: widget.audio.title,
     );
   }
 }

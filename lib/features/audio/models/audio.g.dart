@@ -21,6 +21,8 @@ _$AudioImpl _$$AudioImplFromJson(Map<String, dynamic> json) => _$AudioImpl(
   isActive: json['is_active'] as bool? ?? true,
   isFeatured: json['is_featured'] as bool? ?? false,
   isLiked: json['is_liked'] as bool? ?? false,
+  likesCount: (json['likes_count'] as num?)?.toInt(),
+  commentsCount: (json['comments_count'] as num?)?.toInt(),
   category: json['category'] as String?,
   createdAt: json['created_at'] == null
       ? null
@@ -44,6 +46,8 @@ Map<String, dynamic> _$$AudioImplToJson(_$AudioImpl instance) =>
       'is_active': instance.isActive,
       'is_featured': instance.isFeatured,
       'is_liked': instance.isLiked,
+      'likes_count': instance.likesCount,
+      'comments_count': instance.commentsCount,
       'category': instance.category,
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),

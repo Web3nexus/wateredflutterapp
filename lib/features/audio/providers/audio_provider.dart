@@ -8,6 +8,8 @@ part 'audio_provider.g.dart';
 
 @riverpod
 class AudioList extends _$AudioList {
+  String? _lastCategory;
+
   @override
   Future<PaginatedResponse<Audio>> build({
     int page = 1,
@@ -16,6 +18,7 @@ class AudioList extends _$AudioList {
     String? search,
     String? category,
   }) async {
+    _lastCategory = category;
     return await fetchAudios(
       page: page,
       perPage: perPage,
@@ -48,7 +51,7 @@ class AudioList extends _$AudioList {
       }
 
       if (category != null && category.isNotEmpty) {
-        queryParams['category'] = category;
+        queryParams['category'] = category == 'Teachings' ? 'Music' : category;
       }
 
       final response = await apiClient.get(
@@ -88,8 +91,28 @@ class AudioList extends _$AudioList {
         perPage: 20,
         traditionId: traditionId,
         search: search,
+        category: _lastCategory,
       ),
     );
+  }
+}
+
+@riverpod
+Future<List<String>> audioCategories(AudioCategoriesRef ref) async {
+  try {
+    final apiClient = ref.read(apiClientProvider);
+    final response = await apiClient.get('audio-categories');
+
+    if (response.statusCode == 200 && response.data != null) {
+      final data = response.data['data'] as List;
+      return ['All', ...data.map((cat) {
+        final name = cat['name'] as String;
+        return name == 'Music' ? 'Teachings' : name;
+      })];
+    }
+    return ['All', 'Incantation', 'Teachings', 'Sermons', 'Meditation'];
+  } catch (e) {
+    return ['All', 'Incantation', 'Teachings', 'Sermons', 'Meditation'];
   }
 }
 

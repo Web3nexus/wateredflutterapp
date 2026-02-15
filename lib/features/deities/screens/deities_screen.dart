@@ -18,7 +18,7 @@ class DeitiesScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('The Gods'),
+        title: const Text('Deities'),
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -26,9 +26,10 @@ class DeitiesScreen extends ConsumerWidget {
           ref.invalidate(deitiesListProvider);
         },
         child: ActivityTracker(
-          pageName: 'gods',
+          pageName: 'deities',
           child: Column(
         children: [
+          const SizedBox(height: 16),
           // Filter List
           SizedBox(
             height: 60,

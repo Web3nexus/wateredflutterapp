@@ -11,13 +11,29 @@ class Tradition with _$Tradition {
     required String name,
     required String slug,
     String? description,
-    String? imageUrl,
-    required bool isActive,
-    int? languageId,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'background_image') String? imageUrl,
+    @JsonKey(name: 'is_active') required bool isActive,
+    @JsonKey(name: 'language_id') int? languageId,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _Tradition;
 
-  factory Tradition.fromJson(Map<String, dynamic> json) =>
-      _$TraditionFromJson(json);
+  factory Tradition.fromJson(Map<String, dynamic> json) {
+    // Handle translatable description field
+    final description = json['description'];
+    String? descriptionText;
+    if (description is Map) {
+      // If description is a translatable object like {"en": "text"}
+      descriptionText = description['en'] as String?;
+    } else if (description is String) {
+      descriptionText = description;
+    }
+    
+    // Create a modified JSON with the extracted description
+    final modifiedJson = Map<String, dynamic>.from(json);
+    modifiedJson['description'] = descriptionText;
+    
+    return _$TraditionFromJson(modifiedJson);
+  }
 }
+

@@ -50,4 +50,17 @@ class AudioService {
 
   bool get isPlaying => _player.playing;
   AudioPlayer get player => _player;
+
+  bool isStreamable(String url) {
+    final lowerUrl = url.toLowerCase();
+    // Exclude known external platforms
+    if (lowerUrl.contains('audiomack.com') || 
+        lowerUrl.contains('spotify.com') || 
+        lowerUrl.contains('youtube.com') ||
+        lowerUrl.contains('youtu.be')) {
+      return false;
+    }
+    // Check for common audio extensions or assume streamable if not a known platform
+    return true; 
+  }
 }

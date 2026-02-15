@@ -27,8 +27,6 @@ _$UserGuideImpl _$$UserGuideImplFromJson(Map<String, dynamic> json) =>
       id: (json['id'] as num).toInt(),
       title: json['title'] as String,
       content: json['content'] as String?,
-      type: json['type'] as String,
-      videoUrl: json['video_url'] as String?,
       sortOrder: (json['sort_order'] as num).toInt(),
     );
 
@@ -37,7 +35,5 @@ Map<String, dynamic> _$$UserGuideImplToJson(_$UserGuideImpl instance) =>
       'id': instance.id,
       'title': instance.title,
       'content': instance.content,
-      'type': instance.type,
-      'video_url': instance.videoUrl,
       'sort_order': instance.sortOrder,
     };

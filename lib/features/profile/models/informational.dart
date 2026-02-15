@@ -22,8 +22,6 @@ class UserGuide with _$UserGuide {
     required int id,
     required String title,
     String? content,
-    required String type, // 'text' or 'video'
-    @JsonKey(name: 'video_url') String? videoUrl,
     @JsonKey(name: 'sort_order') required int sortOrder,
   }) = _UserGuide;
 

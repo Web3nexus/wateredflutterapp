@@ -21,7 +21,6 @@ SearchResult _$SearchResultFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$SearchResult {
-  List<Video> get videos => throw _privateConstructorUsedError;
   List<dynamic> get audio =>
       throw _privateConstructorUsedError; // Placeholder until Audio model imported/created
   List<Product> get products => throw _privateConstructorUsedError;
@@ -46,7 +45,6 @@ abstract class $SearchResultCopyWith<$Res> {
   ) = _$SearchResultCopyWithImpl<$Res, SearchResult>;
   @useResult
   $Res call({
-    List<Video> videos,
     List<dynamic> audio,
     List<Product> products,
     List<Temple> temples,
@@ -69,7 +67,6 @@ class _$SearchResultCopyWithImpl<$Res, $Val extends SearchResult>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? videos = null,
     Object? audio = null,
     Object? products = null,
     Object? temples = null,
@@ -77,10 +74,6 @@ class _$SearchResultCopyWithImpl<$Res, $Val extends SearchResult>
   }) {
     return _then(
       _value.copyWith(
-            videos: null == videos
-                ? _value.videos
-                : videos // ignore: cast_nullable_to_non_nullable
-                      as List<Video>,
             audio: null == audio
                 ? _value.audio
                 : audio // ignore: cast_nullable_to_non_nullable
@@ -113,7 +106,6 @@ abstract class _$$SearchResultImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    List<Video> videos,
     List<dynamic> audio,
     List<Product> products,
     List<Temple> temples,
@@ -135,7 +127,6 @@ class __$$SearchResultImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? videos = null,
     Object? audio = null,
     Object? products = null,
     Object? temples = null,
@@ -143,10 +134,6 @@ class __$$SearchResultImplCopyWithImpl<$Res>
   }) {
     return _then(
       _$SearchResultImpl(
-        videos: null == videos
-            ? _value._videos
-            : videos // ignore: cast_nullable_to_non_nullable
-                  as List<Video>,
         audio: null == audio
             ? _value._audio
             : audio // ignore: cast_nullable_to_non_nullable
@@ -172,28 +159,17 @@ class __$$SearchResultImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SearchResultImpl implements _SearchResult {
   const _$SearchResultImpl({
-    final List<Video> videos = const [],
     final List<dynamic> audio = const [],
     final List<Product> products = const [],
     final List<Temple> temples = const [],
     final List<dynamic> traditions = const [],
-  }) : _videos = videos,
-       _audio = audio,
+  }) : _audio = audio,
        _products = products,
        _temples = temples,
        _traditions = traditions;
 
   factory _$SearchResultImpl.fromJson(Map<String, dynamic> json) =>
       _$$SearchResultImplFromJson(json);
-
-  final List<Video> _videos;
-  @override
-  @JsonKey()
-  List<Video> get videos {
-    if (_videos is EqualUnmodifiableListView) return _videos;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_videos);
-  }
 
   final List<dynamic> _audio;
   @override
@@ -235,7 +211,7 @@ class _$SearchResultImpl implements _SearchResult {
 
   @override
   String toString() {
-    return 'SearchResult(videos: $videos, audio: $audio, products: $products, temples: $temples, traditions: $traditions)';
+    return 'SearchResult(audio: $audio, products: $products, temples: $temples, traditions: $traditions)';
   }
 
   @override
@@ -243,7 +219,6 @@ class _$SearchResultImpl implements _SearchResult {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$SearchResultImpl &&
-            const DeepCollectionEquality().equals(other._videos, _videos) &&
             const DeepCollectionEquality().equals(other._audio, _audio) &&
             const DeepCollectionEquality().equals(other._products, _products) &&
             const DeepCollectionEquality().equals(other._temples, _temples) &&
@@ -257,7 +232,6 @@ class _$SearchResultImpl implements _SearchResult {
   @override
   int get hashCode => Object.hash(
     runtimeType,
-    const DeepCollectionEquality().hash(_videos),
     const DeepCollectionEquality().hash(_audio),
     const DeepCollectionEquality().hash(_products),
     const DeepCollectionEquality().hash(_temples),
@@ -280,7 +254,6 @@ class _$SearchResultImpl implements _SearchResult {
 
 abstract class _SearchResult implements SearchResult {
   const factory _SearchResult({
-    final List<Video> videos,
     final List<dynamic> audio,
     final List<Product> products,
     final List<Temple> temples,
@@ -290,8 +263,6 @@ abstract class _SearchResult implements SearchResult {
   factory _SearchResult.fromJson(Map<String, dynamic> json) =
       _$SearchResultImpl.fromJson;
 
-  @override
-  List<Video> get videos;
   @override
   List<dynamic> get audio; // Placeholder until Audio model imported/created
   @override

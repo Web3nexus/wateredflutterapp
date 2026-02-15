@@ -6,6 +6,24 @@ part of 'audio_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+String _$audioCategoriesHash() => r'5567ff57089afdcc7fb23f369108dcce8ed736bf';
+
+/// See also [audioCategories].
+@ProviderFor(audioCategories)
+final audioCategoriesProvider =
+    AutoDisposeFutureProvider<List<String>>.internal(
+      audioCategories,
+      name: r'audioCategoriesProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$audioCategoriesHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AudioCategoriesRef = AutoDisposeFutureProviderRef<List<String>>;
 String _$audioDetailHash() => r'e0ddbf4de5b49d05aa171dfe46c4788c3916add2';
 
 /// Copied from Dart SDK
@@ -146,7 +164,7 @@ class _AudioDetailProviderElement
   int get id => (origin as AudioDetailProvider).id;
 }
 
-String _$audioListHash() => r'60b71f906b1437c10420244127cc938a32917d55';
+String _$audioListHash() => r'e525f81be8acd2cc1cb1004bd9377027f56c7e89';
 
 abstract class _$AudioList
     extends BuildlessAutoDisposeAsyncNotifier<PaginatedResponse<Audio>> {

@@ -15,24 +15,22 @@ final _privateConstructorUsedError = UnsupportedError(
   'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
 );
 
-Tradition _$TraditionFromJson(Map<String, dynamic> json) {
-  return _Tradition.fromJson(json);
-}
-
 /// @nodoc
 mixin _$Tradition {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get slug => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
+  @JsonKey(name: 'background_image')
   String? get imageUrl => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_active')
   bool get isActive => throw _privateConstructorUsedError;
+  @JsonKey(name: 'language_id')
   int? get languageId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
-
-  /// Serializes this Tradition to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of Tradition
   /// with the given fields replaced by the non-null parameter values.
@@ -51,11 +49,11 @@ abstract class $TraditionCopyWith<$Res> {
     String name,
     String slug,
     String? description,
-    String? imageUrl,
-    bool isActive,
-    int? languageId,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'background_image') String? imageUrl,
+    @JsonKey(name: 'is_active') bool isActive,
+    @JsonKey(name: 'language_id') int? languageId,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   });
 }
 
@@ -142,11 +140,11 @@ abstract class _$$TraditionImplCopyWith<$Res>
     String name,
     String slug,
     String? description,
-    String? imageUrl,
-    bool isActive,
-    int? languageId,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'background_image') String? imageUrl,
+    @JsonKey(name: 'is_active') bool isActive,
+    @JsonKey(name: 'language_id') int? languageId,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   });
 }
 
@@ -218,22 +216,19 @@ class __$$TraditionImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
+
 class _$TraditionImpl implements _Tradition {
   const _$TraditionImpl({
     required this.id,
     required this.name,
     required this.slug,
     this.description,
-    this.imageUrl,
-    required this.isActive,
-    this.languageId,
-    this.createdAt,
-    this.updatedAt,
+    @JsonKey(name: 'background_image') this.imageUrl,
+    @JsonKey(name: 'is_active') required this.isActive,
+    @JsonKey(name: 'language_id') this.languageId,
+    @JsonKey(name: 'created_at') this.createdAt,
+    @JsonKey(name: 'updated_at') this.updatedAt,
   });
-
-  factory _$TraditionImpl.fromJson(Map<String, dynamic> json) =>
-      _$$TraditionImplFromJson(json);
 
   @override
   final int id;
@@ -244,14 +239,19 @@ class _$TraditionImpl implements _Tradition {
   @override
   final String? description;
   @override
+  @JsonKey(name: 'background_image')
   final String? imageUrl;
   @override
+  @JsonKey(name: 'is_active')
   final bool isActive;
   @override
+  @JsonKey(name: 'language_id')
   final int? languageId;
   @override
+  @JsonKey(name: 'created_at')
   final DateTime? createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
 
   @override
@@ -281,7 +281,6 @@ class _$TraditionImpl implements _Tradition {
                 other.updatedAt == updatedAt));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
     runtimeType,
@@ -303,11 +302,6 @@ class _$TraditionImpl implements _Tradition {
   @pragma('vm:prefer-inline')
   _$$TraditionImplCopyWith<_$TraditionImpl> get copyWith =>
       __$$TraditionImplCopyWithImpl<_$TraditionImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$TraditionImplToJson(this);
-  }
 }
 
 abstract class _Tradition implements Tradition {
@@ -316,15 +310,12 @@ abstract class _Tradition implements Tradition {
     required final String name,
     required final String slug,
     final String? description,
-    final String? imageUrl,
-    required final bool isActive,
-    final int? languageId,
-    final DateTime? createdAt,
-    final DateTime? updatedAt,
+    @JsonKey(name: 'background_image') final String? imageUrl,
+    @JsonKey(name: 'is_active') required final bool isActive,
+    @JsonKey(name: 'language_id') final int? languageId,
+    @JsonKey(name: 'created_at') final DateTime? createdAt,
+    @JsonKey(name: 'updated_at') final DateTime? updatedAt,
   }) = _$TraditionImpl;
-
-  factory _Tradition.fromJson(Map<String, dynamic> json) =
-      _$TraditionImpl.fromJson;
 
   @override
   int get id;
@@ -335,14 +326,19 @@ abstract class _Tradition implements Tradition {
   @override
   String? get description;
   @override
+  @JsonKey(name: 'background_image')
   String? get imageUrl;
   @override
+  @JsonKey(name: 'is_active')
   bool get isActive;
   @override
+  @JsonKey(name: 'language_id')
   int? get languageId;
   @override
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
 
   /// Create a copy of Tradition

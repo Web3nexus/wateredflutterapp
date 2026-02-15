@@ -83,6 +83,16 @@ class ApiClient {
             _navigationService.showNoInternetDialog();
           }
 
+          // Handle 401 Unauthorized globally
+          if (error.response?.statusCode == 401) {
+             print('🔒 401 Unauthorized detected - Clearing token and redirecting to login');
+             _secureStorage.delete(key: tokenKey).then((_) {
+               // We need a way to reset the auth state in Riverpod. 
+               // For now, let's just use the navigation service to push login or restart
+               _navigationService.navigatorKey.currentState?.pushNamedAndRemoveUntil('/', (route) => false);
+             });
+          }
+
           if (error.response?.data != null) {
             print('❌ Data: ${error.response?.data}');
           }

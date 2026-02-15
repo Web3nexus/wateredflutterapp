@@ -44,11 +44,5 @@ class NotificationSettingsNotifier extends _$NotificationSettingsNotifier {
     if (current == null) return;
     await updateSettings(current.copyWith(eventUpdates: value));
   }
-
-  Future<void> toggleCommunity(bool value) async {
-    final current = state.value;
-    if (current == null) return;
-    await updateSettings(current.copyWith(communityActivity: value));
-  }
 }
 

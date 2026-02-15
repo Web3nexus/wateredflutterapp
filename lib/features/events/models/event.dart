@@ -9,6 +9,7 @@ class Event {
   final bool isPaid;
   final double? price;
   final bool isRegistered;
+  final bool hasReminder;
 
   final String? category;
   final String? recurrence;
@@ -26,6 +27,7 @@ class Event {
     this.isPaid = false,
     this.price,
     this.isRegistered = false,
+    this.hasReminder = false,
     this.category,
     this.recurrence,
     this.traditionId,
@@ -44,6 +46,7 @@ class Event {
       isPaid: json['is_paid'] ?? false,
       price: json['price'] != null ? double.tryParse(json['price'].toString()) : null,
       isRegistered: json['is_registered'] ?? false,
+      hasReminder: json['has_reminder'] ?? false,
       category: json['category'],
       recurrence: json['recurrence'],
       traditionId: json['tradition_id'],

@@ -29,7 +29,7 @@ class SearchService {
     if (query.trim().isEmpty) return const SearchResult();
     try {
       final response = await _client.get('search', queryParameters: {'query': query});
-      return SearchResult.fromJson(response.data); // data is top level here? Wait, controller returns keyed array directly: keys [videos, audio...]
+      return SearchResult.fromJson(response.data); // data is top level here? Wait, controller returns keyed array directly: keys [audio, products...]
     } catch (e) {
       throw 'Search failed.';
     }

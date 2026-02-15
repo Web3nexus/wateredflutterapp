@@ -62,6 +62,33 @@ class EventController extends StateNotifier<AsyncValue<void>> {
       state = AsyncValue.error(e, st);
     }
   }
+
+  Future<void> toggleReminder(int eventId, bool currentStatus) async {
+    state = const AsyncValue.loading();
+    try {
+      if (currentStatus) {
+        await _service.removeReminder(eventId);
+      } else {
+        await _service.saveReminder(eventId);
+      }
+      _ref.invalidate(eventsListProvider);
+      state = const AsyncValue.data(null);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+  Future<Map<String, dynamic>?> initiateEventPayment(int eventId) async {
+    state = const AsyncValue.loading();
+    try {
+      final data = await _service.initiatePayment(eventId);
+      state = const AsyncValue.data(null);
+      return data;
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+      return null;
+    }
+  }
 }
 
 final eventControllerProvider = StateNotifierProvider<EventController, AsyncValue<void>>((ref) {
