@@ -25,6 +25,7 @@ class DeityDetailScreen extends ConsumerWidget {
                 style: const TextStyle(
                   fontFamily: 'Cinzel',
                   fontWeight: FontWeight.bold,
+                  color: Color(0xFFFFF7D6), // Golden White
                   shadows: [Shadow(color: Colors.black, blurRadius: 10)],
                 ),
               ),
