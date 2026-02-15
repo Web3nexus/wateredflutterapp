@@ -12,15 +12,14 @@ class DeityService {
 
   DeityService(this._client);
 
-  Future<List<Deity>> getDeities({int? traditionId, String? search}) async {
-    final Map<String, dynamic> params = {};
+  Future<Map<String, dynamic>> getDeities({int? traditionId, String? search, int page = 1}) async {
+    final Map<String, dynamic> params = {'page': page};
     if (traditionId != null) params['tradition_id'] = traditionId;
     if (search != null && search.isNotEmpty) params['search'] = search;
-    params['per_page'] = 100;
+    params['per_page'] = 20;
 
     final response = await _client.get('deities', queryParameters: params);
-    final data = response.data['data'] as List;
-    return data.map((e) => Deity.fromJson(e)).toList();
+    return response.data;
   }
   
   // Also need traditions for the filter
