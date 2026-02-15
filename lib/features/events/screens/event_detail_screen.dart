@@ -24,7 +24,7 @@ class EventDetailScreen extends ConsumerWidget {
             expandedHeight: 250,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              background: event.imageUrl != null
+              background: event.effectiveImageUrl != null
                   ? CachedNetworkImage(
                       imageUrl: event.effectiveImageUrl!,
                       fit: BoxFit.cover,
@@ -68,10 +68,10 @@ class EventDetailScreen extends ConsumerWidget {
                         children: [
                           if (event.isRegistered)
                              Chip(
-                               label: const Text('Registered'),
-                               backgroundColor: Colors.green.withOpacity(0.2),
-                               labelStyle: const TextStyle(color: Colors.green),
-                               avatar: const Icon(Icons.check, color: Colors.green, size: 18),
+                                label: const Text('Registered'),
+                                backgroundColor: Colors.green.withOpacity(0.2),
+                                labelStyle: const TextStyle(color: Colors.green),
+                                avatar: const Icon(Icons.check, color: Colors.green, size: 18),
                              ),
                           const SizedBox(width: 8),
                           IconButton(
@@ -156,6 +156,11 @@ class EventDetailScreen extends ConsumerWidget {
                 : () async {
                     if (event.isRegistered) {
                         await ref.read(eventControllerProvider.notifier).cancelRegistration(event.id);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Registration cancelled successfully'))
+                          );
+                        }
                     } else if (event.isPaid) {
                         // Payment flow
                         final paymentData = await ref.read(eventControllerProvider.notifier).initiateEventPayment(event.id);
@@ -171,6 +176,11 @@ class EventDetailScreen extends ConsumerWidget {
                         }
                     } else {
                         await ref.read(eventControllerProvider.notifier).registerForEvent(event.id);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Registered successfully!'))
+                          );
+                        }
                     }
                 },
             style: ElevatedButton.styleFrom(

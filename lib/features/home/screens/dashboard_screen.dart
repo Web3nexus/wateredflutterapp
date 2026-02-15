@@ -12,7 +12,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:Watered/features/rituals/screens/rituals_screen.dart';
 import 'package:Watered/features/incantations/screens/incantations_screen.dart';
+import 'package:Watered/features/events/providers/events_providers.dart';
 import 'package:Watered/features/events/screens/events_screen.dart';
+import 'package:Watered/features/events/screens/event_detail_screen.dart';
 
 import 'package:Watered/features/audio/screens/audio_player_screen.dart';
 import 'package:Watered/features/calendar/screens/calendar_home_screen.dart';
@@ -278,7 +280,7 @@ class DashboardScreen extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 12),
-              ref.watch(eventsListProvider(const EventFilter(filter: 'upcoming'))).when(
+              ref.watch(eventsListProvider(EventFilter(filter: 'upcoming'))).when(
                 data: (events) {
                   if (events.isEmpty) {
                     return const SizedBox.shrink();
@@ -299,7 +301,7 @@ class DashboardScreen extends ConsumerWidget {
                               context, 
                               event.title, 
                               '${DateFormat('MMM d').format(event.startTime)} • ${event.location ?? "Online"}', 
-                              event.effectiveImageUrl ?? 'https://Placehold.co/600x400/0077BE/FFFFFF/png?text=Event',
+                              event.effectiveImageUrl ?? 'https://placehold.co/600x400/0077BE/FFFFFF/png?text=Event',
                             ),
                           ),
                         );

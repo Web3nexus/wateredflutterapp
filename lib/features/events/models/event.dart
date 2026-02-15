@@ -10,6 +10,7 @@ class Event {
   final String? location;
   final String? imageUrl;
   final String? bannerImage;
+  final String? bannerImageUrl;
   final bool isPaid;
   final double? price;
   final bool isRegistered;
@@ -32,6 +33,7 @@ class Event {
     this.location,
     this.imageUrl,
     this.bannerImage,
+    this.bannerImageUrl,
     this.isPaid = false,
     this.price,
     this.isRegistered = false,
@@ -42,7 +44,7 @@ class Event {
     this.culturalOrigin,
   });
 
-  String? get effectiveImageUrl => bannerImage ?? imageUrl;
+  String? get effectiveImageUrl => bannerImageUrl ?? bannerImage ?? imageUrl;
 
   factory Event.fromJson(Map<String, dynamic> json) {
     return Event(
@@ -57,6 +59,7 @@ class Event {
       location: json['location'],
       imageUrl: json['image_url'],
       bannerImage: json['banner_image'],
+      bannerImageUrl: json['banner_image_url'],
       isPaid: json['is_paid'] ?? false,
       price: json['price'] != null ? double.tryParse(json['price'].toString()) : null,
       isRegistered: json['is_registered'] ?? false,
