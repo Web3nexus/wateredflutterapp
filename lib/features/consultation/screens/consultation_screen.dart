@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/consultation/providers/booking_providers.dart';
 import 'package:Watered/features/consultation/services/booking_service.dart';
+import 'package:Watered/features/auth/providers/auth_provider.dart';
+import 'package:Watered/features/consultation/models/consultation_type.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -20,9 +22,37 @@ class _ConsultationScreenState extends ConsumerState<ConsultationScreen> {
   TimeOfDay? _selectedTime;
   bool _isLoading = false;
   final _notesController = TextEditingController();
+  final _phoneController = TextEditingController();
+
+  @override
+  void dispose() {
+    _notesController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
 
   Future<void> _submit() async {
-    if (_selectedTypeId == null || _selectedDate == null || _selectedTime == null) return;
+    final user = ref.read(authProvider).user;
+    if (_selectedTypeId == null || _selectedDate == null || _selectedTime == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a type, date, and time.')),
+      );
+      return;
+    }
+
+    if (_phoneController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter your phone number.')),
+      );
+      return;
+    }
+
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please log in to book a consultation.')),
+      );
+      return;
+    }
 
     setState(() => _isLoading = true);
     try {
@@ -37,6 +67,9 @@ class _ConsultationScreenState extends ConsumerState<ConsultationScreen> {
       final response = await ref.read(bookingServiceProvider).createBooking(
         consultationTypeId: _selectedTypeId!,
         scheduledAt: startTime,
+        fullName: user.name,
+        email: user.email,
+        phone: _phoneController.text.trim(),
         notes: _notesController.text,
       );
 
@@ -114,27 +147,45 @@ class _ConsultationScreenState extends ConsumerState<ConsultationScreen> {
             Text('Select Consultation Type', style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
             typesAsync.when(
-              data: (types) => Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: types.map((type) {
-                   final isSelected = _selectedTypeId == type.id;
-                   return ChoiceChip(
-                     label: Text('${type.name} - \$${type.price}'),
-                     selected: isSelected,
-                     onSelected: (selected) {
-                       setState(() => _selectedTypeId = selected ? type.id : null);
-                     },
-                     selectedColor: theme.colorScheme.primary.withOpacity(0.2),
-                     backgroundColor: theme.cardTheme.color,
-                     labelStyle: TextStyle(
-                       color: isSelected ? theme.colorScheme.primary : theme.textTheme.bodyMedium?.color,
-                     ),
-                   );
+              data: (types) => DropdownButtonFormField<int>(
+                value: _selectedTypeId,
+                dropdownColor: theme.cardTheme.color,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: theme.cardTheme.color,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                ),
+                hint: const Text('Choose a consultation type'),
+                items: types.map((type) {
+                  return DropdownMenuItem<int>(
+                    value: type.id,
+                    child: Text(
+                      '${type.name} - \$${type.price}',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  );
                 }).toList(),
+                onChanged: (value) {
+                  setState(() => _selectedTypeId = value);
+                },
               ),
-              loading: () => const CircularProgressIndicator(),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, s) => Text('Error loading types: $e'),
+            ),
+            const SizedBox(height: 32),
+
+            Text('Your Phone Number', style: theme.textTheme.titleMedium),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _phoneController,
+              keyboardType: TextInputType.phone,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: theme.cardTheme.color,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                hintText: 'Enter your phone number',
+              ),
             ),
             const SizedBox(height: 32),
             

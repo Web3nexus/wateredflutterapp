@@ -15,6 +15,7 @@ class EventsScreen extends ConsumerStatefulWidget {
 }
 
 class _EventsScreenState extends ConsumerState<EventsScreen> {
+  String _selectedFilter = 'upcoming';
   String _selectedRecurrence = 'All';
   String _selectedCategory = 'All';
   int? _selectedTraditionId;
@@ -28,6 +29,7 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
       category: _selectedCategory == 'All' ? null : _selectedCategory,
       recurrence: _selectedRecurrence == 'All' ? null : _selectedRecurrence,
       traditionId: _selectedTraditionId,
+      filter: _selectedFilter,
     )));
     final traditionsAsync = ref.watch(traditionListProvider());
     final theme = Theme.of(context);
@@ -35,10 +37,24 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Upcoming Events'),
+        title: const Text('Events'),
       ),
       body: Column(
         children: [
+          // Filter Tabs (New, Upcoming, Past)
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildFilterTab('New', 'new'),
+                _buildFilterTab('Upcoming', 'upcoming'),
+                _buildFilterTab('Past', 'past'),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          const SizedBox(height: 16),
           SizedBox(
             height: 50,
             child: ListView.separated(
@@ -146,14 +162,24 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (event.imageUrl != null)
+                            if (event.effectiveImageUrl != null)
                               ClipRRect(
                                 borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                                 child: CachedNetworkImage(
-                                  imageUrl: event.imageUrl!,
+                                  imageUrl: event.effectiveImageUrl!,
                                   height: 150,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
+                                  placeholder: (context, url) => Container(
+                                    height: 150,
+                                    color: Colors.white.withOpacity(0.05),
+                                    child: const Center(child: CircularProgressIndicator()),
+                                  ),
+                                  errorWidget: (context, url, error) => Container(
+                                    height: 150,
+                                    color: Colors.white.withOpacity(0.05),
+                                    child: const Icon(Icons.error_outline),
+                                  ),
                                 ),
                               ),
                             Padding(
@@ -227,6 +253,33 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, stack) => Center(child: Text('Error: $error')),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterTab(String label, String value) {
+    final theme = Theme.of(context);
+    final isSelected = _selectedFilter == value;
+    return GestureDetector(
+      onTap: () => setState(() => _selectedFilter = value),
+      child: Column(
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? theme.colorScheme.primary : theme.textTheme.bodyMedium?.color?.withOpacity(0.5),
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 4),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            height: 2,
+            width: 20,
+            color: isSelected ? theme.colorScheme.primary : Colors.transparent,
           ),
         ],
       ),

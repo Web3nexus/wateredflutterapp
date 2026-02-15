@@ -25,7 +25,9 @@ mixin _$Temple {
   String get name => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   String? get address => throw _privateConstructorUsedError;
+  @DoubleConverter()
   double? get latitude => throw _privateConstructorUsedError;
+  @DoubleConverter()
   double? get longitude => throw _privateConstructorUsedError;
   @JsonKey(name: 'image_url')
   String? get imageUrl => throw _privateConstructorUsedError;
@@ -53,8 +55,8 @@ abstract class $TempleCopyWith<$Res> {
     String name,
     String? description,
     String? address,
-    double? latitude,
-    double? longitude,
+    @DoubleConverter() double? latitude,
+    @DoubleConverter() double? longitude,
     @JsonKey(name: 'image_url') String? imageUrl,
     double? distance,
     @JsonKey(name: 'is_active') bool isActive,
@@ -143,8 +145,8 @@ abstract class _$$TempleImplCopyWith<$Res> implements $TempleCopyWith<$Res> {
     String name,
     String? description,
     String? address,
-    double? latitude,
-    double? longitude,
+    @DoubleConverter() double? latitude,
+    @DoubleConverter() double? longitude,
     @JsonKey(name: 'image_url') String? imageUrl,
     double? distance,
     @JsonKey(name: 'is_active') bool isActive,
@@ -226,8 +228,8 @@ class _$TempleImpl implements _Temple {
     required this.name,
     this.description,
     this.address,
-    this.latitude,
-    this.longitude,
+    @DoubleConverter() this.latitude,
+    @DoubleConverter() this.longitude,
     @JsonKey(name: 'image_url') this.imageUrl,
     this.distance = 0.0,
     @JsonKey(name: 'is_active') this.isActive = true,
@@ -245,8 +247,10 @@ class _$TempleImpl implements _Temple {
   @override
   final String? address;
   @override
+  @DoubleConverter()
   final double? latitude;
   @override
+  @DoubleConverter()
   final double? longitude;
   @override
   @JsonKey(name: 'image_url')
@@ -321,8 +325,8 @@ abstract class _Temple implements Temple {
     required final String name,
     final String? description,
     final String? address,
-    final double? latitude,
-    final double? longitude,
+    @DoubleConverter() final double? latitude,
+    @DoubleConverter() final double? longitude,
     @JsonKey(name: 'image_url') final String? imageUrl,
     final double? distance,
     @JsonKey(name: 'is_active') final bool isActive,
@@ -339,8 +343,10 @@ abstract class _Temple implements Temple {
   @override
   String? get address;
   @override
+  @DoubleConverter()
   double? get latitude;
   @override
+  @DoubleConverter()
   double? get longitude;
   @override
   @JsonKey(name: 'image_url')

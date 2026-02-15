@@ -26,8 +26,16 @@ class EventDetailScreen extends ConsumerWidget {
             flexibleSpace: FlexibleSpaceBar(
               background: event.imageUrl != null
                   ? CachedNetworkImage(
-                      imageUrl: event.imageUrl!,
+                      imageUrl: event.effectiveImageUrl!,
                       fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        color: Colors.white.withOpacity(0.05),
+                        child: const Center(child: CircularProgressIndicator()),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        color: Colors.white.withOpacity(0.05),
+                        child: const Icon(Icons.error_outline),
+                      ),
                     )
                   : Container(color: theme.colorScheme.surface),
             ),

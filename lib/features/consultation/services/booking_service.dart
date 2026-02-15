@@ -24,11 +24,17 @@ class BookingService {
   Future<Map<String, dynamic>> createBooking({
     required int consultationTypeId,
     required DateTime scheduledAt,
+    required String fullName,
+    required String email,
+    required String phone,
     String? notes,
   }) async {
     final response = await _client.post('bookings', data: {
       'consultation_type_id': consultationTypeId,
       'start_time': scheduledAt.toIso8601String(),
+      'full_name': fullName,
+      'email': email,
+      'phone': phone,
       'notes': notes,
     });
     return response.data;

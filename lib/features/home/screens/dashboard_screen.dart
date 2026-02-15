@@ -248,6 +248,71 @@ class DashboardScreen extends ConsumerWidget {
                 ],
               ),
 
+              // Upcoming Events Section
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'EVENTS',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => const EventsScreen(),
+                      ));
+                    },
+                    child: Text(
+                      'SEE ALL',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary.withOpacity(0.7),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              ref.watch(eventsListProvider(const EventFilter(filter: 'upcoming'))).when(
+                data: (events) {
+                  if (events.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: events.take(5).map((event) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 16),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (_) => EventDetailScreen(event: event),
+                              ));
+                            },
+                            child: _buildFeaturedCard(
+                              context, 
+                              event.title, 
+                              '${DateFormat('MMM d').format(event.startTime)} • ${event.location ?? "Online"}', 
+                              event.effectiveImageUrl ?? 'https://Placehold.co/600x400/0077BE/FFFFFF/png?text=Event',
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  );
+                },
+                loading: () => const SizedBox(height: 100, child: Center(child: CircularProgressIndicator())),
+                error: (e, s) => const SizedBox.shrink(),
+              ),
+
+              const SizedBox(height: 32),
+
               // Upcoming Holidays
               const UpcomingHolidayWidget(),
 

@@ -17,11 +17,13 @@ class EventService {
     String? category,
     String? recurrence,
     int? traditionId,
+    String? filter,
   }) async {
     final Map<String, dynamic> queryParams = {'page': page};
     if (category != null && category != 'All') queryParams['category'] = category;
     if (recurrence != null && recurrence != 'All') queryParams['recurrence'] = recurrence;
     if (traditionId != null) queryParams['tradition_id'] = traditionId;
+    if (filter != null) queryParams['filter'] = filter;
 
     final response = await _client.get('events', queryParameters: queryParams);
     final data = response.data['data'] as List;

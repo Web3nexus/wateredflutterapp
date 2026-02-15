@@ -6,11 +6,13 @@ class EventFilter {
   final String? category;
   final String? recurrence;
   final int? traditionId;
+  final String? filter;
 
   const EventFilter({
     this.category,
     this.recurrence,
     this.traditionId,
+    this.filter,
   });
 
   @override
@@ -19,11 +21,12 @@ class EventFilter {
     return other is EventFilter &&
         other.category == category &&
         other.recurrence == recurrence &&
-        other.traditionId == traditionId;
+        other.traditionId == traditionId &&
+        other.filter == filter;
   }
 
   @override
-  int get hashCode => Object.hash(category, recurrence, traditionId);
+  int get hashCode => Object.hash(category, recurrence, traditionId, filter);
 }
 
 final eventsListProvider = FutureProvider.autoDispose.family<List<Event>, EventFilter>((ref, filter) async {
@@ -32,6 +35,7 @@ final eventsListProvider = FutureProvider.autoDispose.family<List<Event>, EventF
     category: filter.category,
     recurrence: filter.recurrence,
     traditionId: filter.traditionId,
+    filter: filter.filter,
   );
 });
 

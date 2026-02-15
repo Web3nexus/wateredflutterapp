@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:Watered/core/widgets/premium_gate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/auth/providers/auth_provider.dart';
-// import 'package:Watered/features/community/screens/community_feed_screen.dart'; // Removed
 import 'package:Watered/features/auth/screens/login_screen.dart';
 import 'package:Watered/features/library/screens/user_library_screen.dart';
 import 'package:Watered/features/commerce/screens/shop_screen.dart';
