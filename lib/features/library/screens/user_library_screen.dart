@@ -209,28 +209,33 @@ class _BookmarkList extends ConsumerWidget {
                 onTap: () async {
                    final bType = bookmark.bookmarkableType.toLowerCase();
                    if (bType.contains('audio') || bType.contains('song')) {
-                      final audio = Audio.fromJson(Map<String, dynamic>.from(data));
-                      final audioService = ref.read(audioServiceProvider);
-                      
-                      ref.read(currentAudioProvider.notifier).state = audio;
-                      
-                      if (context.mounted) {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                          builder: (context) => AudioPlayerBottomSheet(audio: audio),
-                        );
-                      }
-
                       try {
+                        final audio = Audio.fromJson(Map<String, dynamic>.from(data));
+                        final audioService = ref.read(audioServiceProvider);
+                        
+                        ref.read(currentAudioProvider.notifier).state = audio;
+                        
+                        if (context.mounted) {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) => AudioPlayerBottomSheet(audio: audio),
+                          );
+                        }
+
                         if (audioService.player.audioSource == null || 
                             audioService.player.sequenceState?.currentSource?.tag?.id != audio.id.toString()) {
                           await audioService.loadAudio(audio);
                         }
                         await audioService.play();
                       } catch (e) {
-                        print("Error loading/playing audio: $e");
+                        print("Error parsing or loading bookmark audio: $e");
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Could not play this item. It may have been removed.')),
+                          );
+                        }
                       }
                    }
                 },

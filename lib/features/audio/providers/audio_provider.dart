@@ -106,7 +106,7 @@ Future<List<String>> audioCategories(AudioCategoriesRef ref) async {
     if (response.statusCode == 200 && response.data != null) {
       final data = response.data['data'] as List;
       return ['All', ...data.map((cat) {
-        final name = cat['name'] as String;
+        final name = (cat['name'] as String?) ?? 'Unknown';
         return name == 'Music' ? 'Teachings' : name;
       })];
     }

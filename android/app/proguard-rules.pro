@@ -9,3 +9,9 @@
 -keep class com.stripe.android.** { *; }
 -keep interface com.stripe.android.** { *; }
 -dontwarn com.stripe.android.**
+-dontwarn com.google.gson.**
+-dontwarn kotlin**.**
+-ignorewarnings
+
+# Optimization
+-optimizations !code/allocation/variable

@@ -25,10 +25,14 @@ mixin _$Chapter {
   String get name => throw _privateConstructorUsedError;
   int get number => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
+  @JsonKey(name: 'collection_id')
   int get collectionId => throw _privateConstructorUsedError;
   int? get order => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_active')
   bool get isActive => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this Chapter to a JSON map.
@@ -50,11 +54,11 @@ abstract class $ChapterCopyWith<$Res> {
     String name,
     int number,
     String? description,
-    int collectionId,
+    @JsonKey(name: 'collection_id') int collectionId,
     int? order,
-    bool isActive,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'is_active') bool isActive,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   });
 }
 
@@ -140,11 +144,11 @@ abstract class _$$ChapterImplCopyWith<$Res> implements $ChapterCopyWith<$Res> {
     String name,
     int number,
     String? description,
-    int collectionId,
+    @JsonKey(name: 'collection_id') int collectionId,
     int? order,
-    bool isActive,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'is_active') bool isActive,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   });
 }
 
@@ -223,11 +227,11 @@ class _$ChapterImpl implements _Chapter {
     required this.name,
     required this.number,
     this.description,
-    required this.collectionId,
+    @JsonKey(name: 'collection_id') required this.collectionId,
     this.order,
-    required this.isActive,
-    this.createdAt,
-    this.updatedAt,
+    @JsonKey(name: 'is_active') required this.isActive,
+    @JsonKey(name: 'created_at') this.createdAt,
+    @JsonKey(name: 'updated_at') this.updatedAt,
   });
 
   factory _$ChapterImpl.fromJson(Map<String, dynamic> json) =>
@@ -242,14 +246,18 @@ class _$ChapterImpl implements _Chapter {
   @override
   final String? description;
   @override
+  @JsonKey(name: 'collection_id')
   final int collectionId;
   @override
   final int? order;
   @override
+  @JsonKey(name: 'is_active')
   final bool isActive;
   @override
+  @JsonKey(name: 'created_at')
   final DateTime? createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
 
   @override
@@ -313,11 +321,11 @@ abstract class _Chapter implements Chapter {
     required final String name,
     required final int number,
     final String? description,
-    required final int collectionId,
+    @JsonKey(name: 'collection_id') required final int collectionId,
     final int? order,
-    required final bool isActive,
-    final DateTime? createdAt,
-    final DateTime? updatedAt,
+    @JsonKey(name: 'is_active') required final bool isActive,
+    @JsonKey(name: 'created_at') final DateTime? createdAt,
+    @JsonKey(name: 'updated_at') final DateTime? updatedAt,
   }) = _$ChapterImpl;
 
   factory _Chapter.fromJson(Map<String, dynamic> json) = _$ChapterImpl.fromJson;
@@ -331,14 +339,18 @@ abstract class _Chapter implements Chapter {
   @override
   String? get description;
   @override
+  @JsonKey(name: 'collection_id')
   int get collectionId;
   @override
   int? get order;
   @override
+  @JsonKey(name: 'is_active')
   bool get isActive;
   @override
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
 
   /// Create a copy of Chapter

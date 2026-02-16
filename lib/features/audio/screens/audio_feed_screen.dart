@@ -150,25 +150,16 @@ class _AudioCard extends ConsumerWidget {
           }
 
           // 3. Handle loading and playing asynchronously
-          if (isStreamable) {
-            try {
-              // Only load if not already playing this audio
-              if (audioService.player.audioSource == null || 
-                  audioService.player.sequenceState?.currentSource?.tag?.id != audio.id.toString()) {
-                await audioService.loadAudio(audio);
-              }
-              await audioService.play();
-            } catch (e) {
-              print("Error loading/playing audio: $e");
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Failed to play audio: ${e.toString()}'),
-                    backgroundColor: Colors.redAccent,
-                  ),
-                );
-              }
+          try {
+            // Only load if not already playing this audio
+            if (audioService.player.audioSource == null || 
+                audioService.player.sequenceState?.currentSource?.tag?.id != audio.id.toString()) {
+              await audioService.loadAudio(audio);
             }
+            await audioService.play();
+          } catch (e) {
+            print("Error loading/playing audio: $e");
+            // Errors are also handled within AudioPlayerBottomSheet/AudioPlayerScreen
           }
         },
         borderRadius: BorderRadius.circular(24),

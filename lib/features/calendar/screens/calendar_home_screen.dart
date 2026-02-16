@@ -174,85 +174,63 @@ class CalendarHomeScreen extends ConsumerWidget {
           ),
         ],
       );
-    }
+  }
+
   Widget _buildDateCard(BuildContext context, Map<String, dynamic> kemetic) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.2)),
+        color: Colors.white.withOpacity(0.04),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
       ),
       child: Column(
         children: [
-          Text(
-            '${kemetic['month_name']}'.toUpperCase(),
-            style: TextStyle(
-              fontSize: 28,
-              fontFamily: 'Cinzel',
-              color: Theme.of(context).colorScheme.primary,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 4,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Day ${kemetic['day_number']}',
-            style: TextStyle(
-              fontSize: 48,
-              fontWeight: FontWeight.w900,
-              color: Theme.of(context).textTheme.headlineMedium?.color,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-             'Year ${kemetic['year'] ?? ''} • ${kemetic['season'] ?? ''}',
-            style: TextStyle(
-              fontSize: 14,
-              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.4),
-              letterSpacing: 1.5,
-            ),
-          ),
-          if (kemetic['deities'] != null) ...[
-            const SizedBox(height: 16),
-            Text(
-              'DEITY: ${kemetic['deities']}'.toUpperCase(),
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 2,
-              ),
-            ),
-          ],
-          if (kemetic['meaning'] != null && kemetic['meaning'].toString().isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text(
-              '${kemetic['meaning']}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 14,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ],
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Divider(color: Colors.black12),
-          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.access_time, size: 14, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.4)),
+              Icon(Icons.calendar_today, size: 14, color: Theme.of(context).colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                'Matches: ${DateFormat('MMMM dd, yyyy').format(DateTime.now())}',
+                'TODAY: ${DateFormat('EEEE, MMMM dd').format(DateTime.now())}'.toUpperCase(),
                 style: TextStyle(
                   fontSize: 12,
-                  color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.4),
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                  letterSpacing: 1.2,
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '${kemetic['month_name']}'.toUpperCase(),
+            style: TextStyle(
+              fontSize: 24,
+              fontFamily: 'Cinzel',
+              color: Theme.of(context).textTheme.headlineMedium?.color,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 3,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'DAY ${kemetic['day_number']}',
+            style: TextStyle(
+              fontSize: 40,
+              fontWeight: FontWeight.w900,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+             'KEMETIC YEAR ${kemetic['year'] ?? ''} • ${kemetic['season'] ?? ''}',
+            style: TextStyle(
+              fontSize: 12,
+              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5),
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.5,
+            ),
           ),
         ],
       ),

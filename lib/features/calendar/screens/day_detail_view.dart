@@ -7,15 +7,16 @@ import 'package:intl/intl.dart';
 class DayDetailView extends StatelessWidget {
   final CalendarDay day;
   final List<Event>? events;
+  final DateTime? gregorianDate;
 
-  const DayDetailView({super.key, required this.day, this.events});
+  const DayDetailView({super.key, required this.day, this.events, this.gregorianDate});
 
-  static void show(BuildContext context, CalendarDay day, {List<Event>? events}) {
+  static void show(BuildContext context, CalendarDay day, {List<Event>? events, DateTime? gregorianDate}) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => DayDetailView(day: day, events: events),
+      builder: (context) => DayDetailView(day: day, events: events, gregorianDate: gregorianDate),
     );
   }
 
@@ -51,7 +52,7 @@ class DayDetailView extends StatelessWidget {
                   padding: const EdgeInsets.all(24),
                   children: [
                     Text(
-                      '${day.month?.displayName} Day ${day.dayNumber}'.toUpperCase(),
+                      '${DateFormat('EEEE, MMMM d, yyyy').format(gregorianDate ?? DateTime.now())}'.toUpperCase(),
                       style: TextStyle(
                         color: theme.colorScheme.primary, 
                         fontSize: 12, 
@@ -69,14 +70,15 @@ class DayDetailView extends StatelessWidget {
                         fontWeight: FontWeight.bold
                       ),
                     ),
-                    if (day.gregorianDay != null)
-                      Text(
-                        'Gregorian Alignment: ${day.gregorianDay}',
-                        style: TextStyle(
-                          color: baseTextColor.withOpacity(0.4), 
-                          fontSize: 14
-                        ),
+                    Text(
+                      '${day.month?.displayName} • Day ${day.dayNumber}',
+                      style: TextStyle(
+                        color: baseTextColor.withOpacity(0.6), 
+                        fontSize: 16,
+                        fontFamily: 'Cinzel',
+                        letterSpacing: 1.2,
                       ),
+                    ),
                     const SizedBox(height: 32),
                     if (events != null && events!.isNotEmpty) ...[
                       Text('EVENTS', 

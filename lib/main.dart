@@ -38,9 +38,25 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  
+  // 1. Initialize Audio Service (CRITICAL: Must be as early as possible)
+  try {
+    print('🎵 Initializing JustAudioBackground...');
+    await JustAudioBackground.init(
+      androidNotificationChannelId: 'com.example.wateredflutterapp.channel.audio',
+      androidNotificationChannelName: 'Watered Audio',
+      androidNotificationOngoing: true,
+      androidNotificationIcon: 'mipmap/ic_launcher',
+    );
+    print('✅ JustAudioBackground initialized');
+  } catch (e, stack) {
+    print('❌ JustAudioBackground initialization failed: $e');
+    print(stack);
+  }
+
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  // 1. Global Error Handling (for red screens)
+  // 2. Global Error Handling (for red screens)
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return Scaffold(
       body: ErrorView(
@@ -50,33 +66,18 @@ Future<void> main() async {
     );
   };
 
-  // 2. Global Zoneless Error Handling
+  // 3. Global Zoneless Error Handling
   PlatformDispatcher.instance.onError = (error, stack) {
     print('Caught global error: $error');
-    // You could report to Sentry/Crashlytics here
-    return true; // error handled
+    return true; 
   };
   
-  // 3. Initialize Firebase first
+  // 4. Initialize Firebase
   try {
     await Firebase.initializeApp();
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   } catch (e) {
     print('Firebase initialization error: $e');
-  }
-
-  // 4. Initialize Audio Service (CRITICAL: Must be early)
-  try {
-    print('🎵 Initializing JustAudioBackground...');
-    await JustAudioBackground.init(
-      androidNotificationChannelId: 'com.example.wateredflutterapp.channel.audio',
-      androidNotificationChannelName: 'Watered Audio',
-      androidNotificationOngoing: true,
-    );
-    print('✅ JustAudioBackground initialized');
-  } catch (e, stack) {
-    print('❌ JustAudioBackground initialization failed: $e');
-    print(stack);
   }
 
   // 5. Initialize other services

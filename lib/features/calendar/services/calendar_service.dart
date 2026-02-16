@@ -37,8 +37,8 @@ class CalendarService {
   }
 
   Future<List<Event>> getUpcomingEvents() async {
-    // 1. Fetch backend events
-    final eventResponse = await _client.get('events');
+    // 1. Fetch backend events - Use 'all' filter to see past and future on the calendar
+    final eventResponse = await _client.get('events?filter=all');
     final List eventData = eventResponse.data['data'];
     final List<Event> events = eventData.map((e) => Event.fromJson(e)).toList();
 

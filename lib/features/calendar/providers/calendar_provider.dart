@@ -11,6 +11,10 @@ final kemeticTodayProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   return ref.watch(calendarServiceProvider).getToday();
 });
 
+// Current Gregorian Month and Year view
+final viewMonthProvider = StateProvider<int>((ref) => DateTime.now().month);
+final viewYearProvider = StateProvider<int>((ref) => DateTime.now().year);
+
 final selectedMonthProvider = StateProvider<int>((ref) => 1);
 
 final upcomingEventsProvider = FutureProvider<List<Event>>((ref) async {

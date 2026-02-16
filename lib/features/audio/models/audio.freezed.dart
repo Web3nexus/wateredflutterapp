@@ -22,10 +22,10 @@ Audio _$AudioFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Audio {
   int get id => throw _privateConstructorUsedError;
-  String get title => throw _privateConstructorUsedError;
+  String? get title => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   @JsonKey(name: 'audio_url')
-  String get audioUrl => throw _privateConstructorUsedError;
+  String? get audioUrl => throw _privateConstructorUsedError;
   @JsonKey(name: 'thumbnail_url')
   String? get thumbnailUrl => throw _privateConstructorUsedError;
   @JsonKey(name: 'duration')
@@ -67,9 +67,9 @@ abstract class $AudioCopyWith<$Res> {
   @useResult
   $Res call({
     int id,
-    String title,
+    String? title,
     String? description,
-    @JsonKey(name: 'audio_url') String audioUrl,
+    @JsonKey(name: 'audio_url') String? audioUrl,
     @JsonKey(name: 'thumbnail_url') String? thumbnailUrl,
     @JsonKey(name: 'duration') String? duration,
     String? author,
@@ -102,9 +102,9 @@ class _$AudioCopyWithImpl<$Res, $Val extends Audio>
   @override
   $Res call({
     Object? id = null,
-    Object? title = null,
+    Object? title = freezed,
     Object? description = freezed,
-    Object? audioUrl = null,
+    Object? audioUrl = freezed,
     Object? thumbnailUrl = freezed,
     Object? duration = freezed,
     Object? author = freezed,
@@ -125,18 +125,18 @@ class _$AudioCopyWithImpl<$Res, $Val extends Audio>
                 ? _value.id
                 : id // ignore: cast_nullable_to_non_nullable
                       as int,
-            title: null == title
+            title: freezed == title
                 ? _value.title
                 : title // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as String?,
             description: freezed == description
                 ? _value.description
                 : description // ignore: cast_nullable_to_non_nullable
                       as String?,
-            audioUrl: null == audioUrl
+            audioUrl: freezed == audioUrl
                 ? _value.audioUrl
                 : audioUrl // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as String?,
             thumbnailUrl: freezed == thumbnailUrl
                 ? _value.thumbnailUrl
                 : thumbnailUrl // ignore: cast_nullable_to_non_nullable
@@ -205,9 +205,9 @@ abstract class _$$AudioImplCopyWith<$Res> implements $AudioCopyWith<$Res> {
   @useResult
   $Res call({
     int id,
-    String title,
+    String? title,
     String? description,
-    @JsonKey(name: 'audio_url') String audioUrl,
+    @JsonKey(name: 'audio_url') String? audioUrl,
     @JsonKey(name: 'thumbnail_url') String? thumbnailUrl,
     @JsonKey(name: 'duration') String? duration,
     String? author,
@@ -239,9 +239,9 @@ class __$$AudioImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? title = null,
+    Object? title = freezed,
     Object? description = freezed,
-    Object? audioUrl = null,
+    Object? audioUrl = freezed,
     Object? thumbnailUrl = freezed,
     Object? duration = freezed,
     Object? author = freezed,
@@ -262,18 +262,18 @@ class __$$AudioImplCopyWithImpl<$Res>
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
                   as int,
-        title: null == title
+        title: freezed == title
             ? _value.title
             : title // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as String?,
         description: freezed == description
             ? _value.description
             : description // ignore: cast_nullable_to_non_nullable
                   as String?,
-        audioUrl: null == audioUrl
+        audioUrl: freezed == audioUrl
             ? _value.audioUrl
             : audioUrl // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as String?,
         thumbnailUrl: freezed == thumbnailUrl
             ? _value.thumbnailUrl
             : thumbnailUrl // ignore: cast_nullable_to_non_nullable
@@ -336,9 +336,9 @@ class __$$AudioImplCopyWithImpl<$Res>
 class _$AudioImpl implements _Audio {
   const _$AudioImpl({
     required this.id,
-    required this.title,
+    this.title,
     this.description,
-    @JsonKey(name: 'audio_url') required this.audioUrl,
+    @JsonKey(name: 'audio_url') this.audioUrl,
     @JsonKey(name: 'thumbnail_url') this.thumbnailUrl,
     @JsonKey(name: 'duration') this.duration,
     this.author,
@@ -360,12 +360,12 @@ class _$AudioImpl implements _Audio {
   @override
   final int id;
   @override
-  final String title;
+  final String? title;
   @override
   final String? description;
   @override
   @JsonKey(name: 'audio_url')
-  final String audioUrl;
+  final String? audioUrl;
   @override
   @JsonKey(name: 'thumbnail_url')
   final String? thumbnailUrl;
@@ -486,9 +486,9 @@ class _$AudioImpl implements _Audio {
 abstract class _Audio implements Audio {
   const factory _Audio({
     required final int id,
-    required final String title,
+    final String? title,
     final String? description,
-    @JsonKey(name: 'audio_url') required final String audioUrl,
+    @JsonKey(name: 'audio_url') final String? audioUrl,
     @JsonKey(name: 'thumbnail_url') final String? thumbnailUrl,
     @JsonKey(name: 'duration') final String? duration,
     final String? author,
@@ -509,12 +509,12 @@ abstract class _Audio implements Audio {
   @override
   int get id;
   @override
-  String get title;
+  String? get title;
   @override
   String? get description;
   @override
   @JsonKey(name: 'audio_url')
-  String get audioUrl;
+  String? get audioUrl;
   @override
   @JsonKey(name: 'thumbnail_url')
   String? get thumbnailUrl;

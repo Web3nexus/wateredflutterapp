@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Watered/core/services/interaction_service.dart';
 import 'package:Watered/core/network/api_client.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AudioPlayerScreen extends ConsumerStatefulWidget {
   final Audio audio;
@@ -40,7 +41,7 @@ class _AudioPlayerScreenState extends ConsumerState<AudioPlayerScreen> {
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _error = "This content is hosted on an external platform. Please use the button below to listen.";
+          _error = "This content is hosted on an external platform (${_getPlatformName(widget.audio.audioUrl)}). Please use the button below to listen there.";
         });
       }
       return;
@@ -210,7 +211,27 @@ class _AudioPlayerScreenState extends ConsumerState<AudioPlayerScreen> {
                               ],
                             ),
                           )
-                        : Container(
+                        : _error != null && !audioService.isStreamable(widget.audio.audioUrl)
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.open_in_new_rounded, size: 64, color: theme.colorScheme.primary),
+                                    const SizedBox(height: 24),
+                                    ElevatedButton.icon(
+                                      onPressed: () => launchUrl(Uri.parse(widget.audio.audioUrl)),
+                                      icon: const Icon(Icons.launch_rounded),
+                                      label: Text('Open in ${_getPlatformName(widget.audio.audioUrl)}'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: theme.colorScheme.primary,
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Container(
                             width: double.infinity,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(30),
@@ -497,6 +518,15 @@ class _AudioPlayerScreenState extends ConsumerState<AudioPlayerScreen> {
       '${widget.audio.title} by ${widget.audio.author ?? "Unknown Artist"}\n\nListen on Watered',
       subject: widget.audio.title,
     );
+  }
+
+  String _getPlatformName(String url) {
+    final lower = url.toLowerCase();
+    if (lower.contains('youtube.com') || lower.contains('youtu.be')) return 'YouTube';
+    if (lower.contains('spotify.com')) return 'Spotify';
+    if (lower.contains('audiomack.com')) return 'Audiomack';
+    if (lower.contains('music.apple.com')) return 'Apple Music';
+    return 'Browser';
   }
 }
 

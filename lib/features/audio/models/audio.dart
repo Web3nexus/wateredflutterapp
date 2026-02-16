@@ -7,9 +7,9 @@ part 'audio.g.dart';
 class Audio with _$Audio {
   const factory Audio({
     required int id,
-    required String title,
+    String? title,
     String? description,
-    @JsonKey(name: 'audio_url') required String audioUrl,
+    @JsonKey(name: 'audio_url') String? audioUrl,
     @JsonKey(name: 'thumbnail_url') String? thumbnailUrl,
     @JsonKey(name: 'duration') String? duration,
     String? author,

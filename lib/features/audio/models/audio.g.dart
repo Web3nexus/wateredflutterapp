@@ -8,9 +8,9 @@ part of 'audio.dart';
 
 _$AudioImpl _$$AudioImplFromJson(Map<String, dynamic> json) => _$AudioImpl(
   id: (json['id'] as num).toInt(),
-  title: json['title'] as String,
+  title: json['title'] as String?,
   description: json['description'] as String?,
-  audioUrl: json['audio_url'] as String,
+  audioUrl: json['audio_url'] as String?,
   thumbnailUrl: json['thumbnail_url'] as String?,
   duration: json['duration'] as String?,
   author: json['author'] as String?,

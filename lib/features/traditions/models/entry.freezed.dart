@@ -24,13 +24,16 @@ mixin _$Entry {
   int get id => throw _privateConstructorUsedError;
   int get number => throw _privateConstructorUsedError;
   String get text => throw _privateConstructorUsedError;
+  @JsonKey(name: 'chapter_id')
   int get chapterId => throw _privateConstructorUsedError;
   int? get order => throw _privateConstructorUsedError;
   Map<String, dynamic>? get metadata => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_active')
   bool get isActive => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt => throw _privateConstructorUsedError;
-  DateTime? get updatedAt =>
-      throw _privateConstructorUsedError; // Relationship data
+  @JsonKey(name: 'updated_at')
+  DateTime? get updatedAt => throw _privateConstructorUsedError; // Relationship data
   List<EntryTranslation>? get translations =>
       throw _privateConstructorUsedError;
 
@@ -52,12 +55,12 @@ abstract class $EntryCopyWith<$Res> {
     int id,
     int number,
     String text,
-    int chapterId,
+    @JsonKey(name: 'chapter_id') int chapterId,
     int? order,
     Map<String, dynamic>? metadata,
-    bool isActive,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'is_active') bool isActive,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
     List<EntryTranslation>? translations,
   });
 }
@@ -148,12 +151,12 @@ abstract class _$$EntryImplCopyWith<$Res> implements $EntryCopyWith<$Res> {
     int id,
     int number,
     String text,
-    int chapterId,
+    @JsonKey(name: 'chapter_id') int chapterId,
     int? order,
     Map<String, dynamic>? metadata,
-    bool isActive,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'is_active') bool isActive,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
     List<EntryTranslation>? translations,
   });
 }
@@ -237,12 +240,12 @@ class _$EntryImpl implements _Entry {
     required this.id,
     required this.number,
     required this.text,
-    required this.chapterId,
+    @JsonKey(name: 'chapter_id') required this.chapterId,
     this.order,
     final Map<String, dynamic>? metadata,
-    required this.isActive,
-    this.createdAt,
-    this.updatedAt,
+    @JsonKey(name: 'is_active') required this.isActive,
+    @JsonKey(name: 'created_at') this.createdAt,
+    @JsonKey(name: 'updated_at') this.updatedAt,
     final List<EntryTranslation>? translations,
   }) : _metadata = metadata,
        _translations = translations;
@@ -257,6 +260,7 @@ class _$EntryImpl implements _Entry {
   @override
   final String text;
   @override
+  @JsonKey(name: 'chapter_id')
   final int chapterId;
   @override
   final int? order;
@@ -271,10 +275,13 @@ class _$EntryImpl implements _Entry {
   }
 
   @override
+  @JsonKey(name: 'is_active')
   final bool isActive;
   @override
+  @JsonKey(name: 'created_at')
   final DateTime? createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
   // Relationship data
   final List<EntryTranslation>? _translations;
@@ -352,12 +359,12 @@ abstract class _Entry implements Entry {
     required final int id,
     required final int number,
     required final String text,
-    required final int chapterId,
+    @JsonKey(name: 'chapter_id') required final int chapterId,
     final int? order,
     final Map<String, dynamic>? metadata,
-    required final bool isActive,
-    final DateTime? createdAt,
-    final DateTime? updatedAt,
+    @JsonKey(name: 'is_active') required final bool isActive,
+    @JsonKey(name: 'created_at') final DateTime? createdAt,
+    @JsonKey(name: 'updated_at') final DateTime? updatedAt,
     final List<EntryTranslation>? translations,
   }) = _$EntryImpl;
 
@@ -370,16 +377,20 @@ abstract class _Entry implements Entry {
   @override
   String get text;
   @override
+  @JsonKey(name: 'chapter_id')
   int get chapterId;
   @override
   int? get order;
   @override
   Map<String, dynamic>? get metadata;
   @override
+  @JsonKey(name: 'is_active')
   bool get isActive;
   @override
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt; // Relationship data
   @override
   List<EntryTranslation>? get translations;

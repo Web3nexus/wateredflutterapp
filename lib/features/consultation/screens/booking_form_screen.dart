@@ -16,6 +16,9 @@ class _BookingFormScreenState extends ConsumerState<BookingFormScreen> {
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   final _notesController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   bool _isLoading = false;
 
   Future<void> _pickDate() async {
@@ -28,10 +31,10 @@ class _BookingFormScreenState extends ConsumerState<BookingFormScreen> {
       builder: (context, child) {
         return Theme(
           data: ThemeData.dark().copyWith(
-            colorScheme: const ColorScheme.dark(
+            colorScheme: ColorScheme.dark(
               primary: Theme.of(context).colorScheme.primary,
               onPrimary: Colors.black,
-              surface: Color(0xFF1E293B),
+              surface: const Color(0xFF1E293B),
               onSurface: Colors.white,
             ),
           ),
@@ -51,10 +54,10 @@ class _BookingFormScreenState extends ConsumerState<BookingFormScreen> {
        builder: (context, child) {
         return Theme(
           data: ThemeData.dark().copyWith(
-            colorScheme: const ColorScheme.dark(
+            colorScheme: ColorScheme.dark(
               primary: Theme.of(context).colorScheme.primary,
               onPrimary: Colors.black,
-              surface: Color(0xFF1E293B),
+              surface: const Color(0xFF1E293B),
               onSurface: Colors.white,
             ),
           ),
@@ -68,8 +71,8 @@ class _BookingFormScreenState extends ConsumerState<BookingFormScreen> {
   }
 
   Future<void> _submit() async {
-    if (_selectedDate == null || _selectedTime == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select date and time.')));
+    if (_selectedDate == null || _selectedTime == null || _nameController.text.isEmpty || _emailController.text.isEmpty || _phoneController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please fill in all required fields.')));
       return;
     }
 
@@ -87,6 +90,9 @@ class _BookingFormScreenState extends ConsumerState<BookingFormScreen> {
       await ref.read(bookingServiceProvider).createBooking(
         consultationTypeId: widget.type.id,
         scheduledAt: scheduledAt,
+        fullName: _nameController.text,
+        email: _emailController.text,
+        phone: _phoneController.text,
         notes: _notesController.text,
       );
       if (mounted) {
@@ -172,6 +178,51 @@ class _BookingFormScreenState extends ConsumerState<BookingFormScreen> {
                   ),
                 ),
               ],
+            ),
+            const Text(
+              'Contact Information',
+              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _nameController,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: const Color(0xFF1E293B),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                hintText: 'Full Name',
+                hintStyle: const TextStyle(color: Colors.white24),
+                prefixIcon: const Icon(Icons.person_outline, color: Colors.white24),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _emailController,
+              style: const TextStyle(color: Colors.white),
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: const Color(0xFF1E293B),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                hintText: 'Email Address',
+                hintStyle: const TextStyle(color: Colors.white24),
+                prefixIcon: const Icon(Icons.email_outlined, color: Colors.white24),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _phoneController,
+              style: const TextStyle(color: Colors.white),
+              keyboardType: TextInputType.phone,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: const Color(0xFF1E293B),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                hintText: 'Phone Number',
+                hintStyle: const TextStyle(color: Colors.white24),
+                prefixIcon: const Icon(Icons.phone_outlined, color: Colors.white24),
+              ),
             ),
             const SizedBox(height: 24),
             const Text(

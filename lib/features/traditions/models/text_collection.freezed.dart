@@ -27,11 +27,16 @@ mixin _$TextCollection {
   String? get description => throw _privateConstructorUsedError;
   @JsonKey(name: 'cover_image_url')
   String? get coverImageUrl => throw _privateConstructorUsedError;
+  @JsonKey(name: 'tradition_id')
   int? get traditionId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'category_id')
   int? get categoryId => throw _privateConstructorUsedError;
   int? get order => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_active')
   bool get isActive => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this TextCollection to a JSON map.
@@ -57,12 +62,12 @@ abstract class $TextCollectionCopyWith<$Res> {
     String slug,
     String? description,
     @JsonKey(name: 'cover_image_url') String? coverImageUrl,
-    int? traditionId,
-    int? categoryId,
+    @JsonKey(name: 'tradition_id') int? traditionId,
+    @JsonKey(name: 'category_id') int? categoryId,
     int? order,
-    bool isActive,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'is_active') bool isActive,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   });
 }
 
@@ -160,12 +165,12 @@ abstract class _$$TextCollectionImplCopyWith<$Res>
     String slug,
     String? description,
     @JsonKey(name: 'cover_image_url') String? coverImageUrl,
-    int? traditionId,
-    int? categoryId,
+    @JsonKey(name: 'tradition_id') int? traditionId,
+    @JsonKey(name: 'category_id') int? categoryId,
     int? order,
-    bool isActive,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'is_active') bool isActive,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   });
 }
 
@@ -255,12 +260,12 @@ class _$TextCollectionImpl implements _TextCollection {
     required this.slug,
     this.description,
     @JsonKey(name: 'cover_image_url') this.coverImageUrl,
-    this.traditionId,
-    this.categoryId,
+    @JsonKey(name: 'tradition_id') this.traditionId,
+    @JsonKey(name: 'category_id') this.categoryId,
     this.order,
-    required this.isActive,
-    this.createdAt,
-    this.updatedAt,
+    @JsonKey(name: 'is_active') required this.isActive,
+    @JsonKey(name: 'created_at') this.createdAt,
+    @JsonKey(name: 'updated_at') this.updatedAt,
   });
 
   factory _$TextCollectionImpl.fromJson(Map<String, dynamic> json) =>
@@ -278,16 +283,21 @@ class _$TextCollectionImpl implements _TextCollection {
   @JsonKey(name: 'cover_image_url')
   final String? coverImageUrl;
   @override
+  @JsonKey(name: 'tradition_id')
   final int? traditionId;
   @override
+  @JsonKey(name: 'category_id')
   final int? categoryId;
   @override
   final int? order;
   @override
+  @JsonKey(name: 'is_active')
   final bool isActive;
   @override
+  @JsonKey(name: 'created_at')
   final DateTime? createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
 
   @override
@@ -361,12 +371,12 @@ abstract class _TextCollection implements TextCollection {
     required final String slug,
     final String? description,
     @JsonKey(name: 'cover_image_url') final String? coverImageUrl,
-    final int? traditionId,
-    final int? categoryId,
+    @JsonKey(name: 'tradition_id') final int? traditionId,
+    @JsonKey(name: 'category_id') final int? categoryId,
     final int? order,
-    required final bool isActive,
-    final DateTime? createdAt,
-    final DateTime? updatedAt,
+    @JsonKey(name: 'is_active') required final bool isActive,
+    @JsonKey(name: 'created_at') final DateTime? createdAt,
+    @JsonKey(name: 'updated_at') final DateTime? updatedAt,
   }) = _$TextCollectionImpl;
 
   factory _TextCollection.fromJson(Map<String, dynamic> json) =
@@ -384,16 +394,21 @@ abstract class _TextCollection implements TextCollection {
   @JsonKey(name: 'cover_image_url')
   String? get coverImageUrl;
   @override
+  @JsonKey(name: 'tradition_id')
   int? get traditionId;
   @override
+  @JsonKey(name: 'category_id')
   int? get categoryId;
   @override
   int? get order;
   @override
+  @JsonKey(name: 'is_active')
   bool get isActive;
   @override
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
 
   /// Create a copy of TextCollection

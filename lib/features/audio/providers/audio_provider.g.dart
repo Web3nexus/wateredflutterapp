@@ -6,7 +6,7 @@ part of 'audio_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$audioCategoriesHash() => r'5567ff57089afdcc7fb23f369108dcce8ed736bf';
+String _$audioCategoriesHash() => r'7cdb9cfee3d9d2c7ac2013dbbf0536d91ba79b5e';
 
 /// See also [audioCategories].
 @ProviderFor(audioCategories)
