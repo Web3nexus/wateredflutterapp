@@ -134,7 +134,7 @@ class _AudioCard extends ConsumerWidget {
       child: InkWell(
         onTap: () async {
           final audioService = ref.read(audioServiceProvider);
-          final isStreamable = audioService.isStreamable(audio.audioUrl);
+          final isStreamable = audioService.isStreamable(audio.audioUrl ?? '');
 
           // 1. Set current audio state
           ref.read(currentAudioProvider.notifier).state = audio;
@@ -152,14 +152,24 @@ class _AudioCard extends ConsumerWidget {
           // 3. Handle loading and playing asynchronously
           try {
             // Only load if not already playing this audio
-            if (audioService.player.audioSource == null || 
-                audioService.player.sequenceState?.currentSource?.tag?.id != audio.id.toString()) {
+            if (!audioService.isAudioLoaded(audio.id)) {
               await audioService.loadAudio(audio);
             }
-            await audioService.play();
+            
+            // Start playing if not already playing
+            if (!audioService.isPlaying) {
+              await audioService.play();
+            }
           } catch (e) {
             print("Error loading/playing audio: $e");
-            // Errors are also handled within AudioPlayerBottomSheet/AudioPlayerScreen
+            if (context.mounted) {
+               ScaffoldMessenger.of(context).showSnackBar(
+                 SnackBar(
+                   content: Text('Failed to play audio. Please try again.'),
+                   backgroundColor: Colors.red,
+                 ),
+               );
+            }
           }
         },
         borderRadius: BorderRadius.circular(24),
@@ -190,7 +200,7 @@ class _AudioCard extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      audio.title,
+                      audio.title ?? 'Unknown Title',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

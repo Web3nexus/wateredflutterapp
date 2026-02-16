@@ -68,7 +68,7 @@ class MiniPlayer extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    currentAudio.title,
+                    currentAudio.title ?? 'Unknown Title',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(

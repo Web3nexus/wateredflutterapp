@@ -82,7 +82,7 @@ class _AudioPlayerBottomSheetState extends ConsumerState<AudioPlayerBottomSheet>
           const SizedBox(height: 32),
           // Title & Author
           Text(
-            widget.audio.title,
+            widget.audio.title ?? 'Unknown Title',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 24,
@@ -236,9 +236,11 @@ class _AudioPlayerBottomSheetState extends ConsumerState<AudioPlayerBottomSheet>
             ],
           ),
           const SizedBox(height: 16),
-          if (widget.audio.audioUrl.contains('audiomack.com') || widget.audio.audioUrl.contains('spotify.com') || widget.audio.audioUrl.contains('youtube.com'))
+          if ((widget.audio.audioUrl?.contains('audiomack.com') ?? false) || 
+              (widget.audio.audioUrl?.contains('spotify.com') ?? false) || 
+              (widget.audio.audioUrl?.contains('youtube.com') ?? false))
             TextButton.icon(
-              onPressed: () => launchUrl(Uri.parse(widget.audio.audioUrl), mode: LaunchMode.externalApplication),
+              onPressed: () => launchUrl(Uri.parse(widget.audio.audioUrl ?? ''), mode: LaunchMode.externalApplication),
               icon: Icon(Icons.open_in_new_rounded, color: Theme.of(context).colorScheme.primary, size: 16),
               label: Text('OPEN IN STREAMING PLATFORM', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 12, fontWeight: FontWeight.bold)),
             ),
@@ -300,8 +302,8 @@ class _AudioPlayerBottomSheetState extends ConsumerState<AudioPlayerBottomSheet>
 
   void _shareAudio() {
     Share.share(
-      '${widget.audio.title} by ${widget.audio.author ?? "Unknown Artist"}\n\nListen on Watered',
-      subject: widget.audio.title,
+      '${widget.audio.title ?? "Unknown Title"} by ${widget.audio.author ?? "Unknown Artist"}\n\nListen on Watered',
+      subject: widget.audio.title ?? "Audio Share",
     );
   }
 }

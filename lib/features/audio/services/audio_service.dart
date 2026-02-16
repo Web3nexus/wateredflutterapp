@@ -17,7 +17,14 @@ final audioServiceProvider = Provider<AudioService>((ref) {
 class AudioService {
   final AudioPlayer _player;
   
-  AudioService(this._player);
+  AudioService(this._player) {
+    _player.playbackEventStream.listen(
+      (event) {},
+      onError: (Object e, StackTrace stackTrace) {
+        print('❌ [AudioService] A stream error occurred: $e');
+      },
+    );
+  }
 
   Stream<PlayerState> get playerStateStream => _player.playerStateStream;
   Stream<Duration?> get durationStream => _player.durationStream;
@@ -28,6 +35,8 @@ class AudioService {
     try {
       print('🎵 [AudioService] Loading audio: ${audio.title}');
       final String rawUrl = audio.audioUrl?.trim() ?? '';
+      print('🔗 [AudioService] Raw URL: "$rawUrl"');
+      
       final uri = Uri.tryParse(rawUrl);
       
       if (rawUrl.isEmpty || uri == null || !uri.hasScheme) {
@@ -38,20 +47,43 @@ class AudioService {
       // and prevent "platform exchange" errors caused by duplicate IDs
       final String mediaId = 'audio_${audio.id}_${DateTime.now().millisecondsSinceEpoch}';
 
-      await _player.setAudioSource(
-        AudioSource.uri(
-          uri,
-          tag: MediaItem(
-            id: mediaId,
-            album: audio.category ?? "Watered Teachings",
-            title: audio.title,
-            artist: audio.author?.isNotEmpty == true ? audio.author! : "Watered",
-            artUri: (audio.thumbnailUrl != null && audio.thumbnailUrl!.startsWith('http')) 
-                ? Uri.tryParse(audio.thumbnailUrl!) 
-                : null,
+      // Use LockCachingAudioSource for better buffering and caching
+      try {
+        await _player.setAudioSource(
+          LockCachingAudioSource(
+            uri,
+            tag: MediaItem(
+              id: mediaId,
+              album: audio.category ?? "Watered Teachings",
+              title: audio.title ?? 'Unknown Title',
+              artist: audio.author?.isNotEmpty == true ? audio.author! : "Watered",
+              artUri: (audio.thumbnailUrl != null && audio.thumbnailUrl!.startsWith('http')) 
+                  ? Uri.tryParse(audio.thumbnailUrl!) 
+                  : null,
+            ),
           ),
-        ),
-      );
+        );
+      } catch (e) {
+        print('⚠️ [AudioService] LockCachingAudioSource failed, falling back to standard URI source: $e');
+        // Fallback to standard source if caching fails
+        await _player.setAudioSource(
+          AudioSource.uri(
+            uri,
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            },
+            tag: MediaItem(
+              id: mediaId,
+              album: audio.category ?? "Watered Teachings",
+              title: audio.title ?? 'Unknown Title',
+              artist: audio.author?.isNotEmpty == true ? audio.author! : "Watered",
+              artUri: (audio.thumbnailUrl != null && audio.thumbnailUrl!.startsWith('http')) 
+                  ? Uri.tryParse(audio.thumbnailUrl!) 
+                  : null,
+            ),
+          ),
+        );
+      }
       
       print('✅ [AudioService] Audio source loaded successfully');
     } catch (e, stackTrace) {
@@ -100,5 +132,11 @@ class AudioService {
     // For everything else (including potential direct links from Audiomack/Cloud), 
     // we let just_audio try to play it.
     return true; 
+  }
+
+  bool isAudioLoaded(int audioId) {
+    if (_player.audioSource == null) return false;
+    final currentMediaId = _player.sequenceState?.currentSource?.tag?.id;
+    return currentMediaId != null && currentMediaId.contains('audio_${audioId}_');
   }
 }

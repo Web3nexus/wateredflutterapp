@@ -37,11 +37,11 @@ class _AudioPlayerScreenState extends ConsumerState<AudioPlayerScreen> {
     final audioService = ref.read(audioServiceProvider);
     
     // Check if streamable before loading
-    if (!audioService.isStreamable(widget.audio.audioUrl)) {
+    if (!audioService.isStreamable(widget.audio.audioUrl ?? '')) {
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _error = "This content is hosted on an external platform (${_getPlatformName(widget.audio.audioUrl)}). Please use the button below to listen there.";
+          _error = "This content is hosted on an external platform (${_getPlatformName(widget.audio.audioUrl ?? '')}). Please use the button below to listen there.";
         });
       }
       return;
@@ -109,7 +109,7 @@ class _AudioPlayerScreenState extends ConsumerState<AudioPlayerScreen> {
             ),
             const SizedBox(height: 4),
             Text(
-              widget.audio.title,
+              widget.audio.title ?? 'Unknown Title',
               style: TextStyle(
                 color: textColor,
                 fontSize: 14,
@@ -186,7 +186,7 @@ class _AudioPlayerScreenState extends ConsumerState<AudioPlayerScreen> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'Audio URL: ${widget.audio.audioUrl}',
+                              'Audio URL: ${widget.audio.audioUrl ?? "None"}',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 10,
@@ -211,7 +211,7 @@ class _AudioPlayerScreenState extends ConsumerState<AudioPlayerScreen> {
                               ],
                             ),
                           )
-                        : _error != null && !audioService.isStreamable(widget.audio.audioUrl)
+                        : _error != null && !audioService.isStreamable(widget.audio.audioUrl ?? '')
                             ? Center(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -219,9 +219,9 @@ class _AudioPlayerScreenState extends ConsumerState<AudioPlayerScreen> {
                                     Icon(Icons.open_in_new_rounded, size: 64, color: theme.colorScheme.primary),
                                     const SizedBox(height: 24),
                                     ElevatedButton.icon(
-                                      onPressed: () => launchUrl(Uri.parse(widget.audio.audioUrl)),
+                                      onPressed: () => launchUrl(Uri.parse(widget.audio.audioUrl ?? '')),
                                       icon: const Icon(Icons.launch_rounded),
-                                      label: Text('Open in ${_getPlatformName(widget.audio.audioUrl)}'),
+                                      label: Text('Open in ${_getPlatformName(widget.audio.audioUrl ?? '')}'),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: theme.colorScheme.primary,
                                         foregroundColor: Colors.white,
@@ -275,7 +275,7 @@ class _AudioPlayerScreenState extends ConsumerState<AudioPlayerScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.audio.title,
+                          widget.audio.title ?? 'Unknown Title',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -515,8 +515,8 @@ class _AudioPlayerScreenState extends ConsumerState<AudioPlayerScreen> {
 
   void _shareAudio() {
     Share.share(
-      '${widget.audio.title} by ${widget.audio.author ?? "Unknown Artist"}\n\nListen on Watered',
-      subject: widget.audio.title,
+      '${widget.audio.title ?? "Unknown Title"} by ${widget.audio.author ?? "Unknown Artist"}\n\nListen on Watered',
+      subject: widget.audio.title ?? "Audio Share",
     );
   }
 

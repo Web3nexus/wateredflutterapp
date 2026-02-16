@@ -365,7 +365,7 @@ class DashboardScreen extends ConsumerWidget {
                         String? imageUrl;
                         
                         if (item is Audio) {
-                          title = item.title;
+                          title = item.title ?? 'Unknown Title';
                           subtitle = 'Audio • ${item.duration ?? "Unknown"}';
                           imageUrl = item.thumbnailUrl;
                         } else {
