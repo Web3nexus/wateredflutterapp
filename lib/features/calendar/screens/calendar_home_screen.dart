@@ -208,11 +208,34 @@ class CalendarHomeScreen extends ConsumerWidget {
           Text(
              'Year ${kemetic['year'] ?? ''} • ${kemetic['season'] ?? ''}',
             style: TextStyle(
-              fontSize: 16,
-              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
+              fontSize: 14,
+              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.4),
               letterSpacing: 1.5,
             ),
           ),
+          if (kemetic['deities'] != null) ...[
+            const SizedBox(height: 16),
+            Text(
+              'DEITY: ${kemetic['deities']}'.toUpperCase(),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2,
+              ),
+            ),
+          ],
+          if (kemetic['meaning'] != null && kemetic['meaning'].toString().isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(
+              '${kemetic['meaning']}',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 14,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
             child: Divider(color: Colors.black12),

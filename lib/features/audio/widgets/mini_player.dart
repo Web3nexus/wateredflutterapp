@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/audio/providers/current_audio_provider.dart';
 import 'package:Watered/features/audio/services/audio_service.dart';
 import 'package:Watered/features/audio/widgets/audio_player_bottom_sheet.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class MiniPlayer extends ConsumerWidget {
@@ -89,10 +90,24 @@ class MiniPlayer extends ConsumerWidget {
               ),
             ),
             // Play/Pause Control
-            StreamBuilder<bool>(
-              stream: audioService.playingStream,
+            StreamBuilder<PlayerState>(
+              stream: audioService.playerStateStream,
               builder: (context, snapshot) {
-                final isPlaying = snapshot.data ?? false;
+                final state = snapshot.data;
+                final isPlaying = state?.playing ?? false;
+                final processingState = state?.processingState ?? ProcessingState.idle;
+
+                if (processingState == ProcessingState.loading || processingState == ProcessingState.buffering) {
+                  return const SizedBox(
+                    width: 32,
+                    height: 32,
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white70)),
+                    ),
+                  );
+                }
+
                 return IconButton(
                   icon: Icon(
                     isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,

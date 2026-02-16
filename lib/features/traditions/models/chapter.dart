@@ -11,11 +11,11 @@ class Chapter with _$Chapter {
     required String name,
     required int number,
     String? description,
-    required int collectionId,
+    @JsonKey(name: 'collection_id') required int collectionId,
     int? order,
-    required bool isActive,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'is_active') required bool isActive,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _Chapter;
 
   factory Chapter.fromJson(Map<String, dynamic> json) =>

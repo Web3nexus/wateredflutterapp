@@ -4,6 +4,8 @@ import 'package:Watered/core/widgets/premium_gate.dart';
 import 'package:Watered/features/activity/widgets/activity_tracker.dart';
 import 'package:Watered/features/rituals/providers/ritual_providers.dart';
 import 'package:Watered/features/rituals/screens/ritual_detail_screen.dart';
+import 'package:Watered/core/widgets/error_view.dart';
+import 'package:Watered/core/widgets/loading_view.dart';
 
 class RitualsScreen extends ConsumerStatefulWidget {
   const RitualsScreen({super.key});
@@ -119,7 +121,7 @@ class _RitualsScreenState extends ConsumerState<RitualsScreen> {
                           color: theme.colorScheme.primary.withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(Icons.spa, color: theme.colorScheme.primary),
+                        child: Icon(Icons.auto_fix_high, color: theme.colorScheme.primary),
                       ),
                       title: Text(
                         ritual.title,
@@ -145,11 +147,12 @@ class _RitualsScreenState extends ConsumerState<RitualsScreen> {
                   },
                 );
               },
-              loading: () => const Center(child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 32.0),
-                child: CircularProgressIndicator(),
-              )),
-              error: (error, stack) => Center(child: Text('Error: $error')),
+              loading: () => const LoadingView(),
+              error: (error, stack) => ErrorView(
+                error: error,
+                stackTrace: stack,
+                onRetry: () => ref.invalidate(ritualsListProvider),
+              ),
             ),
             const SizedBox(height: 32),
             ],

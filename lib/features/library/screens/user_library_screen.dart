@@ -5,6 +5,12 @@ import 'package:Watered/features/traditions/providers/tradition_provider.dart';
 import 'package:Watered/features/traditions/screens/tradition_detail_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Watered/features/audio/screens/audio_player_screen.dart';
+import 'package:Watered/features/audio/models/audio.dart';
+import 'package:Watered/features/audio/services/audio_service.dart';
+import 'package:Watered/features/audio/providers/current_audio_provider.dart';
+import 'package:Watered/features/audio/widgets/audio_player_bottom_sheet.dart';
+import 'package:Watered/core/widgets/error_view.dart';
+import 'package:Watered/core/widgets/loading_view.dart';
 
 class UserLibraryScreen extends ConsumerStatefulWidget {
   const UserLibraryScreen({super.key});
@@ -200,12 +206,32 @@ class _BookmarkList extends ConsumerWidget {
                   ),
                 ),
                 trailing: Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.2)),
-                onTap: () {
-                   // Navigate based on type
+                onTap: () async {
                    final bType = bookmark.bookmarkableType.toLowerCase();
-                   if (bType.contains('audio')) {
-                      // Navigate to audio player
-                      // Audio navigation logic here
+                   if (bType.contains('audio') || bType.contains('song')) {
+                      final audio = Audio.fromJson(Map<String, dynamic>.from(data));
+                      final audioService = ref.read(audioServiceProvider);
+                      
+                      ref.read(currentAudioProvider.notifier).state = audio;
+                      
+                      if (context.mounted) {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => AudioPlayerBottomSheet(audio: audio),
+                        );
+                      }
+
+                      try {
+                        if (audioService.player.audioSource == null || 
+                            audioService.player.sequenceState?.currentSource?.tag?.id != audio.id.toString()) {
+                          await audioService.loadAudio(audio);
+                        }
+                        await audioService.play();
+                      } catch (e) {
+                        print("Error loading/playing audio: $e");
+                      }
                    }
                 },
               ),
@@ -213,8 +239,12 @@ class _BookmarkList extends ConsumerWidget {
           },
         );
       },
-      loading: () => Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary)),
-      error: (err, stack) => Center(child: Text('Error loading collection: $err', style: const TextStyle(color: Colors.red))),
+      loading: () => const LoadingView(),
+      error: (error, stack) => ErrorView(
+        error: error,
+        stackTrace: stack,
+        onRetry: () => ref.invalidate(bookmarkListProvider),
+      ),
     );
   }
 

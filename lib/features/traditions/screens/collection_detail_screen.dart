@@ -4,6 +4,8 @@ import 'package:Watered/features/traditions/models/text_collection.dart';
 import 'package:Watered/features/traditions/models/chapter.dart';
 import 'package:Watered/features/traditions/providers/chapter_provider.dart';
 import 'package:Watered/features/traditions/screens/reading_screen.dart';
+import 'package:Watered/core/widgets/error_view.dart';
+import 'package:Watered/core/widgets/loading_view.dart';
 
 class CollectionDetailScreen extends ConsumerStatefulWidget {
   final TextCollection collection;
@@ -205,11 +207,15 @@ class _CollectionDetailScreenState extends ConsumerState<CollectionDetailScreen>
                       ),
                     );
               },
-              loading: () => Center(
-                child: CircularProgressIndicator(color: theme.colorScheme.primary),
+              loading: () => const SliverFillRemaining(
+                child: LoadingView(),
               ),
-              error: (err, stack) => SliverFillRemaining(
-                child: Center(child: Text('Error loading chapters: $err')),
+              error: (error, stack) => SliverFillRemaining(
+                child: ErrorView(
+                  error: error,
+                  stackTrace: stack,
+                  onRetry: () => ref.invalidate(chapterListProvider(collectionId: widget.collection.id)),
+                ),
               ),
             ),
 

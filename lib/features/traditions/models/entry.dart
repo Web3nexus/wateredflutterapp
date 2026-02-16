@@ -10,12 +10,12 @@ class Entry with _$Entry {
     required int id,
     required int number,
     required String text,
-    required int chapterId,
+    @JsonKey(name: 'chapter_id') required int chapterId,
     int? order,
     Map<String, dynamic>? metadata,
-    required bool isActive,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'is_active') required bool isActive,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
     // Relationship data
     List<EntryTranslation>? translations,
   }) = _Entry;

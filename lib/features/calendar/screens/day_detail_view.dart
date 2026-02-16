@@ -21,22 +21,29 @@ class DayDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final baseTextColor = theme.textTheme.bodyLarge?.color ?? (isDark ? Colors.white : Colors.black);
+
     return DraggableScrollableSheet(
       initialChildSize: 0.6,
       maxChildSize: 0.9,
       minChildSize: 0.4,
       builder: (context, scrollController) {
         return Container(
-          decoration: const BoxDecoration(
-            color: Color(0xFF1E293B),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+          decoration: BoxDecoration(
+            color: theme.scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
           ),
           child: Column(
             children: [
               const SizedBox(height: 12),
               Container(
                 width: 40, height: 4,
-                decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2)),
+                decoration: BoxDecoration(
+                  color: baseTextColor.withOpacity(0.1), 
+                  borderRadius: BorderRadius.circular(2)
+                ),
               ),
               Expanded(
                 child: ListView(
@@ -45,46 +52,69 @@ class DayDetailView extends StatelessWidget {
                   children: [
                     Text(
                       '${day.month?.displayName} Day ${day.dayNumber}'.toUpperCase(),
-                      style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 12, letterSpacing: 2, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: theme.colorScheme.primary, 
+                        fontSize: 12, 
+                        letterSpacing: 2, 
+                        fontWeight: FontWeight.bold
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       day.displayName,
-                      style: const TextStyle(fontSize: 28, fontFamily: 'Cinzel', color: Colors.white, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 28, 
+                        fontFamily: 'Cinzel', 
+                        color: baseTextColor, 
+                        fontWeight: FontWeight.bold
+                      ),
                     ),
                     if (day.gregorianDay != null)
                       Text(
                         'Gregorian Alignment: ${day.gregorianDay}',
-                        style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 14),
+                        style: TextStyle(
+                          color: baseTextColor.withOpacity(0.4), 
+                          fontSize: 14
+                        ),
                       ),
                     const SizedBox(height: 32),
                     if (events != null && events!.isNotEmpty) ...[
-                      const Text('EVENTS', 
-                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white30, letterSpacing: 1.2)
+                      Text('EVENTS', 
+                        style: TextStyle(
+                          fontSize: 10, 
+                          fontWeight: FontWeight.bold, 
+                          color: baseTextColor.withOpacity(0.3), 
+                          letterSpacing: 1.2
+                        )
                       ),
                       const SizedBox(height: 12),
                       ...events!.map((e) => Container(
                         margin: const EdgeInsets.only(bottom: 12),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
+                          color: baseTextColor.withOpacity(0.05),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.white10),
+                          border: Border.all(color: baseTextColor.withOpacity(0.1)),
                         ),
                         child: Row(
                           children: [
                              Container(
                                 width: 40, height: 40,
-                                decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary.withOpacity(0.2), shape: BoxShape.circle),
-                                child: Icon(Icons.event, color: Theme.of(context).colorScheme.primary, size: 20),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.primary.withOpacity(0.2), 
+                                  shape: BoxShape.circle
+                                ),
+                                child: Icon(Icons.event, color: theme.colorScheme.primary, size: 20),
                              ),
                              const SizedBox(width: 12),
                              Expanded(
                                child: Column(
                                  crossAxisAlignment: CrossAxisAlignment.start,
                                  children: [
-                                   Text(e.title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                                   Text(DateFormat('h:mm a').format(e.startTime), style: const TextStyle(color: Colors.white54, fontSize: 12)),
+                                   Text(e.title, style: TextStyle(color: baseTextColor, fontWeight: FontWeight.bold)),
+                                   Text(DateFormat('h:mm a').format(e.startTime), 
+                                     style: TextStyle(color: baseTextColor.withOpacity(0.5), fontSize: 12)
+                                   ),
                                  ],
                                ),
                              )
@@ -98,22 +128,33 @@ class DayDetailView extends StatelessWidget {
                       const SizedBox(height: 16),
                     ],
                     if (day.associatedDeities != null && day.associatedDeities!.isNotEmpty) ...[
-                      const Text('ASSOCIATED DEITIES', 
-                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white30, letterSpacing: 1.2)
+                      Text('ASSOCIATED DEITIES', 
+                        style: TextStyle(
+                          fontSize: 10, 
+                          fontWeight: FontWeight.bold, 
+                          color: baseTextColor.withOpacity(0.3), 
+                          letterSpacing: 1.2
+                        )
                       ),
                       const SizedBox(height: 8),
                       Wrap(
                         spacing: 8,
                         children: day.associatedDeities!.map((d) => Chip(
-                          label: Text(d, style: const TextStyle(fontSize: 12, color: Colors.white70)),
-                          backgroundColor: Colors.white.withOpacity(0.05),
+                          label: Text(d, style: TextStyle(fontSize: 12, color: baseTextColor.withOpacity(0.7))),
+                          backgroundColor: baseTextColor.withOpacity(0.05),
+                          side: BorderSide(color: baseTextColor.withOpacity(0.1)),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         )).toList(),
                       ),
                       const SizedBox(height: 32),
                     ],
-                    const Text('SACRED KNOWLEDGE', 
-                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white30, letterSpacing: 1.2)
+                    Text('SACRED KNOWLEDGE', 
+                      style: TextStyle(
+                        fontSize: 10, 
+                        fontWeight: FontWeight.bold, 
+                        color: baseTextColor.withOpacity(0.3), 
+                        letterSpacing: 1.2
+                      )
                     ),
                     const SizedBox(height: 12),
                     Text(
@@ -121,7 +162,7 @@ class DayDetailView extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         height: 1.7,
-                        color: Colors.white.withOpacity(0.9),
+                        color: baseTextColor.withOpacity(0.9),
                         fontFamily: 'Outfit',
                       ),
                     ),

@@ -16,6 +16,8 @@ import 'package:Watered/features/traditions/providers/tradition_provider.dart';
 import 'package:Watered/features/traditions/screens/tradition_detail_screen.dart';
 import 'package:Watered/features/deities/screens/deities_screen.dart';
 import 'package:Watered/features/activity/widgets/activity_tracker.dart';
+import 'package:Watered/core/widgets/error_view.dart';
+import 'package:Watered/core/widgets/loading_view.dart';
 
 class LibraryScreen extends ConsumerStatefulWidget {
   const LibraryScreen({super.key});
@@ -302,8 +304,12 @@ class _LibraryTabContent extends ConsumerWidget {
                     ),
                   );
                 },
-                loading: () => const SizedBox(height: 320, child: Center(child: CircularProgressIndicator())),
-                error: (_, __) => const SizedBox.shrink(),
+                loading: () => const LoadingView(),
+                error: (error, stack) => ErrorView(
+                  error: error,
+                  stackTrace: stack,
+                  onRetry: () => ref.invalidate(traditionListProvider()),
+                ),
               ),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 16)),
@@ -311,7 +317,7 @@ class _LibraryTabContent extends ConsumerWidget {
 
         if (libraryState.isLoading)
           const SliverFillRemaining(
-            child: Center(child: CircularProgressIndicator()),
+            child: LoadingView(),
           ),
 
         const SliverToBoxAdapter(child: SizedBox(height: 100)),

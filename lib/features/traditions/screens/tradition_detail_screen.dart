@@ -5,6 +5,8 @@ import 'package:Watered/features/traditions/models/text_collection.dart';
 import 'package:Watered/features/traditions/providers/collection_provider.dart';
 import 'package:Watered/features/traditions/screens/collection_detail_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:Watered/core/widgets/error_view.dart';
+import 'package:Watered/core/widgets/loading_view.dart';
 
 class TraditionDetailScreen extends ConsumerWidget {
   final Tradition tradition;
@@ -154,11 +156,15 @@ class TraditionDetailScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-            loading: () => SliverFillRemaining(
-              child: Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary)),
+            loading: () => const SliverFillRemaining(
+              child: LoadingView(),
             ),
-            error: (err, stack) => SliverFillRemaining(
-              child: Center(child: Text('Error: $err', style: const TextStyle(color: Colors.red))),
+            error: (error, stack) => SliverFillRemaining(
+              child: ErrorView(
+                error: error,
+                stackTrace: stack,
+                onRetry: () => ref.invalidate(collectionListProvider),
+              ),
             ),
           ),
 
@@ -217,7 +223,9 @@ class _CollectionItem extends StatelessWidget {
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 4),
           child: Text(
-            collection.description ?? 'Sacred writing available for study.',
+            (collection.description != null && collection.description!.isNotEmpty) 
+                ? collection.description! 
+                : 'Sacred writing available for study.',
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(

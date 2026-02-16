@@ -111,46 +111,49 @@ class CalendarGridView extends ConsumerWidget {
   }
 
   Widget _buildDaysGrid(ThemeData theme, List<CalendarDay> days, List<Event> allEvents) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(20),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 5,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 1,
-      ),
-      itemCount: days.length,
-      itemBuilder: (context, index) {
-        final day = days[index];
-        // Filter events for this day
-        // Note: This matches based on Gregorian date alignment if present.
-        // Assuming 'gregorianDay' string (e.g., "Sept 11") matches event date format or we simply match logic.
-        // For accurate matching, we need exact date comparison which might be tricky with rough "gregorianDay" string.
-        // However, if backend sends exact 'date' we could use it.
-        // For now, let's assume we filter by matching day/month if we can parse it, OR just pass empty for now if mapping is complex without exact dates.
-        // ACTUALLY: The request says "event schedules for a day should also show up".
-        // Let's match by checking if an event's start time falls on the *current year's* Gregorian date corresponding to this Kemetic day.
-        // Since `gregorianDay` is just a string range (e.g. "Sept 11"), parsing it exactly to a year-specific Date is hard.
-        // Ideally, the backend would provide exact dates for days.
-        // PROVISIONAL: We will match events that happen to have the SAME DAY index if we had that mapping.
-        // Lacking exact mapping, we will parse `gregorianDay` crudely if possible, otherwise we just pass empty.
-        
-        // Better approach: We check if `day.gregorianDay` (e.g. "Sep 11") matches `DateFormat('MMM d').format(event.startTime)`.
-        
-        final dayEvents = allEvents.where((e) {
-           if (day.gregorianDay == null) return false;
-           // format event date to "MMM d" (e.g. "Sep 11")
-           // Note: Data might be "Sept 11", so we need to be careful.
-           // Let's try flexible matching or standard format.
-           // Assume `gregorianDay` comes formatted from backend cleanly.
-           // Let's normalize both to be safe? 
-           // Or just check containment.
-           final eventDateStr = DateFormat('MMM d').format(e.startTime); // "Sep 11"
-           return day.gregorianDay!.contains(eventDateStr) || day.gregorianDay!.contains(DateFormat('MMMM d').format(e.startTime));
-        }).toList();
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day) => Expanded(
+              child: Center(
+                child: Text(
+                  day,
+                  style: TextStyle(
+                    color: theme.textTheme.bodySmall?.color?.withOpacity(0.5),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 10,
+                  ),
+                ),
+              ),
+            )).toList(),
+          ),
+        ),
+        Expanded(
+          child: GridView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: 1,
+            ),
+            itemCount: days.length,
+            itemBuilder: (context, index) {
+              final day = days[index];
+              final dayEvents = allEvents.where((e) {
+                 if (day.gregorianDay == null) return false;
+                 final eventDateStr = DateFormat('MMM d').format(e.startTime); 
+                 return day.gregorianDay!.contains(eventDateStr) || day.gregorianDay!.contains(DateFormat('MMMM d').format(e.startTime));
+              }).toList();
 
-        return _buildDayCell(context, theme, day, dayEvents);
-      },
+              return _buildDayCell(context, theme, day, dayEvents);
+            },
+          ),
+        ),
+      ],
     );
   }
 

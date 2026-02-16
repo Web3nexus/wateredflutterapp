@@ -13,16 +13,16 @@ _$TextCollectionImpl _$$TextCollectionImplFromJson(Map<String, dynamic> json) =>
       slug: json['slug'] as String,
       description: json['description'] as String?,
       coverImageUrl: json['cover_image_url'] as String?,
-      traditionId: (json['traditionId'] as num?)?.toInt(),
-      categoryId: (json['categoryId'] as num?)?.toInt(),
+      traditionId: (json['tradition_id'] as num?)?.toInt(),
+      categoryId: (json['category_id'] as num?)?.toInt(),
       order: (json['order'] as num?)?.toInt(),
-      isActive: json['isActive'] as bool,
-      createdAt: json['createdAt'] == null
+      isActive: json['is_active'] as bool,
+      createdAt: json['created_at'] == null
           ? null
-          : DateTime.parse(json['createdAt'] as String),
-      updatedAt: json['updatedAt'] == null
+          : DateTime.parse(json['created_at'] as String),
+      updatedAt: json['updated_at'] == null
           ? null
-          : DateTime.parse(json['updatedAt'] as String),
+          : DateTime.parse(json['updated_at'] as String),
     );
 
 Map<String, dynamic> _$$TextCollectionImplToJson(
@@ -33,10 +33,10 @@ Map<String, dynamic> _$$TextCollectionImplToJson(
   'slug': instance.slug,
   'description': instance.description,
   'cover_image_url': instance.coverImageUrl,
-  'traditionId': instance.traditionId,
-  'categoryId': instance.categoryId,
+  'tradition_id': instance.traditionId,
+  'category_id': instance.categoryId,
   'order': instance.order,
-  'isActive': instance.isActive,
-  'createdAt': instance.createdAt?.toIso8601String(),
-  'updatedAt': instance.updatedAt?.toIso8601String(),
+  'is_active': instance.isActive,
+  'created_at': instance.createdAt?.toIso8601String(),
+  'updated_at': instance.updatedAt?.toIso8601String(),
 };

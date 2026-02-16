@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/traditions/models/chapter.dart';
@@ -39,12 +40,13 @@ class _ReadingScreenState extends ConsumerState<ReadingScreen> {
     // Or we can wait for frame and find render object.
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
-       if (_scrollController.hasClients) {
-          final target = (widget.initialVerse! - 1) * 120.0; // Estimate
+       if (mounted && _scrollController.hasClients) {
+          // Calculate approximate target. Each verse is roughly 120-150px.
+          final target = (widget.initialVerse! - 1) * 120.0; 
           _scrollController.animateTo(
-            target, 
-            duration: const Duration(milliseconds: 500), 
-            curve: Curves.easeInOut,
+            target.clamp(0.0, _scrollController.position.maxScrollExtent), 
+            duration: const Duration(milliseconds: 800), 
+            curve: Curves.fastOutSlowIn,
           );
           _hasScrolled = true;
        }
@@ -111,23 +113,40 @@ class _ReadingScreenState extends ConsumerState<ReadingScreen> {
             itemCount: entries.data.length + 1, // +1 for Header
             itemBuilder: (context, index) {
               if (index == 0) {
+                final collectionName = widget.collection.name.isNotEmpty 
+                    ? widget.collection.name.toUpperCase() 
+                    : "SACRED TEXT";
+                final chapterTitle = widget.chapter.name.isNotEmpty 
+                    ? widget.chapter.name 
+                    : "Chapter ${widget.chapter.order}";
+
                 return Padding(
                   padding: const EdgeInsets.only(top: 24, bottom: 40),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Chapter ${widget.chapter.order}: ${widget.chapter.name.isNotEmpty ? widget.chapter.name : "The Text"}',
+                        collectionName,
+                        style: TextStyle(
+                          fontSize: 12,
+                          letterSpacing: 3,
+                          fontWeight: FontWeight.w900,
+                          color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        chapterTitle,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontFamily: 'Cinzel', // Serif font
+                          fontFamily: 'Cinzel',
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).textTheme.headlineMedium?.color,
                           height: 1.2,
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 20),
                       Container(
                         width: 40, 
                         height: 4, 

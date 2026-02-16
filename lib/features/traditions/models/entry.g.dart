@@ -10,16 +10,16 @@ _$EntryImpl _$$EntryImplFromJson(Map<String, dynamic> json) => _$EntryImpl(
   id: (json['id'] as num).toInt(),
   number: (json['number'] as num).toInt(),
   text: json['text'] as String,
-  chapterId: (json['chapterId'] as num).toInt(),
+  chapterId: (json['chapter_id'] as num).toInt(),
   order: (json['order'] as num?)?.toInt(),
   metadata: json['metadata'] as Map<String, dynamic>?,
-  isActive: json['isActive'] as bool,
-  createdAt: json['createdAt'] == null
+  isActive: json['is_active'] as bool,
+  createdAt: json['created_at'] == null
       ? null
-      : DateTime.parse(json['createdAt'] as String),
-  updatedAt: json['updatedAt'] == null
+      : DateTime.parse(json['created_at'] as String),
+  updatedAt: json['updated_at'] == null
       ? null
-      : DateTime.parse(json['updatedAt'] as String),
+      : DateTime.parse(json['updated_at'] as String),
   translations: (json['translations'] as List<dynamic>?)
       ?.map((e) => EntryTranslation.fromJson(e as Map<String, dynamic>))
       .toList(),
@@ -30,12 +30,12 @@ Map<String, dynamic> _$$EntryImplToJson(_$EntryImpl instance) =>
       'id': instance.id,
       'number': instance.number,
       'text': instance.text,
-      'chapterId': instance.chapterId,
+      'chapter_id': instance.chapterId,
       'order': instance.order,
       'metadata': instance.metadata,
-      'isActive': instance.isActive,
-      'createdAt': instance.createdAt?.toIso8601String(),
-      'updatedAt': instance.updatedAt?.toIso8601String(),
+      'is_active': instance.isActive,
+      'created_at': instance.createdAt?.toIso8601String(),
+      'updated_at': instance.updatedAt?.toIso8601String(),
       'translations': instance.translations,
     };
 

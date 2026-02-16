@@ -26,20 +26,48 @@ class AudioService {
 
   Future<void> loadAudio(Audio audio) async {
     try {
+      print('🎵 [AudioService] Loading audio: ${audio.title}');
+      print('🎵 [AudioService] Audio URL: ${audio.audioUrl}');
+      print('🎵 [AudioService] Audio ID: ${audio.id}');
+      
+      // Validate URL
+      final uri = Uri.tryParse(audio.audioUrl);
+      if (uri == null) {
+        throw Exception('Invalid audio URL: ${audio.audioUrl}');
+      }
+      
+      print('🎵 [AudioService] Parsed URI - Scheme: ${uri.scheme}, Host: ${uri.host}');
+      
       await _player.setAudioSource(
         AudioSource.uri(
-          Uri.parse(audio.audioUrl),
+          uri,
           tag: MediaItem(
             id: audio.id.toString(),
             album: "Watered Teachings",
             title: audio.title,
             artist: audio.author ?? "Unknown Recitor",
-            artUri: audio.thumbnailUrl != null ? Uri.parse(audio.thumbnailUrl!) : null,
+            artUri: audio.thumbnailUrl != null ? Uri.tryParse(audio.thumbnailUrl!) : null,
           ),
         ),
       );
-    } catch (e) {
-      rethrow;
+      
+      print('✅ [AudioService] Audio source loaded successfully');
+    } catch (e, stackTrace) {
+      print('❌ [AudioService] Failed to load audio: $e');
+      print('❌ [AudioService] Stack trace: $stackTrace');
+      
+      // Provide more specific error messages
+      if (e.toString().contains('Unable to connect')) {
+        throw Exception('Network error: Unable to connect to audio source. Please check your internet connection.');
+      } else if (e.toString().contains('404')) {
+        throw Exception('Audio file not found (404). The audio may have been removed.');
+      } else if (e.toString().contains('403')) {
+        throw Exception('Access denied (403). The audio source may require authentication.');
+      } else if (e.toString().contains('Invalid audio URL')) {
+        rethrow;
+      } else {
+        throw Exception('Failed to load audio: ${e.toString()}');
+      }
     }
   }
 

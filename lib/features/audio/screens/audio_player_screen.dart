@@ -130,38 +130,114 @@ class _AudioPlayerScreenState extends ConsumerState<AudioPlayerScreen> {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            // Album Art
+            // Album Art or Error Display
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 30,
-                        offset: const Offset(0, 15),
-                      ),
-                    ],
-                    image: widget.audio.thumbnailUrl != null 
-                        ? DecorationImage(
-                            image: CachedNetworkImageProvider(widget.audio.thumbnailUrl!),
-                            fit: BoxFit.cover,
-                          )
-                        : null,
-                  ),
-                  child: widget.audio.thumbnailUrl == null
-                    ? Container(
-                        decoration: BoxDecoration(
-                          color: theme.dividerColor.withOpacity(0.05),
-                          borderRadius: BorderRadius.circular(30),
+                child: _error != null
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.error_outline_rounded,
+                              size: 80,
+                              color: Colors.redAccent.withOpacity(0.7),
+                            ),
+                            const SizedBox(height: 24),
+                            Text(
+                              'Playback Error',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: textColor,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 24),
+                              child: Text(
+                                _error!,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: secondaryTextColor,
+                                  height: 1.5,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                setState(() {
+                                  _error = null;
+                                  _isLoading = true;
+                                });
+                                _initPlayer();
+                              },
+                              icon: const Icon(Icons.refresh_rounded),
+                              label: const Text('Retry'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: theme.colorScheme.primary,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Audio URL: ${widget.audio.audioUrl}',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: secondaryTextColor.withOpacity(0.5),
+                                fontFamily: 'monospace',
+                              ),
+                            ),
+                          ],
                         ),
-                        child: Icon(Icons.music_note, size: 100, color: theme.colorScheme.primary.withOpacity(0.3)),
                       )
-                    : null,
-                ),
+                    : _isLoading
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircularProgressIndicator(color: theme.colorScheme.primary),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Loading audio...',
+                                  style: TextStyle(color: secondaryTextColor),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 30,
+                                  offset: const Offset(0, 15),
+                                ),
+                              ],
+                              image: widget.audio.thumbnailUrl != null 
+                                  ? DecorationImage(
+                                      image: CachedNetworkImageProvider(widget.audio.thumbnailUrl!),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : null,
+                            ),
+                            child: widget.audio.thumbnailUrl == null
+                              ? Container(
+                                  decoration: BoxDecoration(
+                                    color: theme.dividerColor.withOpacity(0.05),
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  child: Icon(Icons.music_note, size: 100, color: theme.colorScheme.primary.withOpacity(0.3)),
+                                )
+                              : null,
+                          ),
               ),
             ),
             

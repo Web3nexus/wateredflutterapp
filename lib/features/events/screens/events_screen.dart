@@ -6,6 +6,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 
 import 'package:Watered/features/traditions/providers/tradition_provider.dart';
+import 'package:Watered/core/widgets/error_view.dart';
+import 'package:Watered/core/widgets/loading_view.dart';
 
 class EventsScreen extends ConsumerStatefulWidget {
   const EventsScreen({super.key});
@@ -16,22 +18,11 @@ class EventsScreen extends ConsumerStatefulWidget {
 
 class _EventsScreenState extends ConsumerState<EventsScreen> {
   String _selectedFilter = 'upcoming';
-  String _selectedRecurrence = 'All';
-  String _selectedCategory = 'All';
-  int? _selectedTraditionId;
-
-  final List<String> _recurrences = ['All', 'Weekly', 'Monthly', 'Yearly', 'Special'];
-  final List<String> _categories = ['All', 'Sacred Celebration', 'Symposium', 'Workshop', 'Lecture'];
-
   @override
   Widget build(BuildContext context) {
     final eventsAsync = ref.watch(eventsListProvider(EventFilter(
-      category: _selectedCategory == 'All' ? null : _selectedCategory,
-      recurrence: _selectedRecurrence == 'All' ? null : _selectedRecurrence,
-      traditionId: _selectedTraditionId,
       filter: _selectedFilter,
     )));
-    final traditionsAsync = ref.watch(traditionListProvider());
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -53,76 +44,6 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
               ],
             ),
           ),
-          const Divider(height: 1),
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 50,
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              scrollDirection: Axis.horizontal,
-              itemCount: _categories.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
-              itemBuilder: (context, index) {
-                final cat = _categories[index];
-                return _buildModernFilter(
-                  label: cat,
-                  isSelected: _selectedCategory == cat,
-                  onTap: () => setState(() => _selectedCategory = cat),
-                  theme: theme,
-                );
-              },
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Recurrence Factor Filter
-          SizedBox(
-            height: 50,
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              scrollDirection: Axis.horizontal,
-              itemCount: _recurrences.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
-              itemBuilder: (context, index) {
-                final rec = _recurrences[index];
-                return _buildModernFilter(
-                  label: rec,
-                  isSelected: _selectedRecurrence == rec,
-                  onTap: () => setState(() => _selectedRecurrence = rec),
-                  theme: theme,
-                );
-              },
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Tradition Filter
-          SizedBox(
-            height: 50,
-            child: traditionsAsync.when(
-              data: (traditions) {
-                return ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: traditions.data.length + 1,
-                  separatorBuilder: (_, __) => const SizedBox(width: 12),
-                  itemBuilder: (context, index) {
-                    final isAll = index == 0;
-                    final tradition = isAll ? null : traditions.data[index - 1];
-                    final isSelected = isAll ? _selectedTraditionId == null : _selectedTraditionId == tradition?.id;
-
-                    return _buildModernFilter(
-                      label: isAll ? 'All Traditions' : tradition!.name,
-                      isSelected: isSelected,
-                      onTap: () => setState(() => _selectedTraditionId = tradition?.id),
-                      theme: theme,
-                    );
-                  },
-                );
-              },
-              loading: () => const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))),
-              error: (_, __) => const SizedBox.shrink(),
-            ),
-          ),
-          const SizedBox(height: 16),
           const Divider(height: 1),
           Expanded(
             child: eventsAsync.when(
@@ -250,8 +171,12 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
                   },
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => Center(child: Text('Error: $error')),
+              loading: () => const LoadingView(),
+              error: (error, stack) => ErrorView(
+                error: error,
+                stackTrace: stack,
+                onRetry: () => ref.invalidate(eventsListProvider),
+              ),
             ),
           ),
         ],
@@ -282,48 +207,6 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
             color: isSelected ? theme.colorScheme.primary : Colors.transparent,
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildModernFilter({
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-    required ThemeData theme,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: BoxDecoration(
-          color: isSelected ? theme.colorScheme.primary : theme.cardTheme.color,
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(
-            color: isSelected ? theme.colorScheme.primary : theme.dividerColor.withOpacity(0.1),
-            width: 1.5,
-          ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: theme.colorScheme.primary.withOpacity(0.4),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  )
-                ]
-              : null,
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: TextStyle(
-              color: isSelected ? Colors.white : theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-              fontSize: 13,
-            ),
-          ),
-        ),
       ),
     );
   }

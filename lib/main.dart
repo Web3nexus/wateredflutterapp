@@ -26,6 +26,10 @@ import 'package:Watered/core/services/navigation_service.dart';
 import 'package:Watered/features/auth/screens/verification_pending_screen.dart';
 import 'package:Watered/core/widgets/splash_screen.dart';
 
+import 'package:flutter/foundation.dart';
+import 'package:Watered/core/widgets/error_view.dart';
+import 'package:Watered/core/widgets/loading_view.dart';
+
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -35,8 +39,25 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  // 1. Global Error Handling (for red screens)
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return Scaffold(
+      body: ErrorView(
+        error: details.exception,
+        stackTrace: details.stack,
+      ),
+    );
+  };
+
+  // 2. Global Zoneless Error Handling
+  PlatformDispatcher.instance.onError = (error, stack) {
+    print('Caught global error: $error');
+    // You could report to Sentry/Crashlytics here
+    return true; // error handled
+  };
   
-  // 1. Initialize Firebase first
+  // 3. Initialize Firebase first
   try {
     await Firebase.initializeApp();
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -44,15 +65,23 @@ Future<void> main() async {
     print('Firebase initialization error: $e');
   }
 
-  // 2. Initialize other services
-  final container = ProviderContainer();
+  // 4. Initialize Audio Service (CRITICAL: Must be early)
   try {
+    print('🎵 Initializing JustAudioBackground...');
     await JustAudioBackground.init(
       androidNotificationChannelId: 'com.example.wateredflutterapp.channel.audio',
       androidNotificationChannelName: 'Watered Audio',
       androidNotificationOngoing: true,
     );
-    
+    print('✅ JustAudioBackground initialized');
+  } catch (e, stack) {
+    print('❌ JustAudioBackground initialization failed: $e');
+    print(stack);
+  }
+
+  // 5. Initialize other services
+  final container = ProviderContainer();
+  try {
     // Initialize Ads
     await container.read(adServiceProvider).initialize();
     // Initialize Notifications
@@ -347,7 +376,7 @@ class _MainTabsScreenState extends ConsumerState<MainTabsScreen> {
               label: 'Nima Sedani',
             ),
             const BottomNavigationBarItem(
-              icon: Icon(Icons.auto_awesome_rounded),
+              icon: Icon(Icons.auto_fix_high),
               label: 'Rituals',
             ),
             const BottomNavigationBarItem(

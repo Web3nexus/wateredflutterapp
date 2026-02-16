@@ -12,12 +12,12 @@ class TextCollection with _$TextCollection {
     required String slug,
     String? description,
     @JsonKey(name: 'cover_image_url') String? coverImageUrl,
-    int? traditionId,
-    int? categoryId,
+    @JsonKey(name: 'tradition_id') int? traditionId,
+    @JsonKey(name: 'category_id') int? categoryId,
     int? order,
-    required bool isActive,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'is_active') required bool isActive,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _TextCollection;
 
   factory TextCollection.fromJson(Map<String, dynamic> json) =>

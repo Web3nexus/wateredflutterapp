@@ -22,14 +22,16 @@ class Ritual {
 
   factory Ritual.fromJson(Map<String, dynamic> json) {
     return Ritual(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      content: json['content'],
-      mediaUrls: json['media_urls'] != null ? List<String>.from(json['media_urls']) : null,
-      category: json['category'],
-      timeOfDay: json['time_of_day'],
-      traditionId: json['tradition_id'],
+      id: json['id'] is num ? (json['id'] as num).toInt() : 0,
+      title: json['title']?.toString() ?? 'Untitled Ritual',
+      description: json['description']?.toString(),
+      content: json['content']?.toString(),
+      mediaUrls: json['media_urls'] is List 
+          ? List<String>.from(json['media_urls']) 
+          : [],
+      category: json['category']?.toString(),
+      timeOfDay: json['time_of_day']?.toString(),
+      traditionId: json['tradition_id'] is num ? (json['tradition_id'] as num).toInt() : null,
     );
   }
 

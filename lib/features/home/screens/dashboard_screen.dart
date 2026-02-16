@@ -20,6 +20,8 @@ import 'package:Watered/features/audio/screens/audio_player_screen.dart';
 import 'package:Watered/features/calendar/screens/calendar_home_screen.dart';
 import 'package:Watered/features/reminders/widgets/upcoming_holiday_widget.dart';
 import 'package:Watered/features/rituals/widgets/sacred_schedule_widget.dart';
+import 'package:Watered/core/widgets/error_view.dart';
+import 'package:Watered/core/widgets/loading_view.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -199,15 +201,12 @@ class DashboardScreen extends ConsumerWidget {
                   ),
                 );
                 },
-                loading: () => Container(
-                  height: 180,
-                  decoration: BoxDecoration(
-                    color: theme.cardTheme.color,
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: const Center(child: CircularProgressIndicator()),
+                loading: () => const LoadingView(),
+                error: (error, stack) => ErrorView(
+                  error: error,
+                  stackTrace: stack,
+                  onRetry: () => ref.invalidate(dailyWisdomProvider),
                 ),
-                error: (_, __) => const SizedBox.shrink(),
               ),
 
               const SizedBox(height: 32),
@@ -309,8 +308,12 @@ class DashboardScreen extends ConsumerWidget {
                     ),
                   );
                 },
-                loading: () => const SizedBox(height: 100, child: Center(child: CircularProgressIndicator())),
-                error: (e, s) => const SizedBox.shrink(),
+                loading: () => const LoadingView(),
+                error: (error, stack) => ErrorView(
+                  error: error,
+                  stackTrace: stack,
+                  onRetry: () => ref.invalidate(eventsListProvider),
+                ),
               ),
 
               const SizedBox(height: 32),
@@ -390,13 +393,13 @@ class DashboardScreen extends ConsumerWidget {
                     ),
                   );
                 },
-                loading: () => const SizedBox(height: 160, child: Center(child: CircularProgressIndicator())),
-                error: (e, s) => const SizedBox(
-                  height: 100,
-                  child: Center(child: Text("No featured content yet.", style: TextStyle(color: Colors.white54))),
+                loading: () => const LoadingView(),
+                error: (error, stack) => ErrorView(
+                  error: error,
+                  stackTrace: stack,
+                  onRetry: () => ref.invalidate(featuredContentProvider),
                 ),
               ),
-
               const SizedBox(height: 32),
               
               const SizedBox(height: 100), // Bottom padding for nav bar

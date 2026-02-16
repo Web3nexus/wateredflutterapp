@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/audio/models/audio.dart';
 import 'package:Watered/features/audio/services/audio_service.dart';
@@ -155,10 +156,25 @@ class _AudioPlayerBottomSheetState extends ConsumerState<AudioPlayerBottomSheet>
                 ),
               ),
               const SizedBox(width: 24),
-              StreamBuilder<bool>(
-                stream: audioService.playingStream,
+              StreamBuilder<PlayerState>(
+                stream: audioService.playerStateStream,
                 builder: (context, snapshot) {
-                  final isPlaying = snapshot.data ?? false;
+                  final state = snapshot.data;
+                  final isPlaying = state?.playing ?? false;
+                  final processingState = state?.processingState ?? ProcessingState.idle;
+
+                  if (processingState == ProcessingState.loading || processingState == ProcessingState.buffering) {
+                    return Container(
+                      width: 80,
+                      height: 80,
+                      padding: const EdgeInsets.all(20),
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 3,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white70),
+                      ),
+                    );
+                  }
+
                   return Container(
                     width: 80,
                     height: 80,

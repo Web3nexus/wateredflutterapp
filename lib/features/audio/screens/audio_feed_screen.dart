@@ -14,6 +14,8 @@ import 'package:Watered/features/auth/screens/login_screen.dart';
 import 'package:Watered/core/services/ad_service.dart';
 import 'package:Watered/features/subscription/screens/subscription_screen.dart';
 import 'package:Watered/features/activity/widgets/activity_tracker.dart';
+import 'package:Watered/core/widgets/error_view.dart';
+import 'package:Watered/core/widgets/loading_view.dart';
 
 class AudioFeedScreen extends ConsumerStatefulWidget {
   final bool showAppBar;
@@ -97,8 +99,12 @@ class _AudioFeedScreenState extends ConsumerState<AudioFeedScreen> {
                           return _AudioCard(audio: audios.data[index]);
                         },
                       ),
-                loading: () => const _AudioFeedLoading(),
-                error: (err, stack) => Center(child: Text('Wisdom delayed: $err')),
+                loading: () => const LoadingView(),
+                error: (error, stack) => ErrorView(
+                  error: error,
+                  stackTrace: stack,
+                  onRetry: () => ref.read(audioListProvider(category: _selectedCategory == 'All' ? null : _selectedCategory).notifier).refresh(),
+                ),
               ),
             ),
           ),
@@ -130,13 +136,10 @@ class _AudioCard extends ConsumerWidget {
           final audioService = ref.read(audioServiceProvider);
           final isStreamable = audioService.isStreamable(audio.audioUrl);
 
+          // 1. Set current audio state
           ref.read(currentAudioProvider.notifier).state = audio;
           
-          if (isStreamable) {
-            await audioService.loadAudio(audio);
-            await audioService.play();
-          }
-
+          // 2. Show the player bottom sheet immediately for better responsiveness
           if (context.mounted) {
             showModalBottomSheet(
               context: context,
@@ -144,6 +147,28 @@ class _AudioCard extends ConsumerWidget {
               backgroundColor: Colors.transparent,
               builder: (context) => AudioPlayerBottomSheet(audio: audio),
             );
+          }
+
+          // 3. Handle loading and playing asynchronously
+          if (isStreamable) {
+            try {
+              // Only load if not already playing this audio
+              if (audioService.player.audioSource == null || 
+                  audioService.player.sequenceState?.currentSource?.tag?.id != audio.id.toString()) {
+                await audioService.loadAudio(audio);
+              }
+              await audioService.play();
+            } catch (e) {
+              print("Error loading/playing audio: $e");
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Failed to play audio: ${e.toString()}'),
+                    backgroundColor: Colors.redAccent,
+                  ),
+                );
+              }
+            }
           }
         },
         borderRadius: BorderRadius.circular(24),

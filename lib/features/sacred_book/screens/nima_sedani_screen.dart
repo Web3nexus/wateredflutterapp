@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/traditions/providers/text_collection_provider.dart';
 import 'package:Watered/features/traditions/providers/chapter_provider.dart';
@@ -6,6 +7,8 @@ import 'package:Watered/features/traditions/providers/entry_provider.dart';
 import 'package:Watered/features/traditions/models/chapter.dart';
 import 'package:Watered/features/traditions/models/text_collection.dart';
 import 'package:Watered/features/activity/widgets/activity_tracker.dart';
+import 'package:Watered/core/widgets/error_view.dart';
+import 'package:Watered/core/widgets/loading_view.dart';
 
 class NimaSedaniScreen extends ConsumerStatefulWidget {
   const NimaSedaniScreen({super.key});
@@ -215,7 +218,7 @@ class _NimaSedaniScreenState extends ConsumerState<NimaSedaniScreen> {
                 _currentCollection = books.first;
               });
             });
-            return const Center(child: CircularProgressIndicator());
+            return const LoadingView();
           }
 
           // Load chapters for the current collection
@@ -240,7 +243,7 @@ class _NimaSedaniScreenState extends ConsumerState<NimaSedaniScreen> {
                         _currentChapter = chapters.data.first;
                       });
                     });
-                    return const Center(child: CircularProgressIndicator());
+                    return const LoadingView();
                   }
 
                   // Load entries for current chapter
@@ -351,21 +354,31 @@ class _NimaSedaniScreenState extends ConsumerState<NimaSedaniScreen> {
                             },
                           );
                         },
-                        loading: () => const Center(child: CircularProgressIndicator()),
-                        error: (err, _) => Center(child: Text('Error: $err')),
+                        loading: () => const LoadingView(),
+                        error: (error, stack) => ErrorView(
+                          error: error,
+                          stackTrace: stack,
+                          onRetry: () => ref.invalidate(entryListProvider),
+                        ),
                       );
                     },
                   );
                 },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, _) => Center(child: Text('Error loading chapters: $err')),
+                loading: () => const LoadingView(),
+                error: (error, stack) => ErrorView(
+                  error: error,
+                  stackTrace: stack,
+                  onRetry: () => ref.invalidate(chapterListProvider),
+                ),
               );
             },
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Text('Error loading sacred texts: $error'),
+        loading: () => const LoadingView(),
+        error: (error, stack) => ErrorView(
+          error: error,
+          stackTrace: stack,
+          onRetry: () => ref.invalidate(textCollectionListProvider),
         ),
       ),
       ),
