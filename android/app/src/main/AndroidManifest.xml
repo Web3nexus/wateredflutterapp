@@ -34,7 +34,7 @@
         </activity>
         
         <!-- Just Audio Background Services -->
-        <service android:name="com.ryanheise.audioservice.AudioService"
+        <service android:name="com.ryanheise.just_audio_background.JustAudioBackgroundService"
             android:foregroundServiceType="mediaPlayback"
             android:exported="true">
             <intent-filter>
@@ -42,7 +42,7 @@
             </intent-filter>
         </service>
 
-        <receiver android:name="com.ryanheise.audioservice.MediaButtonReceiver"
+        <receiver android:name="com.ryanheise.just_audio_background.MediaButtonReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />

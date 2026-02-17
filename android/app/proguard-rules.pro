@@ -2,8 +2,11 @@
 -keep interface com.ryanheise.audioservice.** { *; }
 -keep class com.ryanheise.just_audio.** { *; }
 -keep interface com.ryanheise.just_audio.** { *; }
+-keep class com.ryanheise.just_audio_background.** { *; }
+-keep interface com.ryanheise.just_audio_background.** { *; }
 -dontwarn com.ryanheise.audioservice.**
 -dontwarn com.ryanheise.just_audio.**
+-dontwarn com.ryanheise.just_audio_background.**
 
 # Stripe
 -keep class com.stripe.android.** { *; }
