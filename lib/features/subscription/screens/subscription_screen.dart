@@ -134,7 +134,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         publicKey: publicKey,
         context: context,
         customerEmail: user?.email ?? 'customer@example.com',
-        amount: (amount * 100).toString(), // convert to kobo
+        amount: amount.toString(), // amount from settings is already in kobo/cents
         reference: 'sub_${DateTime.now().millisecondsSinceEpoch}',
         onClosed: () {
           setState(() => _isLoading = false);
