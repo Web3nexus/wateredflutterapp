@@ -268,44 +268,51 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
                   style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
-                ...allSounds.map((sound) {
-                  final isSelected = _selectedSound == sound['name'];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: InkWell(
-                      onTap: () {
-                        setState(() => _selectedSound = sound['name']!);
-                        setModalState(() {});
-                      },
-                      borderRadius: BorderRadius.circular(16),
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: isSelected ? theme.colorScheme.primary.withOpacity(0.1) : Colors.transparent,
-                          border: Border.all(
-                            color: isSelected ? theme.colorScheme.primary : theme.dividerColor.withOpacity(0.1),
+                // Wrap sound list in scrollable container
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: allSounds.map((sound) {
+                        final isSelected = _selectedSound == sound['name'];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: InkWell(
+                            onTap: () {
+                              setState(() => _selectedSound = sound['name']!);
+                              setModalState(() {});
+                            },
+                            borderRadius: BorderRadius.circular(16),
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: isSelected ? theme.colorScheme.primary.withOpacity(0.1) : Colors.transparent,
+                                border: Border.all(
+                                  color: isSelected ? theme.colorScheme.primary : theme.dividerColor.withOpacity(0.1),
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+                                    color: isSelected ? theme.colorScheme.primary : theme.textTheme.bodySmall?.color?.withOpacity(0.4),
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(child: Text(sound['name']!)),
+                                  IconButton(
+                                    icon: const Icon(Icons.play_circle_outline, size: 24),
+                                    onPressed: () => _previewSound(sound['url']!),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-                              color: isSelected ? theme.colorScheme.primary : theme.textTheme.bodySmall?.color?.withOpacity(0.4),
-                              size: 20,
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(child: Text(sound['name']!)),
-                            IconButton(
-                              icon: const Icon(Icons.play_circle_outline, size: 24),
-                              onPressed: () => _previewSound(sound['url']!),
-                            ),
-                          ],
-                        ),
-                      ),
+                        );
+                      }).toList(),
                     ),
-                  );
-                }),
+                  ),
+                ),
                 const SizedBox(height: 24),
               ],
             ),
