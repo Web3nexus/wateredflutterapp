@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/rituals/models/ritual.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:Watered/features/audio/services/audio_service.dart'; // Add import
 
 class RitualDetailScreen extends ConsumerStatefulWidget {
   final Ritual ritual;
@@ -21,7 +22,8 @@ class _RitualDetailScreenState extends ConsumerState<RitualDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _player = AudioPlayer();
+    // _player = AudioPlayer(); // Use shared instead
+    _player = ref.read(audioPlayerProvider);
     if (widget.ritual.mediaUrls != null && widget.ritual.mediaUrls!.isNotEmpty) {
       _initAudio(widget.ritual.mediaUrls!.first);
     }
@@ -56,7 +58,7 @@ class _RitualDetailScreenState extends ConsumerState<RitualDetailScreen> {
 
   @override
   void dispose() {
-    _player.dispose();
+    // _player.dispose(); // Do NOT dispose shared player
     super.dispose();
   }
 

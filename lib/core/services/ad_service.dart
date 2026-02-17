@@ -17,6 +17,10 @@ class AdService {
 
   Future<void> initialize() async {
     if (_isInitialized) return;
+    if (Platform.isMacOS) {
+      print('ℹ️ Ads disabled on macOS');
+      return;
+    }
     await MobileAds.instance.initialize();
     _isInitialized = true;
   }

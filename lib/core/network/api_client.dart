@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Add this import
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/core/services/navigation_service.dart';
@@ -57,7 +58,13 @@ class ApiClient {
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           // Automatically attach token to requests
-          final token = await _secureStorage.read(key: tokenKey);
+          String? token;
+          if (Platform.isMacOS) {
+            final prefs = await SharedPreferences.getInstance();
+            token = prefs.getString(tokenKey);
+          } else {
+            token = await _secureStorage.read(key: tokenKey);
+          }
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
           }
@@ -87,10 +94,15 @@ class ApiClient {
           // Handle 401 Unauthorized globally
           if (error.response?.statusCode == 401) {
              print('🔒 401 Unauthorized detected - Clearing token and redirecting to login');
-             _secureStorage.delete(key: tokenKey).then((_) {
-               // We need a way to reset the auth state in Riverpod. 
-               // For now, let's just use the navigation service to push login or restart
-               _navigationService.navigatorKey.currentState?.pushNamedAndRemoveUntil('/', (route) => false);
+             print('🔒 401 Unauthorized detected - Clearing token and redirecting to login');
+             if (Platform.isMacOS) {
+               SharedPreferences.getInstance().then((prefs) => prefs.remove(tokenKey));
+             } else {
+               _secureStorage.delete(key: tokenKey);
+             }
+             // Proceed with navigation reset
+             Future.delayed(const Duration(milliseconds: 100), () { 
+                _navigationService.navigatorKey.currentState?.pushNamedAndRemoveUntil('/', (route) => false);
              });
           }
 
@@ -166,16 +178,30 @@ class ApiClient {
 
   /// Save authentication token
   Future<void> saveToken(String token) async {
-    await _secureStorage.write(key: tokenKey, value: token);
+    if (Platform.isMacOS) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(tokenKey, token);
+    } else {
+      await _secureStorage.write(key: tokenKey, value: token);
+    }
   }
 
   /// Get authentication token
   Future<String?> getToken() async {
+    if (Platform.isMacOS) {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(tokenKey);
+    }
     return await _secureStorage.read(key: tokenKey);
   }
 
   /// Clear authentication token
   Future<void> clearToken() async {
-    await _secureStorage.delete(key: tokenKey);
+    if (Platform.isMacOS) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(tokenKey);
+    } else {
+      await _secureStorage.delete(key: tokenKey);
+    }
   }
 }

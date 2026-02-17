@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/reminders/providers/reminder_providers.dart';
 import 'package:Watered/features/reminders/services/reminder_service.dart';
 import 'package:Watered/features/config/providers/global_settings_provider.dart';
+import 'package:Watered/features/audio/services/audio_service.dart'; // Add import
+import 'package:Watered/features/audio/services/sacred_sound_service.dart'; // Add import
 import 'package:Watered/core/widgets/premium_gate.dart';
 
 import 'dart:async';
@@ -14,6 +16,7 @@ import 'package:Watered/features/rituals/providers/ritual_providers.dart';
 import 'package:Watered/features/rituals/widgets/sacred_schedule_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart'; // Add import
 
 class RemindersScreen extends ConsumerStatefulWidget {
   const RemindersScreen({super.key});
@@ -36,7 +39,23 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
 
       await showDialog(
           context: context,
-          builder: (context) => AlertDialog(
+          builder: (context) => Consumer(
+            builder: (context, ref, _) {
+              final sacredSoundsAsync = ref.watch(sacredSoundsProvider);
+              
+              // Build items list
+              List<DropdownMenuItem<String>> soundItems = [];
+
+              sacredSoundsAsync.whenData((sounds) {
+                for (var sound in sounds) {
+                  soundItems.add(DropdownMenuItem(
+                    value: sound.filePath, // Use URL as value
+                    child: Text(sound.title),
+                  ));
+                }
+              });
+
+              return AlertDialog(
                 title: const Text('New Reminder'),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -49,12 +68,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                           child: DropdownButtonFormField<String>(
                             value: selectedSound,
                             decoration: const InputDecoration(labelText: 'Alarm Sound'),
-                            items: const [
-                              DropdownMenuItem(value: 'default', child: Text('Default Sound')),
-                              DropdownMenuItem(value: 'nature', child: Text('Nature (African Savannah)')),
-                              DropdownMenuItem(value: 'drums', child: Text('Sacred Drums')),
-                              DropdownMenuItem(value: 'chant', child: Text('Ancient Chant')),
-                            ],
+                            items: soundItems,
                             onChanged: (val) {
                               selectedSound = val;
                               // Play preview logic could go here
@@ -64,15 +78,31 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                         IconButton(
                           icon: const Icon(Icons.play_arrow_rounded),
                           onPressed: () async {
-                              final player = AudioPlayer();
+                              final player = ref.read(audioPlayerProvider); // Use shared player
                               // Determine asset path based on selection
-                              String assetPath = 'assets/audio/default.mp3';
-                              if (selectedSound == 'nature') assetPath = 'assets/audio/nature.mp3';
-                              if (selectedSound == 'drums') assetPath = 'assets/audio/drums.mp3';
-                              if (selectedSound == 'chant') assetPath = 'assets/audio/chant.mp3';
-                              
+                              /* 
+                               * Simplified logic: We now only use URL-based sounds from backend.
+                               * Local assets (nature, drums, etc.) are removed.
+                               */
+                              if (selectedSound == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Please select a sound first')),
+                                );
+                                return;
+                              }
+
                               try {
-                                await player.setAsset(assetPath);
+                                await player.stop();
+                                await player.setAudioSource(
+                                  AudioSource.uri(
+                                    Uri.parse(selectedSound!),
+                                    tag: MediaItem(
+                                      id: selectedSound!,
+                                      album: "Custom Sound",
+                                      title: "Preview",
+                                    ),
+                                  ),
+                                );
                                 await player.play();
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -102,7 +132,9 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                       },
                       child: const Text('Save')),
                 ],
-              ));
+              );
+            }
+          ));
     }
   }
 

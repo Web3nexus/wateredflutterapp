@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:Watered/features/audio/screens/isolate_player_screen.dart';
 import 'package:Watered/core/widgets/premium_gate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/core/theme/theme_provider.dart';

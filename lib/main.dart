@@ -25,6 +25,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:Watered/core/services/navigation_service.dart';
 import 'package:Watered/features/auth/screens/verification_pending_screen.dart';
 import 'package:Watered/core/widgets/splash_screen.dart';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:Watered/core/widgets/error_view.dart';
@@ -74,8 +75,12 @@ Future<void> main() async {
   
   // 4. Initialize Firebase
   try {
-    await Firebase.initializeApp();
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    if (!Platform.isMacOS) {
+      await Firebase.initializeApp();
+      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    } else {
+      print('ℹ️ Skipping Firebase initialization on macOS');
+    }
   } catch (e) {
     print('Firebase initialization error: $e');
   }
@@ -84,7 +89,11 @@ Future<void> main() async {
   final container = ProviderContainer();
   try {
     // Initialize Ads
-    await container.read(adServiceProvider).initialize();
+    if (!Platform.isMacOS) {
+      await container.read(adServiceProvider).initialize();
+    } else {
+      print('ℹ️ Skipping Ads initialization on macOS');
+    }
     // Initialize Notifications
     await container.read(notificationServiceProvider).initialize();
   } catch (e, stack) {

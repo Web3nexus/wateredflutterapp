@@ -10,14 +10,21 @@ final notificationServiceProvider = Provider<NotificationService>((ref) {
 
 class NotificationService {
   final ApiClient _client;
-  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+  // Make _fcm nullable to handle macOS where it's not supported
+  final FirebaseMessaging? _fcm;
   final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
 
-  NotificationService(this._client);
+  NotificationService(this._client) : _fcm = Platform.isMacOS ? null : FirebaseMessaging.instance;
 
   Future<void> initialize() async {
+    // Skip Firebase initialization on macOS
+    if (Platform.isMacOS || _fcm == null) {
+      print('ℹ️ NotificationService skipped on macOS');
+      return;
+    }
+
     // 1. Request Permissions
-    NotificationSettings settings = await _fcm.requestPermission(
+    NotificationSettings settings = await _fcm!.requestPermission(
       alert: true,
       badge: true,
       sound: true,
@@ -25,13 +32,13 @@ class NotificationService {
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       // 2. Get Token
-      String? token = await _fcm.getToken();
+      String? token = await _fcm!.getToken();
       if (token != null) {
         await _updateTokenOnBackend(token);
       }
 
       // 3. Listen for token refresh
-      _fcm.onTokenRefresh.listen(_updateTokenOnBackend);
+      _fcm!.onTokenRefresh.listen(_updateTokenOnBackend);
 
       // 4. Handle Foreground Messages
       FirebaseMessaging.onMessage.listen(_showLocalNotification);

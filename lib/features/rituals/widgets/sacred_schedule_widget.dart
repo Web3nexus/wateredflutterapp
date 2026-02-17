@@ -5,7 +5,11 @@ import 'package:Watered/features/rituals/models/ritual.dart';
 import 'package:Watered/features/rituals/providers/ritual_providers.dart';
 import 'package:Watered/features/rituals/screens/ritual_detail_screen.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart'; // Add import
 import 'package:Watered/features/reminders/services/reminder_service.dart';
+import 'package:Watered/features/audio/services/audio_service.dart'; // Add import
+import 'package:Watered/features/audio/services/sacred_sound_service.dart'; // Add import
+import 'package:Watered/features/audio/models/sacred_sound.dart'; // Add import
 
 class SacredScheduleWidget extends ConsumerStatefulWidget {
   const SacredScheduleWidget({super.key});
@@ -17,24 +21,12 @@ class SacredScheduleWidget extends ConsumerStatefulWidget {
 class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
   Timer? _timer;
   late DateTime _now;
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  // final AudioPlayer _audioPlayer = AudioPlayer(); // Removed local instance
   bool _notificationsEnabled = true;
   String _selectedSound = 'Ancient Chant';
 
-  final List<Map<String, String>> _sacredSounds = [
-    {
-      'name': 'Ancient Chant',
-      'url': 'https://assets.mixkit.co/music/preview/mixkit-zen-meditation-healing-bowl-436.mp3'
-    },
-    {
-      'name': 'Tibetan Bowls',
-      'url': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
-    },
-    {
-      'name': 'Sacred Nature',
-      'url': 'https://assets.mixkit.co/music/preview/mixkit-forest-river-ambience-1215.mp3'
-    },
-  ];
+  // Fallback sounds removed as per request to use only backend sounds
+  // final List<Map<String, String>> _defaultSounds = [];
 
   @override
   void initState() {
@@ -52,7 +44,7 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
   @override
   void dispose() {
     _timer?.cancel();
-    _audioPlayer.dispose();
+    // _audioPlayer.dispose(); // Do not dispose shared player
     super.dispose();
   }
 
@@ -185,7 +177,7 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
           "Ritual: ${nextRitual.title}",
           TimeOfDay.fromDateTime(nextRitual.scheduledTime ?? DateTime.now()),
           ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-          soundPath: _sacredSounds.firstWhere((s) => s['name'] == _selectedSound)['url'],
+          soundPath: _selectedSound, // Store name or URL? ReminderService expects soundPath. Storing URL for now.
         );
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -210,16 +202,32 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) {
+      builder: (context) => Consumer(
+        builder: (context, ref, _) {
+          final sacredSoundsAsync = ref.watch(sacredSoundsProvider);
           final theme = Theme.of(context);
-          return Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: theme.scaffoldBackgroundColor,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-            ),
-            child: Column(
+          
+          return StatefulBuilder(
+            builder: (context, setModalState) {
+              // Use backend sounds only
+              List<Map<String, String>> allSounds = [];
+              
+              sacredSoundsAsync.whenData((sounds) {
+                for (var sound in sounds) {
+                  allSounds.add({
+                    'name': sound.title,
+                    'url': sound.filePath,
+                  });
+                }
+              });
+              
+              return Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: theme.scaffoldBackgroundColor,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+                ),
+                child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -260,7 +268,7 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
                   style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
-                ..._sacredSounds.map((sound) {
+                ...allSounds.map((sound) {
                   final isSelected = _selectedSound == sound['name'];
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 8),
@@ -303,14 +311,28 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
             ),
           );
         },
+          );
+        }
       ),
     );
   }
 
   void _previewSound(String url) async {
     try {
-      await _audioPlayer.setUrl(url);
-      await _audioPlayer.play();
+      final player = ref.read(audioPlayerProvider);
+      await player.stop();
+      await player.setAudioSource(
+        AudioSource.uri(
+          Uri.parse(url),
+          tag: MediaItem(
+            id: url,
+            album: "Ritual Preview",
+            title: "Preview Sound",
+            artUri: Uri.parse("https://mywatered.com/storage/images/logo_light.png"),
+          ),
+        ),
+      );
+      await player.play();
     } catch (e) {
       print("Error playing preview: $e");
     }
