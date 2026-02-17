@@ -5,6 +5,7 @@ import 'package:Watered/features/commerce/providers/currency_provider.dart';
 import 'package:Watered/features/commerce/utils/price_utils.dart';
 import 'package:flutter_paystack_plus/flutter_paystack_plus.dart';
 import 'package:Watered/features/auth/providers/auth_provider.dart';
+import 'package:Watered/features/config/providers/global_settings_provider.dart';
 
 class PaymentSelectionScreen extends ConsumerStatefulWidget {
   const PaymentSelectionScreen({super.key});
@@ -163,9 +164,17 @@ class _PaymentSelectionScreenState extends ConsumerState<PaymentSelectionScreen>
     final totalValue = cartItems.fold(0.0, (sum, item) => sum + (PriceUtils.getRawPrice(item.product, currency) * item.quantity));
 
     if (_selectedMethod == 'paystack') {
+      final settings = ref.read(globalSettingsNotifierProvider).valueOrNull;
+      final publicKey = settings?.paystackPublicKey;
+      
+      if (publicKey == null || publicKey.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Paystack is not configured')));
+        return;
+      }
+
       try {
         await FlutterPaystackPlus.openPaystackPopup(
-          publicKey: 'pk_test_placeholder', // User should replace with actual key
+          publicKey: publicKey,
           context: context,
           amount: (totalValue * 100).toInt().toString(),
           customerEmail: ref.read(authProvider).user?.email ?? 'seeker@watered.app',

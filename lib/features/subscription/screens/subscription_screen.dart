@@ -6,6 +6,7 @@ import 'package:flutter_paystack_plus/flutter_paystack_plus.dart';
 import 'package:Watered/features/subscription/providers/subscription_providers.dart';
 import 'package:Watered/features/subscription/services/subscription_service.dart';
 import 'package:Watered/features/config/providers/global_settings_provider.dart';
+import 'package:Watered/features/auth/providers/auth_provider.dart';
 
 class SubscriptionScreen extends ConsumerStatefulWidget {
   const SubscriptionScreen({super.key});
@@ -78,11 +79,11 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), backgroundColor: Colors.green));
   }
 
-  Future<void> _subscribe(String planId) async {
+  Future<void> _subscribe(BuildContext context, String planId) async {
     if (Platform.isIOS) {
       await _subscribeWithApple(planId);
     } else {
-      await _subscribeWithPaystack(planId);
+      await _subscribeWithPaystack(context, planId);
     }
   }
 
@@ -111,9 +112,10 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     await InAppPurchase.instance.buyNonConsumable(purchaseParam: purchaseParam);
   }
 
-  Future<void> _subscribeWithPaystack(String planId) async {
+  Future<void> _subscribeWithPaystack(BuildContext context, String planId) async {
     final settings = ref.read(globalSettingsNotifierProvider).valueOrNull;
     final publicKey = settings?.paystackPublicKey;
+    final user = ref.read(authProvider).user;
     
     if (publicKey == null || publicKey.isEmpty) {
       _showError('Paystack is not configured in settings');
@@ -123,24 +125,26 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     setState(() => _isLoading = true);
     
     try {
-      final amount = planId.contains('monthly') ? 999 : 9999; // Mock amounts for UI, Paystack expects kobo
+      // Dynamic amount from backend, fallback to hardcoded defaults
+      int amount = planId.contains('monthly') 
+          ? (settings?.premiumMonthlyAmount ?? 999) 
+          : (settings?.premiumYearlyAmount ?? 9999);
       
       await FlutterPaystackPlus.openPaystackPopup(
         publicKey: publicKey,
-        customerEmail: 'customer@example.com', // In reality, fetch from user profile
-        amount: (amount * 100).toString(),
+        context: context,
+        customerEmail: user?.email ?? 'customer@example.com',
+        amount: (amount * 100).toString(), // convert to kobo
         reference: 'sub_${DateTime.now().millisecondsSinceEpoch}',
         onClosed: () {
           setState(() => _isLoading = false);
           _showError('Payment closed');
         },
         onSuccess: () async {
-          // Verification usually happens via webook or manual verify call
-          // Here we tell the service to verify the reference
           try {
             await ref.read(subscriptionServiceProvider).verifyPaystackPayment(
               planId: planId,
-              reference: 'sub_${DateTime.now().millisecondsSinceEpoch}', // This should be the actual ref used
+              reference: 'sub_${DateTime.now().millisecondsSinceEpoch}',
             );
             ref.refresh(subscriptionStatusProvider);
             _showSuccess('Paystack payment successful!');
@@ -213,23 +217,23 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 const SizedBox(height: 48),
                 _PlanCard(
                   title: 'Monthly Plan',
-                  price: '\$9.99 / month',
+                  price: settings?.premiumMonthlyPrice ?? '\$9.99 / month',
                   features: const ['Complete Sacred Library', 'Daily Audio Teachings', 'Community Access', 'Unlimited Rituals'],
-                  onTap: () => _subscribe('monthly_premium'),
+                  onTap: () => _subscribe(context, 'monthly_premium'),
                   isLoading: _isLoading,
                 ),
                 const SizedBox(height: 16),
                 _PlanCard(
                   title: 'Yearly Plan',
-                  price: '\$99.99 / year',
+                  price: settings?.premiumYearlyPrice ?? '\$99.99 / year',
                   features: const ['Everything in Monthly', '2 Months Free', 'Exclusive Yearly Content', 'Priority Support'],
                   isBestValue: true,
-                  onTap: () => _subscribe('yearly_premium'),
+                  onTap: () => _subscribe(context, 'yearly_premium'),
                   isLoading: _isLoading,
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton(
-                  onPressed: _isLoading ? null : () => _subscribe('free_trial'),
+                  onPressed: _isLoading ? null : () => _subscribe(context, 'free_trial'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white10,
                     foregroundColor: Colors.white,

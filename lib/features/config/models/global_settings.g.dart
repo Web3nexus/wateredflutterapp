@@ -33,6 +33,10 @@ _$GlobalSettingsImpl _$$GlobalSettingsImplFromJson(Map<String, dynamic> json) =>
       paystackPublicKey: json['paystack_public_key'] as String?,
       premiumMonthlyId: json['premium_monthly_id'] as String?,
       premiumYearlyId: json['premium_yearly_id'] as String?,
+      premiumMonthlyPrice: json['premium_monthly_price'] as String?,
+      premiumYearlyPrice: json['premium_yearly_price'] as String?,
+      premiumMonthlyAmount: (json['premium_monthly_amount'] as num?)?.toInt(),
+      premiumYearlyAmount: (json['premium_yearly_amount'] as num?)?.toInt(),
       contactEmail: json['contact_email'] as String?,
       contactPhone: json['contact_phone'] as String?,
     );
@@ -59,6 +63,10 @@ Map<String, dynamic> _$$GlobalSettingsImplToJson(
   'paystack_public_key': instance.paystackPublicKey,
   'premium_monthly_id': instance.premiumMonthlyId,
   'premium_yearly_id': instance.premiumYearlyId,
+  'premium_monthly_price': instance.premiumMonthlyPrice,
+  'premium_yearly_price': instance.premiumYearlyPrice,
+  'premium_monthly_amount': instance.premiumMonthlyAmount,
+  'premium_yearly_amount': instance.premiumYearlyAmount,
   'contact_email': instance.contactEmail,
   'contact_phone': instance.contactPhone,
 };

@@ -42,17 +42,17 @@ Future<void> main() async {
   
   // 1. Initialize Audio Service (CRITICAL: Must be as early as possible)
   try {
-    print('🎵 Initializing JustAudioBackground...');
+    print('🎵 [Main] Initializing JustAudioBackground...');
     await JustAudioBackground.init(
-      androidNotificationChannelId: 'com.example.wateredflutterapp.channel.audio',
+      androidNotificationChannelId: 'com.watered.audio.channel',
       androidNotificationChannelName: 'Watered Audio',
       androidNotificationOngoing: true,
       androidNotificationIcon: 'mipmap/ic_launcher',
     );
-    print('✅ JustAudioBackground initialized');
+    print('✅ [Main] JustAudioBackground initialized successfully');
   } catch (e, stack) {
-    print('❌ JustAudioBackground initialization failed: $e');
-    print(stack);
+    print('❌ [Main] JustAudioBackground initialization failed: $e');
+    print('📚 [Main] Stack trace: $stack');
   }
 
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);

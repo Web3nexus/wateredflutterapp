@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/incantations/models/incantation.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:Watered/features/audio/services/audio_service.dart';
 
 class IncantationDetailScreen extends ConsumerStatefulWidget {
   final Incantation incantation;
@@ -20,7 +21,7 @@ class _IncantationDetailScreenState extends ConsumerState<IncantationDetailScree
   @override
   void initState() {
     super.initState();
-    _player = AudioPlayer();
+    _player = ref.read(audioPlayerProvider);
     _initAudio();
   }
 
@@ -54,7 +55,7 @@ class _IncantationDetailScreenState extends ConsumerState<IncantationDetailScree
 
   @override
   void dispose() {
-    _player.dispose();
+    // _player.dispose(); // Do NOT dispose shared player
     super.dispose();
   }
 

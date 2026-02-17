@@ -59,6 +59,14 @@ mixin _$GlobalSettings {
   String? get premiumMonthlyId => throw _privateConstructorUsedError;
   @JsonKey(name: 'premium_yearly_id')
   String? get premiumYearlyId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'premium_monthly_price')
+  String? get premiumMonthlyPrice => throw _privateConstructorUsedError;
+  @JsonKey(name: 'premium_yearly_price')
+  String? get premiumYearlyPrice => throw _privateConstructorUsedError;
+  @JsonKey(name: 'premium_monthly_amount')
+  int? get premiumMonthlyAmount => throw _privateConstructorUsedError;
+  @JsonKey(name: 'premium_yearly_amount')
+  int? get premiumYearlyAmount => throw _privateConstructorUsedError;
   @JsonKey(name: 'contact_email')
   String? get contactEmail => throw _privateConstructorUsedError;
   @JsonKey(name: 'contact_phone')
@@ -101,6 +109,10 @@ abstract class $GlobalSettingsCopyWith<$Res> {
     @JsonKey(name: 'paystack_public_key') String? paystackPublicKey,
     @JsonKey(name: 'premium_monthly_id') String? premiumMonthlyId,
     @JsonKey(name: 'premium_yearly_id') String? premiumYearlyId,
+    @JsonKey(name: 'premium_monthly_price') String? premiumMonthlyPrice,
+    @JsonKey(name: 'premium_yearly_price') String? premiumYearlyPrice,
+    @JsonKey(name: 'premium_monthly_amount') int? premiumMonthlyAmount,
+    @JsonKey(name: 'premium_yearly_amount') int? premiumYearlyAmount,
     @JsonKey(name: 'contact_email') String? contactEmail,
     @JsonKey(name: 'contact_phone') String? contactPhone,
   });
@@ -140,6 +152,10 @@ class _$GlobalSettingsCopyWithImpl<$Res, $Val extends GlobalSettings>
     Object? paystackPublicKey = freezed,
     Object? premiumMonthlyId = freezed,
     Object? premiumYearlyId = freezed,
+    Object? premiumMonthlyPrice = freezed,
+    Object? premiumYearlyPrice = freezed,
+    Object? premiumMonthlyAmount = freezed,
+    Object? premiumYearlyAmount = freezed,
     Object? contactEmail = freezed,
     Object? contactPhone = freezed,
   }) {
@@ -221,6 +237,22 @@ class _$GlobalSettingsCopyWithImpl<$Res, $Val extends GlobalSettings>
                 ? _value.premiumYearlyId
                 : premiumYearlyId // ignore: cast_nullable_to_non_nullable
                       as String?,
+            premiumMonthlyPrice: freezed == premiumMonthlyPrice
+                ? _value.premiumMonthlyPrice
+                : premiumMonthlyPrice // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            premiumYearlyPrice: freezed == premiumYearlyPrice
+                ? _value.premiumYearlyPrice
+                : premiumYearlyPrice // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            premiumMonthlyAmount: freezed == premiumMonthlyAmount
+                ? _value.premiumMonthlyAmount
+                : premiumMonthlyAmount // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            premiumYearlyAmount: freezed == premiumYearlyAmount
+                ? _value.premiumYearlyAmount
+                : premiumYearlyAmount // ignore: cast_nullable_to_non_nullable
+                      as int?,
             contactEmail: freezed == contactEmail
                 ? _value.contactEmail
                 : contactEmail // ignore: cast_nullable_to_non_nullable
@@ -264,6 +296,10 @@ abstract class _$$GlobalSettingsImplCopyWith<$Res>
     @JsonKey(name: 'paystack_public_key') String? paystackPublicKey,
     @JsonKey(name: 'premium_monthly_id') String? premiumMonthlyId,
     @JsonKey(name: 'premium_yearly_id') String? premiumYearlyId,
+    @JsonKey(name: 'premium_monthly_price') String? premiumMonthlyPrice,
+    @JsonKey(name: 'premium_yearly_price') String? premiumYearlyPrice,
+    @JsonKey(name: 'premium_monthly_amount') int? premiumMonthlyAmount,
+    @JsonKey(name: 'premium_yearly_amount') int? premiumYearlyAmount,
     @JsonKey(name: 'contact_email') String? contactEmail,
     @JsonKey(name: 'contact_phone') String? contactPhone,
   });
@@ -302,6 +338,10 @@ class __$$GlobalSettingsImplCopyWithImpl<$Res>
     Object? paystackPublicKey = freezed,
     Object? premiumMonthlyId = freezed,
     Object? premiumYearlyId = freezed,
+    Object? premiumMonthlyPrice = freezed,
+    Object? premiumYearlyPrice = freezed,
+    Object? premiumMonthlyAmount = freezed,
+    Object? premiumYearlyAmount = freezed,
     Object? contactEmail = freezed,
     Object? contactPhone = freezed,
   }) {
@@ -383,6 +423,22 @@ class __$$GlobalSettingsImplCopyWithImpl<$Res>
             ? _value.premiumYearlyId
             : premiumYearlyId // ignore: cast_nullable_to_non_nullable
                   as String?,
+        premiumMonthlyPrice: freezed == premiumMonthlyPrice
+            ? _value.premiumMonthlyPrice
+            : premiumMonthlyPrice // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        premiumYearlyPrice: freezed == premiumYearlyPrice
+            ? _value.premiumYearlyPrice
+            : premiumYearlyPrice // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        premiumMonthlyAmount: freezed == premiumMonthlyAmount
+            ? _value.premiumMonthlyAmount
+            : premiumMonthlyAmount // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        premiumYearlyAmount: freezed == premiumYearlyAmount
+            ? _value.premiumYearlyAmount
+            : premiumYearlyAmount // ignore: cast_nullable_to_non_nullable
+                  as int?,
         contactEmail: freezed == contactEmail
             ? _value.contactEmail
             : contactEmail // ignore: cast_nullable_to_non_nullable
@@ -420,6 +476,10 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
     @JsonKey(name: 'paystack_public_key') this.paystackPublicKey,
     @JsonKey(name: 'premium_monthly_id') this.premiumMonthlyId,
     @JsonKey(name: 'premium_yearly_id') this.premiumYearlyId,
+    @JsonKey(name: 'premium_monthly_price') this.premiumMonthlyPrice,
+    @JsonKey(name: 'premium_yearly_price') this.premiumYearlyPrice,
+    @JsonKey(name: 'premium_monthly_amount') this.premiumMonthlyAmount,
+    @JsonKey(name: 'premium_yearly_amount') this.premiumYearlyAmount,
     @JsonKey(name: 'contact_email') this.contactEmail,
     @JsonKey(name: 'contact_phone') this.contactPhone,
   }) : _supportedLanguages = supportedLanguages,
@@ -501,6 +561,18 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
   @JsonKey(name: 'premium_yearly_id')
   final String? premiumYearlyId;
   @override
+  @JsonKey(name: 'premium_monthly_price')
+  final String? premiumMonthlyPrice;
+  @override
+  @JsonKey(name: 'premium_yearly_price')
+  final String? premiumYearlyPrice;
+  @override
+  @JsonKey(name: 'premium_monthly_amount')
+  final int? premiumMonthlyAmount;
+  @override
+  @JsonKey(name: 'premium_yearly_amount')
+  final int? premiumYearlyAmount;
+  @override
   @JsonKey(name: 'contact_email')
   final String? contactEmail;
   @override
@@ -509,7 +581,7 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
 
   @override
   String toString() {
-    return 'GlobalSettings(primaryColor: $primaryColor, secondaryColor: $secondaryColor, defaultLanguage: $defaultLanguage, supportedLanguages: $supportedLanguages, maintenanceMode: $maintenanceMode, isAdsEnabled: $isAdsEnabled, adUnitIdAndroid: $adUnitIdAndroid, adUnitIdIos: $adUnitIdIos, adsScreens: $adsScreens, notificationSoundPath: $notificationSoundPath, alarmSoundPath: $alarmSoundPath, siteName: $siteName, siteDescription: $siteDescription, logoPath: $logoPath, privacyPolicy: $privacyPolicy, termsOfService: $termsOfService, paystackPublicKey: $paystackPublicKey, premiumMonthlyId: $premiumMonthlyId, premiumYearlyId: $premiumYearlyId, contactEmail: $contactEmail, contactPhone: $contactPhone)';
+    return 'GlobalSettings(primaryColor: $primaryColor, secondaryColor: $secondaryColor, defaultLanguage: $defaultLanguage, supportedLanguages: $supportedLanguages, maintenanceMode: $maintenanceMode, isAdsEnabled: $isAdsEnabled, adUnitIdAndroid: $adUnitIdAndroid, adUnitIdIos: $adUnitIdIos, adsScreens: $adsScreens, notificationSoundPath: $notificationSoundPath, alarmSoundPath: $alarmSoundPath, siteName: $siteName, siteDescription: $siteDescription, logoPath: $logoPath, privacyPolicy: $privacyPolicy, termsOfService: $termsOfService, paystackPublicKey: $paystackPublicKey, premiumMonthlyId: $premiumMonthlyId, premiumYearlyId: $premiumYearlyId, premiumMonthlyPrice: $premiumMonthlyPrice, premiumYearlyPrice: $premiumYearlyPrice, premiumMonthlyAmount: $premiumMonthlyAmount, premiumYearlyAmount: $premiumYearlyAmount, contactEmail: $contactEmail, contactPhone: $contactPhone)';
   }
 
   @override
@@ -559,6 +631,14 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
                 other.premiumMonthlyId == premiumMonthlyId) &&
             (identical(other.premiumYearlyId, premiumYearlyId) ||
                 other.premiumYearlyId == premiumYearlyId) &&
+            (identical(other.premiumMonthlyPrice, premiumMonthlyPrice) ||
+                other.premiumMonthlyPrice == premiumMonthlyPrice) &&
+            (identical(other.premiumYearlyPrice, premiumYearlyPrice) ||
+                other.premiumYearlyPrice == premiumYearlyPrice) &&
+            (identical(other.premiumMonthlyAmount, premiumMonthlyAmount) ||
+                other.premiumMonthlyAmount == premiumMonthlyAmount) &&
+            (identical(other.premiumYearlyAmount, premiumYearlyAmount) ||
+                other.premiumYearlyAmount == premiumYearlyAmount) &&
             (identical(other.contactEmail, contactEmail) ||
                 other.contactEmail == contactEmail) &&
             (identical(other.contactPhone, contactPhone) ||
@@ -588,6 +668,10 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
     paystackPublicKey,
     premiumMonthlyId,
     premiumYearlyId,
+    premiumMonthlyPrice,
+    premiumYearlyPrice,
+    premiumMonthlyAmount,
+    premiumYearlyAmount,
     contactEmail,
     contactPhone,
   ]);
@@ -631,6 +715,10 @@ abstract class _GlobalSettings implements GlobalSettings {
     @JsonKey(name: 'paystack_public_key') final String? paystackPublicKey,
     @JsonKey(name: 'premium_monthly_id') final String? premiumMonthlyId,
     @JsonKey(name: 'premium_yearly_id') final String? premiumYearlyId,
+    @JsonKey(name: 'premium_monthly_price') final String? premiumMonthlyPrice,
+    @JsonKey(name: 'premium_yearly_price') final String? premiumYearlyPrice,
+    @JsonKey(name: 'premium_monthly_amount') final int? premiumMonthlyAmount,
+    @JsonKey(name: 'premium_yearly_amount') final int? premiumYearlyAmount,
     @JsonKey(name: 'contact_email') final String? contactEmail,
     @JsonKey(name: 'contact_phone') final String? contactPhone,
   }) = _$GlobalSettingsImpl;
@@ -695,6 +783,18 @@ abstract class _GlobalSettings implements GlobalSettings {
   @override
   @JsonKey(name: 'premium_yearly_id')
   String? get premiumYearlyId;
+  @override
+  @JsonKey(name: 'premium_monthly_price')
+  String? get premiumMonthlyPrice;
+  @override
+  @JsonKey(name: 'premium_yearly_price')
+  String? get premiumYearlyPrice;
+  @override
+  @JsonKey(name: 'premium_monthly_amount')
+  int? get premiumMonthlyAmount;
+  @override
+  @JsonKey(name: 'premium_yearly_amount')
+  int? get premiumYearlyAmount;
   @override
   @JsonKey(name: 'contact_email')
   String? get contactEmail;

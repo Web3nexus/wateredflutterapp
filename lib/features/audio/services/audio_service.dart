@@ -48,21 +48,25 @@ class AudioService {
     try {
       print('🎵 [AudioService] Loading audio: ${audio.title}');
       final String rawUrl = audio.audioUrl?.trim() ?? '';
-      print('🔗 [AudioService] Raw URL: "$rawUrl"');
       
+      if (rawUrl.isEmpty) {
+        throw Exception('Audio URL is empty');
+      }
+
       final uri = Uri.tryParse(rawUrl);
-      
-      if (rawUrl.isEmpty || uri == null || !uri.hasScheme) {
+      if (uri == null || !uri.hasScheme) {
         throw Exception('Invalid or non-absolute audio URL: "$rawUrl"');
       }
       
       // We use a specific ID format for just_audio_background to ensure uniqueness
-      // and prevent "platform exchange" errors caused by duplicate IDs
       final String mediaId = 'audio_${audio.id}_${DateTime.now().millisecondsSinceEpoch}';
 
-      // Use LockCachingAudioSource for better buffering and caching
+      // Defensive check: If initialization failed, we might still want to try playing 
+      // but background features might be limited. However, JustAudioBackground 
+      // usually throws if accessed when not initialized.
+      
       try {
-        print('🔄 [AudioService] Attempting to set audio source with 30s timeout...');
+        print('🔄 [AudioService] Setting audio source for $mediaId...');
         await _player.setAudioSource(
           LockCachingAudioSource(
             uri,
@@ -77,54 +81,28 @@ class AudioService {
             ),
           ),
         ).timeout(
-          const Duration(seconds: 30),
-          onTimeout: () {
-            print('⏱️ [AudioService] LockCachingAudioSource timed out after 30s');
-            throw Exception('Audio loading timed out. Please check your internet connection.');
-          },
+          const Duration(seconds: 20),
+          onTimeout: () => throw Exception('Loading timed out'),
         );
-        print('✅ [AudioService] LockCachingAudioSource set successfully for $mediaId');
       } catch (e) {
-        print('⚠️ [AudioService] LockCachingAudioSource failed, falling back to standard URI source: $e');
-        // Fallback to standard source if caching fails
+        print('⚠️ [AudioService] Background source failed: $e');
+        // Fallback to standard source if caching/background fails
         await _player.setAudioSource(
           AudioSource.uri(
             uri,
-            headers: {
-              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            },
             tag: MediaItem(
               id: mediaId,
-              album: audio.category ?? "Watered Teachings",
               title: audio.title ?? 'Unknown Title',
               artist: audio.author?.isNotEmpty == true ? audio.author! : "Watered",
-              artUri: (audio.thumbnailUrl != null && audio.thumbnailUrl!.startsWith('http')) 
-                  ? Uri.tryParse(audio.thumbnailUrl!) 
-                  : null,
             ),
           ),
-        ).timeout(
-          const Duration(seconds: 30),
-          onTimeout: () {
-            print('⏱️ [AudioService] Standard AudioSource also timed out after 30s');
-            throw Exception('Audio loading timed out. Please check your internet connection.');
-          },
         );
       }
       
-      print('✅ [AudioService] Audio source loaded successfully');
+      print('✅ [AudioService] Audio source loaded');
     } catch (e, stackTrace) {
-      print('❌ [AudioService] Failed to load audio: $e');
-      print('📚 [AudioService] Stack trace: $stackTrace');
-      
-      if (e is PlayerException) {
-        print('❌ [AudioService] Player error: ${e.message}');
-        throw Exception('Player Error: ${e.message}');
-      } else if (e is PlayerInterruptedException) {
-        print('❌ [AudioService] Player interrupted: ${e.message}');
-        throw Exception('Playback interrupted');
-      }
-      
+      print('❌ [AudioService] Critical error loading audio: $e');
+      print(stackTrace);
       rethrow;
     }
   }

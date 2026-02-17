@@ -26,6 +26,10 @@ class GlobalSettings with _$GlobalSettings {
     @JsonKey(name: 'paystack_public_key') String? paystackPublicKey,
     @JsonKey(name: 'premium_monthly_id') String? premiumMonthlyId,
     @JsonKey(name: 'premium_yearly_id') String? premiumYearlyId,
+    @JsonKey(name: 'premium_monthly_price') String? premiumMonthlyPrice,
+    @JsonKey(name: 'premium_yearly_price') String? premiumYearlyPrice,
+    @JsonKey(name: 'premium_monthly_amount') int? premiumMonthlyAmount,
+    @JsonKey(name: 'premium_yearly_amount') int? premiumYearlyAmount,
     @JsonKey(name: 'contact_email') String? contactEmail,
     @JsonKey(name: 'contact_phone') String? contactPhone,
   }) = _GlobalSettings;
