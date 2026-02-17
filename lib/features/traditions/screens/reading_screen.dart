@@ -1,5 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/traditions/models/chapter.dart';
 import 'package:Watered/features/traditions/models/text_collection.dart';
@@ -185,15 +187,21 @@ class _ReadingScreenState extends ConsumerState<ReadingScreen> {
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: Text(
+                        child: HtmlWidget(
                           entry.text,
-                          style: TextStyle(
+                          textStyle: TextStyle(
                             fontSize: 19,
                             height: 1.8,
                             letterSpacing: 0.3,
                             color: Theme.of(context).textTheme.bodyMedium?.color,
-                            fontFamily: 'Outfit', // Clear readable font
+                            fontFamily: 'Outfit',
                           ),
+                          onTapUrl: (url) async {
+                            if (await canLaunchUrl(Uri.parse(url))) {
+                              await launchUrl(Uri.parse(url));
+                            }
+                            return true;
+                          },
                         ),
                       ),
                   ],

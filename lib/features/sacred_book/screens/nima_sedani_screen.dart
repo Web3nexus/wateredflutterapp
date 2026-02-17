@@ -9,6 +9,8 @@ import 'package:Watered/features/traditions/models/text_collection.dart';
 import 'package:Watered/features/activity/widgets/activity_tracker.dart';
 import 'package:Watered/core/widgets/error_view.dart';
 import 'package:Watered/core/widgets/loading_view.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NimaSedaniScreen extends ConsumerStatefulWidget {
   const NimaSedaniScreen({super.key});
@@ -337,15 +339,21 @@ class _NimaSedaniScreenState extends ConsumerState<NimaSedaniScreen> {
                                     ),
                                     const SizedBox(width: 12),
                                     Expanded(
-                                      child: Text(
+                                      child: HtmlWidget(
                                         entry.text,
-                                        style: TextStyle(
+                                        textStyle: TextStyle(
                                           fontSize: 19,
                                           height: 1.8,
                                           letterSpacing: 0.3,
                                           color: theme.textTheme.bodyMedium?.color,
                                           fontFamily: 'Outfit',
                                         ),
+                                        onTapUrl: (url) async {
+                                          if (await canLaunchUrl(Uri.parse(url))) {
+                                            await launchUrl(Uri.parse(url));
+                                          }
+                                          return true;
+                                        },
                                       ),
                                     ),
                                   ],
