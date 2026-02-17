@@ -62,6 +62,7 @@ class AudioService {
 
       // Use LockCachingAudioSource for better buffering and caching
       try {
+        print('🔄 [AudioService] Attempting to set audio source with 30s timeout...');
         await _player.setAudioSource(
           LockCachingAudioSource(
             uri,
@@ -75,6 +76,12 @@ class AudioService {
                   : null,
             ),
           ),
+        ).timeout(
+          const Duration(seconds: 30),
+          onTimeout: () {
+            print('⏱️ [AudioService] LockCachingAudioSource timed out after 30s');
+            throw Exception('Audio loading timed out. Please check your internet connection.');
+          },
         );
         print('✅ [AudioService] LockCachingAudioSource set successfully for $mediaId');
       } catch (e) {
@@ -96,12 +103,19 @@ class AudioService {
                   : null,
             ),
           ),
+        ).timeout(
+          const Duration(seconds: 30),
+          onTimeout: () {
+            print('⏱️ [AudioService] Standard AudioSource also timed out after 30s');
+            throw Exception('Audio loading timed out. Please check your internet connection.');
+          },
         );
       }
       
       print('✅ [AudioService] Audio source loaded successfully');
     } catch (e, stackTrace) {
       print('❌ [AudioService] Failed to load audio: $e');
+      print('📚 [AudioService] Stack trace: $stackTrace');
       
       if (e is PlayerException) {
         print('❌ [AudioService] Player error: ${e.message}');
