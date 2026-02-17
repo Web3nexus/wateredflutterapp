@@ -19,11 +19,24 @@ class AudioService {
   
   AudioService(this._player) {
     _player.playbackEventStream.listen(
-      (event) {},
+      (event) {
+        print('📡 [AudioService] Playback Event: ${event.processingState} serving=${event.updatePosition} buffered=${event.bufferedPosition}');
+      },
       onError: (Object e, StackTrace stackTrace) {
         print('❌ [AudioService] A stream error occurred: $e');
       },
     );
+
+    _player.playerStateStream.listen((state) {
+      print('▶️ [AudioService] Player State Changed: playing=${state.playing}, processingState=${state.processingState}');
+      if (state.processingState == ProcessingState.completed) {
+        print('🏁 [AudioService] Playback completed');
+      }
+    });
+
+    _player.volumeStream.listen((volume) {
+      print('🔊 [AudioService] Volume changed to: $volume');
+    });
   }
 
   Stream<PlayerState> get playerStateStream => _player.playerStateStream;
@@ -63,6 +76,7 @@ class AudioService {
             ),
           ),
         );
+        print('✅ [AudioService] LockCachingAudioSource set successfully for $mediaId');
       } catch (e) {
         print('⚠️ [AudioService] LockCachingAudioSource failed, falling back to standard URI source: $e');
         // Fallback to standard source if caching fails
