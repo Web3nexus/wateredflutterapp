@@ -14,7 +14,7 @@ class MiniPlayer extends ConsumerWidget {
     final currentAudio = ref.watch(currentAudioProvider);
     final audioService = ref.watch(audioServiceProvider);
 
-    if (currentAudio == null) return const SizedBox.shrink();
+    if (currentAudio == null || !audioService.isReady) return const SizedBox.shrink();
 
     return GestureDetector(
       onTap: () {

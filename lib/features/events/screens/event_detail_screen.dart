@@ -151,7 +151,7 @@ class EventDetailScreen extends ConsumerWidget {
         ),
         child: SafeArea( // Handle bottom notch/bar
           child: ElevatedButton(
-            onPressed: controller.isLoading 
+            onPressed: (controller.isLoading || event.isPast)
                 ? null 
                 : () async {
                     if (event.isRegistered) {
@@ -184,17 +184,25 @@ class EventDetailScreen extends ConsumerWidget {
                     }
                 },
             style: ElevatedButton.styleFrom(
-              backgroundColor: event.isRegistered ? Colors.redAccent.withOpacity(0.1) : theme.colorScheme.primary,
-              foregroundColor: event.isRegistered ? Colors.redAccent : Colors.black,
+              backgroundColor: event.isPast 
+                  ? Colors.grey.withOpacity(0.1) 
+                  : (event.isRegistered ? Colors.redAccent.withOpacity(0.1) : theme.colorScheme.primary),
+              foregroundColor: event.isPast 
+                  ? Colors.grey 
+                  : (event.isRegistered ? Colors.redAccent : Colors.black),
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              disabledBackgroundColor: event.isPast ? Colors.grey.withOpacity(0.1) : null,
+              disabledForegroundColor: event.isPast ? Colors.grey : null,
             ),
             child: controller.isLoading
                 ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
                 : Text(
-                    event.isRegistered 
-                        ? 'CANCEL REGISTRATION' 
-                        : (event.isPaid ? 'REGISTER & PAY' : 'REGISTER NOW'),
+                    event.isPast 
+                        ? 'PAST'
+                        : (event.isRegistered 
+                            ? 'CANCEL REGISTRATION' 
+                            : (event.isPaid ? 'REGISTER & PAY' : 'REGISTER NOW')),
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
           ),

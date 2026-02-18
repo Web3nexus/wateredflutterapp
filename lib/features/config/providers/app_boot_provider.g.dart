@@ -6,7 +6,7 @@ part of 'app_boot_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appBootHash() => r'c6d7022dad27bcb47bda66f77294b701ff30a45e';
+String _$appBootHash() => r'a9c7f32dd496d07e1fcf0a1de426fcd1c64ab63c';
 
 /// App boot provider - loads config before app starts
 ///

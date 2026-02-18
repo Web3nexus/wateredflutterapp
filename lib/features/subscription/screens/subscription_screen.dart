@@ -165,6 +165,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final statusAsync = ref.watch(subscriptionStatusProvider);
+    final settings = ref.watch(globalSettingsNotifierProvider).valueOrNull;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,

@@ -24,6 +24,10 @@ mixin _$DailyWisdom {
   int get id => throw _privateConstructorUsedError;
   String get quote => throw _privateConstructorUsedError;
   String? get author => throw _privateConstructorUsedError;
+  @JsonKey(name: 'chapter_number')
+  int? get chapterNumber => throw _privateConstructorUsedError;
+  @JsonKey(name: 'verse_number')
+  int? get verseNumber => throw _privateConstructorUsedError;
   @JsonKey(name: 'background_image_url')
   String? get backgroundImageUrl => throw _privateConstructorUsedError;
   @JsonKey(name: 'active_date')
@@ -50,6 +54,8 @@ abstract class $DailyWisdomCopyWith<$Res> {
     int id,
     String quote,
     String? author,
+    @JsonKey(name: 'chapter_number') int? chapterNumber,
+    @JsonKey(name: 'verse_number') int? verseNumber,
     @JsonKey(name: 'background_image_url') String? backgroundImageUrl,
     @JsonKey(name: 'active_date') DateTime publishDate,
   });
@@ -73,6 +79,8 @@ class _$DailyWisdomCopyWithImpl<$Res, $Val extends DailyWisdom>
     Object? id = null,
     Object? quote = null,
     Object? author = freezed,
+    Object? chapterNumber = freezed,
+    Object? verseNumber = freezed,
     Object? backgroundImageUrl = freezed,
     Object? publishDate = null,
   }) {
@@ -90,6 +98,14 @@ class _$DailyWisdomCopyWithImpl<$Res, $Val extends DailyWisdom>
                 ? _value.author
                 : author // ignore: cast_nullable_to_non_nullable
                       as String?,
+            chapterNumber: freezed == chapterNumber
+                ? _value.chapterNumber
+                : chapterNumber // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            verseNumber: freezed == verseNumber
+                ? _value.verseNumber
+                : verseNumber // ignore: cast_nullable_to_non_nullable
+                      as int?,
             backgroundImageUrl: freezed == backgroundImageUrl
                 ? _value.backgroundImageUrl
                 : backgroundImageUrl // ignore: cast_nullable_to_non_nullable
@@ -117,6 +133,8 @@ abstract class _$$DailyWisdomImplCopyWith<$Res>
     int id,
     String quote,
     String? author,
+    @JsonKey(name: 'chapter_number') int? chapterNumber,
+    @JsonKey(name: 'verse_number') int? verseNumber,
     @JsonKey(name: 'background_image_url') String? backgroundImageUrl,
     @JsonKey(name: 'active_date') DateTime publishDate,
   });
@@ -139,6 +157,8 @@ class __$$DailyWisdomImplCopyWithImpl<$Res>
     Object? id = null,
     Object? quote = null,
     Object? author = freezed,
+    Object? chapterNumber = freezed,
+    Object? verseNumber = freezed,
     Object? backgroundImageUrl = freezed,
     Object? publishDate = null,
   }) {
@@ -156,6 +176,14 @@ class __$$DailyWisdomImplCopyWithImpl<$Res>
             ? _value.author
             : author // ignore: cast_nullable_to_non_nullable
                   as String?,
+        chapterNumber: freezed == chapterNumber
+            ? _value.chapterNumber
+            : chapterNumber // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        verseNumber: freezed == verseNumber
+            ? _value.verseNumber
+            : verseNumber // ignore: cast_nullable_to_non_nullable
+                  as int?,
         backgroundImageUrl: freezed == backgroundImageUrl
             ? _value.backgroundImageUrl
             : backgroundImageUrl // ignore: cast_nullable_to_non_nullable
@@ -176,6 +204,8 @@ class _$DailyWisdomImpl implements _DailyWisdom {
     required this.id,
     required this.quote,
     this.author,
+    @JsonKey(name: 'chapter_number') this.chapterNumber,
+    @JsonKey(name: 'verse_number') this.verseNumber,
     @JsonKey(name: 'background_image_url') this.backgroundImageUrl,
     @JsonKey(name: 'active_date') required this.publishDate,
   });
@@ -190,6 +220,12 @@ class _$DailyWisdomImpl implements _DailyWisdom {
   @override
   final String? author;
   @override
+  @JsonKey(name: 'chapter_number')
+  final int? chapterNumber;
+  @override
+  @JsonKey(name: 'verse_number')
+  final int? verseNumber;
+  @override
   @JsonKey(name: 'background_image_url')
   final String? backgroundImageUrl;
   @override
@@ -198,7 +234,7 @@ class _$DailyWisdomImpl implements _DailyWisdom {
 
   @override
   String toString() {
-    return 'DailyWisdom(id: $id, quote: $quote, author: $author, backgroundImageUrl: $backgroundImageUrl, publishDate: $publishDate)';
+    return 'DailyWisdom(id: $id, quote: $quote, author: $author, chapterNumber: $chapterNumber, verseNumber: $verseNumber, backgroundImageUrl: $backgroundImageUrl, publishDate: $publishDate)';
   }
 
   @override
@@ -209,6 +245,10 @@ class _$DailyWisdomImpl implements _DailyWisdom {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.quote, quote) || other.quote == quote) &&
             (identical(other.author, author) || other.author == author) &&
+            (identical(other.chapterNumber, chapterNumber) ||
+                other.chapterNumber == chapterNumber) &&
+            (identical(other.verseNumber, verseNumber) ||
+                other.verseNumber == verseNumber) &&
             (identical(other.backgroundImageUrl, backgroundImageUrl) ||
                 other.backgroundImageUrl == backgroundImageUrl) &&
             (identical(other.publishDate, publishDate) ||
@@ -222,6 +262,8 @@ class _$DailyWisdomImpl implements _DailyWisdom {
     id,
     quote,
     author,
+    chapterNumber,
+    verseNumber,
     backgroundImageUrl,
     publishDate,
   );
@@ -245,6 +287,8 @@ abstract class _DailyWisdom implements DailyWisdom {
     required final int id,
     required final String quote,
     final String? author,
+    @JsonKey(name: 'chapter_number') final int? chapterNumber,
+    @JsonKey(name: 'verse_number') final int? verseNumber,
     @JsonKey(name: 'background_image_url') final String? backgroundImageUrl,
     @JsonKey(name: 'active_date') required final DateTime publishDate,
   }) = _$DailyWisdomImpl;
@@ -258,6 +302,12 @@ abstract class _DailyWisdom implements DailyWisdom {
   String get quote;
   @override
   String? get author;
+  @override
+  @JsonKey(name: 'chapter_number')
+  int? get chapterNumber;
+  @override
+  @JsonKey(name: 'verse_number')
+  int? get verseNumber;
   @override
   @JsonKey(name: 'background_image_url')
   String? get backgroundImageUrl;

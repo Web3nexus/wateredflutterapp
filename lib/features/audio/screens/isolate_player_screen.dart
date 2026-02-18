@@ -20,23 +20,30 @@ class _IsolatePlayerScreenState extends ConsumerState<IsolatePlayerScreen> {
   @override
   void initState() {
     super.initState();
-    _player = ref.read(audioPlayerProvider); // Use shared player
-    _initPlayer();
+    // Note: We don't read player here anymore as it's async. 
+    // We'll get it when needed or in the first frame.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _initPlayer());
   }
 
-  void _initPlayer() {
-    _player.playerStateStream.listen((state) {
-      if (mounted) {
-        setState(() {
-          _status = 'State: ${state.processingState} | Playing: ${state.playing}';
-        });
-      }
-    });
-    
-    _player.playbackEventStream.listen((event) {}, onError: (Object e, StackTrace stackTrace) {
-      print('A stream error occurred: $e');
-      if (mounted) setState(() => _status = 'Error: $e');
-    });
+  Future<void> _initPlayer() async {
+    try {
+      _player = await ref.read(audioPlayerProvider.future);
+      
+      _player.playerStateStream.listen((state) {
+        if (mounted) {
+          setState(() {
+            _status = 'State: ${state.processingState} | Playing: ${state.playing}';
+          });
+        }
+      });
+      
+      _player.playbackEventStream.listen((event) {}, onError: (Object e, StackTrace stackTrace) {
+        print('A stream error occurred: $e');
+        if (mounted) setState(() => _status = 'Error: $e');
+      });
+    } catch (e) {
+      if (mounted) setState(() => _status = 'Init Error: $e');
+    }
   }
 
   Future<void> _play() async {

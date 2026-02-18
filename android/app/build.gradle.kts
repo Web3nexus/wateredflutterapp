@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.wateredflutterapp"
+    namespace = "com.watered.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.wateredflutterapp"
+        applicationId = "com.watered.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion // Manually set to 21 or higher for desugaring if needed, but 21 is safe

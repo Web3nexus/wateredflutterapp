@@ -78,7 +78,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                         IconButton(
                           icon: const Icon(Icons.play_arrow_rounded),
                           onPressed: () async {
-                              final player = ref.read(audioPlayerProvider); // Use shared player
+                              final player = await ref.read(audioPlayerProvider.future);
                               // Determine asset path based on selection
                               /* 
                                * Simplified logic: We now only use URL-based sounds from backend.

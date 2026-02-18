@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,11 +11,24 @@ final notificationServiceProvider = Provider<NotificationService>((ref) {
 
 class NotificationService {
   final ApiClient _client;
-  // Make _fcm nullable to handle macOS where it's not supported
-  final FirebaseMessaging? _fcm;
   final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
 
-  NotificationService(this._client) : _fcm = Platform.isMacOS ? null : FirebaseMessaging.instance;
+  NotificationService(this._client);
+
+  FirebaseMessaging? get _fcm {
+    try {
+      if (Platform.isMacOS) return null;
+      // Ensure Firebase is actually initialized before accessing instance
+      if (Firebase.apps.isEmpty) {
+        print('⚠️ FCM not available: Firebase not initialized');
+        return null;
+      }
+      return FirebaseMessaging.instance;
+    } catch (e) {
+      print('⚠️ FCM not available: $e');
+      return null;
+    }
+  }
 
   Future<void> initialize() async {
     // Skip Firebase initialization on macOS

@@ -23,6 +23,8 @@ import 'package:Watered/features/reminders/widgets/upcoming_holiday_widget.dart'
 import 'package:Watered/features/rituals/widgets/sacred_schedule_widget.dart';
 import 'package:Watered/core/widgets/error_view.dart';
 import 'package:Watered/core/widgets/loading_view.dart';
+import 'package:Watered/features/consultation/screens/consultation_screen.dart';
+import 'package:Watered/features/temples/screens/temple_screen.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -187,17 +189,15 @@ class DashboardScreen extends ConsumerWidget {
                           height: 1.4,
                         ),
                       ),
-                      if (wisdom.author != null) ...[
-                        const SizedBox(height: 16),
-                        Text(
-                          "- ${wisdom.author}",
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.8),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
+                      const SizedBox(height: 16),
+                      Text(
+                        "${wisdom.author ?? 'Nima Sedani'}${wisdom.chapterNumber != null ? ', Ch. ${wisdom.chapterNumber}:${wisdom.verseNumber}' : ''}",
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
                         ),
-                      ],
+                      ),
                     ],
                   ),
                 );
@@ -229,18 +229,20 @@ class DashboardScreen extends ConsumerWidget {
                 mainAxisSpacing: 16,
                 crossAxisSpacing: 16,
                 children: [
-                   _buildQuickAction(context, 'Rituals', Icons.auto_fix_high_rounded, () {
+                   _buildQuickAction(context, 'Temples', Icons.castle_rounded, () {
                      Navigator.of(context).push(MaterialPageRoute(
-                       builder: (_) => const RitualsScreen(),
+                       builder: (_) => const TempleScreen(),
                      ));
                    }),
-                   _buildQuickAction(context, 'Incantation', Icons.record_voice_over_rounded, () {
+                   _buildQuickAction(context, 'Incantations', Icons.record_voice_over_rounded, () {
                      Navigator.of(context).push(MaterialPageRoute(
                        builder: (_) => const IncantationsScreen(),
                      ));
                    }),
                    _buildQuickAction(context, 'Consult', Icons.calendar_month_rounded, () {
-                      ref.read(tabIndexProvider.notifier).state = 2;
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => const ConsultationScreen(),
+                      ));
                    }),
                    _buildQuickAction(context, 'Events', Icons.event_rounded, () {
                      Navigator.of(context).push(MaterialPageRoute(
@@ -250,63 +252,68 @@ class DashboardScreen extends ConsumerWidget {
                 ],
               ),
 
-              // Upcoming Events Section
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'EVENTS',
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_) => const EventsScreen(),
-                      ));
-                    },
-                    child: Text(
-                      'SEE ALL',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary.withOpacity(0.7),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
               ref.watch(eventsListProvider(EventFilter(filter: 'upcoming'))).when(
                 data: (events) {
                   if (events.isEmpty) {
                     return const SizedBox.shrink();
                   }
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: events.take(5).map((event) {
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 16),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (_) => EventDetailScreen(event: event),
-                              ));
-                            },
-                            child: _buildFeaturedCard(
-                              context, 
-                              event.title, 
-                              '${DateFormat('MMM d').format(event.startTime)} • ${event.location ?? "Online"}', 
-                              event.effectiveImageUrl ?? 'https://placehold.co/600x400/0077BE/FFFFFF/png?text=Event',
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'EVENTS',
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.2,
+                              color: theme.colorScheme.primary,
                             ),
                           ),
-                        );
-                      }).toList(),
-                    ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (_) => const EventsScreen(),
+                              ));
+                            },
+                            child: Text(
+                              'SEE ALL',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: theme.colorScheme.primary.withOpacity(0.7),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: events.take(5).map((event) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 16),
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (_) => EventDetailScreen(event: event),
+                                  ));
+                                },
+                                child: _buildFeaturedCard(
+                                  context, 
+                                  event.title, 
+                                  '${DateFormat('MMM d').format(event.startTime)} • ${event.location ?? "Online"}', 
+                                  event.effectiveImageUrl ?? 'https://placehold.co/600x400/0077BE/FFFFFF/png?text=Event',
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                    ],
                   );
                 },
                 loading: () => const LoadingView(),
@@ -316,8 +323,6 @@ class DashboardScreen extends ConsumerWidget {
                   onRetry: () => ref.invalidate(eventsListProvider),
                 ),
               ),
-
-              const SizedBox(height: 32),
 
               // Upcoming Holidays
               const UpcomingHolidayWidget(),
@@ -329,69 +334,70 @@ class DashboardScreen extends ConsumerWidget {
 
               const SizedBox(height: 32),
               
-              // Featured Teachings
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'FEATURED TEACHINGS',
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              
               ref.watch(featuredContentProvider).when(
                 data: (content) {
                   final items = content.all;
                   if (items.isEmpty) {
-                    return const SizedBox(
-                      height: 100,
-                      child: Center(child: Text("No featured content yet.")),
-                    );
+                    return const SizedBox.shrink();
                   }
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: items.map((item) {
-                        // Skip null items if any
-                        if (item == null) return const SizedBox.shrink();
-
-                        String title = '';
-                        String subtitle = '';
-                        String? imageUrl;
-                        
-                        if (item is Audio) {
-                          title = item.title ?? 'Unknown Title';
-                          subtitle = 'Audio • ${item.duration ?? "Unknown"}';
-                          imageUrl = item.thumbnailUrl;
-                        } else {
-                           // Handle unknown types or provide defaults to avoid "Type Null" or empty cards
-                           return const SizedBox.shrink();
-                        }
-
-                        // Ensure imageUrl is not null before passing or handle it in widget
-                        final finalImageUrl = imageUrl ?? 'https://Placehold.co/600x400/png?text=No+Image';
-
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 16),
-                          child: InkWell(
-                            onTap: () {
-                              if (item is Audio) {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (_) => AudioPlayerScreen(audio: item),
-                                ));
-                              }
-                            },
-                            child: _buildFeaturedCard(context, title, subtitle, finalImageUrl),
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'FEATURED TEACHINGS',
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.2,
+                              color: theme.colorScheme.primary,
+                            ),
                           ),
-                        );
-                      }).toList(),
-                    ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: items.map((item) {
+                            // Skip null items if any
+                            if (item == null) return const SizedBox.shrink();
+
+                            String title = '';
+                            String subtitle = '';
+                            String? imageUrl;
+                            
+                            if (item is Audio) {
+                              title = item.title ?? 'Unknown Title';
+                              subtitle = 'Audio • ${item.duration ?? "Unknown"}';
+                              imageUrl = item.thumbnailUrl;
+                            } else {
+                               // Handle unknown types or provide defaults to avoid "Type Null" or empty cards
+                               return const SizedBox.shrink();
+                            }
+
+                            // Ensure imageUrl is not null before passing or handle it in widget
+                            final finalImageUrl = imageUrl ?? 'https://Placehold.co/600x400/png?text=No+Image';
+
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 16),
+                              child: InkWell(
+                                onTap: () {
+                                  if (item is Audio) {
+                                    Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (_) => AudioPlayerScreen(audio: item),
+                                    ));
+                                  }
+                                },
+                                child: _buildFeaturedCard(context, title, subtitle, finalImageUrl),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                    ],
                   );
                 },
                 loading: () => const LoadingView(),
@@ -401,7 +407,6 @@ class DashboardScreen extends ConsumerWidget {
                   onRetry: () => ref.invalidate(featuredContentProvider),
                 ),
               ),
-              const SizedBox(height: 32),
               
               const SizedBox(height: 100), // Bottom padding for nav bar
             ],

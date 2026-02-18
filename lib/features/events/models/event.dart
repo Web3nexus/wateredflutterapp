@@ -46,6 +46,8 @@ class Event {
 
   String? get effectiveImageUrl => bannerImageUrl ?? bannerImage ?? imageUrl;
 
+  bool get isPast => DateTime.now().isAfter(startTime);
+
   factory Event.fromJson(Map<String, dynamic> json) {
     return Event(
       id: json['id'],

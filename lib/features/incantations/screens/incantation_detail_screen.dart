@@ -21,8 +21,10 @@ class _IncantationDetailScreenState extends ConsumerState<IncantationDetailScree
   @override
   void initState() {
     super.initState();
-    _player = ref.read(audioPlayerProvider);
-    _initAudio();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _player = await ref.read(audioPlayerProvider.future);
+      _initAudio();
+    });
   }
 
   Future<void> _initAudio() async {

@@ -9,6 +9,8 @@ class DailyWisdom with _$DailyWisdom {
     required int id,
     required String quote,
     String? author,
+    @JsonKey(name: 'chapter_number') int? chapterNumber,
+    @JsonKey(name: 'verse_number') int? verseNumber,
     @JsonKey(name: 'background_image_url') String? backgroundImageUrl,
     @JsonKey(name: 'active_date') required DateTime publishDate,
   }) = _DailyWisdom;

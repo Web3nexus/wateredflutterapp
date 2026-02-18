@@ -31,85 +31,102 @@ class _AudioFeedScreenState extends ConsumerState<AudioFeedScreen> {
   @override
   Widget build(BuildContext context) {
     final categoriesAsync = ref.watch(audioCategoriesProvider);
-    final audioState = ref.watch(audioListProvider(category: _selectedCategory == 'All' ? null : _selectedCategory));
+    final audioState = ref.watch(
+      audioListProvider(
+        category: _selectedCategory == 'All' ? null : _selectedCategory,
+      ),
+    );
     final isPremium = ref.watch(authProvider).user?.isPremium ?? false;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: widget.showAppBar ? AppBar(
-        title: const Text('AUDIO TEACHINGS'),
-        actions: [
-          if (!isPremium)
-            TextButton(
-              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SubscriptionScreen())),
-              child: Text('GET PLUS+', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 12)),
-            ),
-          const SizedBox(width: 8),
-        ],
-      ) : null,
+      appBar: widget.showAppBar
+          ? AppBar(
+              title: const Text('AUDIO TEACHINGS'),
+              actions: [
+                if (!isPremium)
+                  TextButton(
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const SubscriptionScreen(),
+                      ),
+                    ),
+                    child: Text(
+                      'GET PLUS+',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                const SizedBox(width: 8),
+              ],
+            )
+          : null,
       body: ActivityTracker(
         pageName: 'audio_teachings',
         child: Column(
-        children: [
-          const AdBanner(screenKey: 'audio'),
-          // Category Filters
-          categoriesAsync.when(
-            data: (categories) => SizedBox(
-              height: 60,
-              child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                scrollDirection: Axis.horizontal,
-                itemCount: categories.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
-                itemBuilder: (context, index) {
-                  final category = categories[index];
-                  final isSelected = _selectedCategory == category;
-                  return FilterChip(
-                    label: Text(category),
-                    selected: isSelected,
-                    onSelected: (selected) {
-                      setState(() {
-                        _selectedCategory = category;
-                      });
-                    },
-                    backgroundColor: Theme.of(context).cardTheme.color,
-                    selectedColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                    checkmarkColor: Theme.of(context).colorScheme.primary,
-                    labelStyle: TextStyle(
-                      color: isSelected ? Theme.of(context).colorScheme.primary : null,
-                      fontWeight: isSelected ? FontWeight.bold : null,
-                    ),
-                  );
-                },
+          children: [
+            categoriesAsync.when(
+              data: (categories) => SizedBox(
+                height: 60,
+                child: ListView.separated(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: categories.length,
+                  separatorBuilder: (_, __) =>
+                      const SizedBox(width: 8),
+                  itemBuilder: (context, index) {
+                    final category = categories[index];
+                    final isSelected =
+                        _selectedCategory == category;
+
+                    return FilterChip(
+                      label: Text(category),
+                      selected: isSelected,
+                      onSelected: (_) {
+                        setState(() {
+                          _selectedCategory = category;
+                        });
+                      },
+                    );
+                  },
+                ),
               ),
+              loading: () => const SizedBox(height: 60),
+              error: (_, __) => const SizedBox(height: 60),
             ),
-            loading: () => const SizedBox(height: 60),
-            error: (_, __) => const SizedBox(height: 60),
-          ),
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: () => ref.read(audioListProvider(category: _selectedCategory == 'All' ? null : _selectedCategory).notifier).refresh(),
-              child: audioState.when(
-                data: (audios) => audios.data.isEmpty
-                    ? const _EmptyAudioFeed()
-                    : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        itemCount: audios.data.length,
-                        itemBuilder: (context, index) {
-                          return _AudioCard(audio: audios.data[index]);
-                        },
-                      ),
-                loading: () => const LoadingView(),
-                error: (error, stack) => ErrorView(
-                  error: error,
-                  stackTrace: stack,
-                  onRetry: () => ref.read(audioListProvider(category: _selectedCategory == 'All' ? null : _selectedCategory).notifier).refresh(),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () => ref
+                    .read(audioListProvider(
+                            category: _selectedCategory == 'All'
+                                ? null
+                                : _selectedCategory)
+                        .notifier)
+                    .refresh(),
+                child: audioState.when(
+                  data: (audios) => audios.data.isEmpty
+                      ? const _EmptyAudioFeed()
+                      : ListView.builder(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: audios.data.length,
+                          itemBuilder: (context, index) {
+                            return _AudioCard(
+                              audio: audios.data[index],
+                            );
+                          },
+                        ),
+                  loading: () => const LoadingView(),
+                  error: (error, stack) =>
+                      ErrorView(error: error, stackTrace: stack),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }
@@ -122,7 +139,7 @@ class _AudioCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final audioService = ref.read(audioServiceProvider);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -130,49 +147,57 @@ class _AudioCard extends ConsumerWidget {
         color: theme.cardTheme.color,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: InkWell(
+        borderRadius: BorderRadius.circular(24),
         onTap: () async {
-          final audioService = ref.read(audioServiceProvider);
-          final isStreamable = audioService.isStreamable(audio.audioUrl ?? '');
-
-          // 1. Set current audio state
-          ref.read(currentAudioProvider.notifier).state = audio;
-          
-          // 2. Show the player bottom sheet immediately for better responsiveness
-          if (context.mounted) {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              backgroundColor: Colors.transparent,
-              builder: (context) => AudioPlayerBottomSheet(audio: audio),
-            );
-          }
-
-          // 3. Handle loading and playing asynchronously
           try {
-            // Only load if not already playing this audio
+            // 0️⃣ Ensure player is ready
+            if (!audioService.isReady) {
+              await ref.read(audioPlayerProvider.future);
+            }
+
+            // 1️⃣ Load audio FIRST
             if (!audioService.isAudioLoaded(audio.id)) {
               await audioService.loadAudio(audio);
             }
-            
-            // Start playing if not already playing
+
+            // 2️⃣ Start playback
             if (!audioService.isPlaying) {
               await audioService.play();
             }
-          } catch (e) {
-            print("Error loading/playing audio: $e");
+
+            // 3️⃣ Update current audio AFTER successful load/play
+            ref.read(currentAudioProvider.notifier).state = audio;
+
+            // 4️⃣ Show player sheet
             if (context.mounted) {
-               ScaffoldMessenger.of(context).showSnackBar(
-                 SnackBar(
-                   content: Text('Failed to play audio. Please try again.'),
-                   backgroundColor: Colors.red,
-                 ),
-               );
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (_) => AudioPlayerBottomSheet(audio: audio),
+              );
+            }
+          } catch (e) {
+            print("Playback error: $e");
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Failed to play audio. Please try again.'),
+                  backgroundColor: Colors.red,
+                ),
+              );
             }
           }
         },
-        borderRadius: BorderRadius.circular(24),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
@@ -182,16 +207,18 @@ class _AudioCard extends ConsumerWidget {
                 child: audio.thumbnailUrl != null
                     ? CachedNetworkImage(
                         imageUrl: audio.thumbnailUrl!,
-                        width: 80,
-                        height: 80,
+                        width: 70,
+                        height: 70,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(color: Colors.white10),
+                        placeholder: (context, url) =>
+                            Container(color: theme.colorScheme.primary.withOpacity(0.05)),
                       )
                     : Container(
-                        width: 80,
-                        height: 80,
+                        width: 70,
+                        height: 70,
                         color: theme.colorScheme.primary.withOpacity(0.1),
-                        child: Icon(Icons.music_note_rounded, color: theme.colorScheme.primary),
+                        child: Icon(Icons.music_note_rounded,
+                            color: theme.colorScheme.primary),
                       ),
               ),
               const SizedBox(width: 16),
@@ -200,55 +227,51 @@ class _AudioCard extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      audio.title ?? 'Unknown Title',
+                      audio.title ?? "Unknown",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      audio.author ?? 'Watered Scholar',
-                      style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13, color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7)),
+                      audio.author ?? "Watered Scholar",
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontSize: 13,
+                        color: theme.textTheme.bodyMedium?.color
+                            ?.withOpacity(0.7),
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        if (audio.duration != null) ...[
-                          Icon(Icons.timer_outlined, size: 12, color: theme.colorScheme.primary.withOpacity(0.7)),
-                          const SizedBox(width: 4),
-                          Text(audio.duration!, style: TextStyle(fontSize: 11, color: theme.colorScheme.primary.withOpacity(0.7))),
-                        ],
+                        Icon(Icons.timer_outlined,
+                            size: 12,
+                            color: theme.colorScheme.primary.withOpacity(0.7)),
+                        const SizedBox(width: 4),
+                        Text(
+                          audio.duration ?? "0:00",
+                          style: TextStyle(
+                              fontSize: 11,
+                              color:
+                                  theme.colorScheme.primary.withOpacity(0.7)),
+                        ),
                         const Spacer(),
-                        InkWell(
-                          onTap: () async {
-                             if (!ref.read(authProvider).isAuthenticated) {
-                               Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LoginScreen()));
-                               return;
-                             }
-                             await ref.read(interactionServiceProvider).toggleLike('audio', audio.id);
-                             ref.refresh(audioListProvider());
-                          },
-                          child: Icon(
-                            audio.isLiked ?? false ? Icons.favorite : Icons.favorite_border_rounded,
-                            size: 16,
-                            color: audio.isLiked ?? false ? Colors.redAccent : theme.iconTheme.color?.withOpacity(0.5),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        InkWell(
-                          onTap: () => CommentBottomSheet.show(context, 'audio', audio.id),
-                          child: Icon(Icons.chat_bubble_outline_rounded, size: 16, color: theme.iconTheme.color?.withOpacity(0.5)),
-                        ),
+                        _InteractionButtons(audio: audio),
                       ],
                     ),
                   ],
                 ),
               ),
               Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(color: theme.colorScheme.primary.withOpacity(0.15), shape: BoxShape.circle),
-                child: Icon(Icons.play_arrow_rounded, color: theme.colorScheme.primary, size: 28),
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.play_arrow_rounded,
+                    color: theme.colorScheme.primary, size: 24),
               ),
             ],
           ),
@@ -258,39 +281,56 @@ class _AudioCard extends ConsumerWidget {
   }
 }
 
-class _AudioFeedLoading extends StatelessWidget {
-  const _AudioFeedLoading();
+class _InteractionButtons extends ConsumerWidget {
+  final Audio audio;
+  const _InteractionButtons({required this.audio});
+
   @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: 5,
-      itemBuilder: (context, index) => Shimmer.fromColors(
-        baseColor: Colors.white10,
-        highlightColor: Colors.white.withOpacity(0.05),
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          height: 104,
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        InkWell(
+          onTap: () async {
+            if (!ref.read(authProvider).isAuthenticated) {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => const LoginScreen()));
+              return;
+            }
+            await ref
+                .read(interactionServiceProvider)
+                .toggleLike('audio', audio.id);
+            ref.refresh(audioListProvider(category: null));
+          },
+          child: Icon(
+            audio.isLiked ?? false ? Icons.favorite : Icons.favorite_border,
+            size: 16,
+            color: audio.isLiked ?? false
+                ? Colors.redAccent
+                : theme.iconTheme.color?.withOpacity(0.4),
+          ),
         ),
-      ),
+        const SizedBox(width: 12),
+        InkWell(
+          onTap: () => CommentBottomSheet.show(context, 'audio', audio.id),
+          child: Icon(
+            Icons.chat_bubble_outline_rounded,
+            size: 16,
+            color: theme.iconTheme.color?.withOpacity(0.4),
+          ),
+        ),
+      ],
     );
   }
 }
 
 class _EmptyAudioFeed extends StatelessWidget {
   const _EmptyAudioFeed();
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.mic_none_rounded, size: 64, color: Colors.blueGrey.shade700),
-          const SizedBox(height: 16),
-          const Text('The sound of silence... no audios yet.', style: TextStyle(color: Colors.blueGrey)),
-        ],
-      ),
+    return const Center(
+      child: Text("No audio available yet."),
     );
   }
 }

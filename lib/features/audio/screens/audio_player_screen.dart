@@ -36,6 +36,12 @@ class _AudioPlayerScreenState extends ConsumerState<AudioPlayerScreen> {
   Future<void> _initPlayer() async {
     final audioService = ref.read(audioServiceProvider);
     
+    // Safety check: Wait for player to be instantiated if it isn't yet
+    if (!audioService.isReady) {
+      print('⏳ [AudioScreen] Waiting for AudioService to be ready...');
+      await ref.read(audioPlayerProvider.future);
+    }
+    
     // Check if streamable before loading
     if (!audioService.isStreamable(widget.audio.audioUrl ?? '')) {
       if (mounted) {
@@ -442,19 +448,6 @@ class _AudioPlayerScreenState extends ConsumerState<AudioPlayerScreen> {
 
             const SizedBox(height: 48),
 
-            // Bottom Actions
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _BottomAction(icon: Icons.ios_share_rounded, label: 'SHARE', onTap: () {}),
-                const SizedBox(width: 40),
-                _BottomAction(icon: Icons.playlist_add_rounded, label: 'ADD', onTap: () {}),
-                const SizedBox(width: 40),
-                _BottomAction(icon: Icons.lyrics_outlined, label: 'LYRICS', onTap: () {}),
-              ],
-            ),
-            
-            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -530,36 +523,3 @@ class _AudioPlayerScreenState extends ConsumerState<AudioPlayerScreen> {
   }
 }
 
-class _BottomAction extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _BottomAction({required this.icon, required this.label, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final secondaryTextColor = theme.textTheme.bodyMedium?.color?.withOpacity(0.5) ?? Colors.grey;
-
-    return InkWell(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: Colors.blue, size: 24),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: TextStyle(
-              color: secondaryTextColor,
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

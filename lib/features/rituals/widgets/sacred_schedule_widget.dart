@@ -326,9 +326,14 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
 
   void _previewSound(String url) async {
     try {
-      final player = ref.read(audioPlayerProvider);
-      await player.stop();
-      await player.setAudioSource(
+      // Ensure the player is initialized before using AudioService
+      if (!ref.read(audioServiceProvider).isReady) {
+        await ref.read(audioPlayerProvider.future);
+      }
+      // Re-read after await to get the updated AudioService instance with player set
+      final audioService = ref.read(audioServiceProvider);
+      await audioService.stop();
+      await audioService.player.setAudioSource(
         AudioSource.uri(
           Uri.parse(url),
           tag: MediaItem(
@@ -339,7 +344,7 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
           ),
         ),
       );
-      await player.play();
+      await audioService.play();
     } catch (e) {
       print("Error playing preview: $e");
     }
@@ -450,21 +455,34 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
                 style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14),
               ),
               const SizedBox(height: 24),
-              Row(
-                children: [
-                  _buildTimeUnit("${hours < 0 ? 0 : hours}", "hrs"),
-                  const SizedBox(width: 8),
-                  _buildTimeUnit("${mins < 0 ? 0 : mins}", "min"),
-                  const SizedBox(width: 8),
-                  _buildTimeUnit("${secs < 0 ? 0 : secs}", "sec"),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      isTomorrow ? "until tomorrow at ${ritual.timeOfDay}" : "until ${ritual.timeOfDay}",
-                      style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 14),
-                    ),
-                  ),
-                ],
+              // Use LayoutBuilder to determine if we should hide seconds
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final showSeconds = constraints.maxWidth > 300;
+                  
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _buildTimeUnit("${hours < 0 ? 0 : hours}", "hrs"),
+                      const SizedBox(width: 8),
+                      _buildTimeUnit("${mins < 0 ? 0 : mins}", "min"),
+                      if (showSeconds) ...[
+                        const SizedBox(width: 8),
+                        _buildTimeUnit("${secs < 0 ? 0 : secs}", "sec"),
+                      ],
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          isTomorrow ? "until tomorrow at ${ritual.timeOfDay}" : "until ${ritual.timeOfDay}",
+                          style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 13),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ],
           ),

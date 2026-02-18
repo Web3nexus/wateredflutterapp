@@ -35,6 +35,10 @@ class _AudioPlayerBottomSheetState extends ConsumerState<AudioPlayerBottomSheet>
   Widget build(BuildContext context) {
     final audioService = ref.watch(audioServiceProvider);
 
+    if (!audioService.isReady) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
       decoration: BoxDecoration(
@@ -152,7 +156,7 @@ class _AudioPlayerBottomSheetState extends ConsumerState<AudioPlayerBottomSheet>
               IconButton(
                 icon: Icon(Icons.replay_10_rounded, size: 32, color: Theme.of(context).iconTheme.color),
                 onPressed: () => audioService.seek(
-                  audioService.player.position - const Duration(seconds: 10),
+                  audioService.internalPlayer!.position - const Duration(seconds: 10),
                 ),
               ),
               const SizedBox(width: 24),
@@ -197,7 +201,7 @@ class _AudioPlayerBottomSheetState extends ConsumerState<AudioPlayerBottomSheet>
               IconButton(
                 icon: Icon(Icons.forward_10_rounded, size: 32, color: Theme.of(context).iconTheme.color),
                 onPressed: () => audioService.seek(
-                  audioService.player.position + const Duration(seconds: 10),
+                  audioService.internalPlayer!.position + const Duration(seconds: 10),
                 ),
               ),
             ],

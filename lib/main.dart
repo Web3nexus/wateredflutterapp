@@ -9,11 +9,10 @@ import 'package:Watered/features/traditions/screens/library_screen.dart';
 import 'package:Watered/features/audio/screens/audio_feed_screen.dart';
 import 'package:Watered/features/audio/widgets/mini_player.dart';
 import 'package:Watered/features/profile/screens/profile_screen.dart';
-// import 'package:Watered/features/community/screens/community_feed_screen.dart'; // Removed
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:Watered/features/auth/screens/login_screen.dart';
 import 'package:Watered/features/sacred_book/screens/nima_sedani_screen.dart';
 import 'package:Watered/features/rituals/screens/rituals_screen.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 import 'package:Watered/core/theme/theme_provider.dart';
 import 'package:Watered/core/widgets/premium_gate.dart';
 import 'package:Watered/features/subscription/screens/subscription_screen.dart';
@@ -37,27 +36,18 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.messageId}");
 }
 
+@pragma('vm:entry-point')
 Future<void> main() async {
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  // 1. Core Flutter initialization
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   
-  // 1. Initialize Audio Service (CRITICAL: Must be as early as possible)
-  try {
-    print('🎵 [Main] Initializing JustAudioBackground...');
-    await JustAudioBackground.init(
-      androidNotificationChannelId: 'com.watered.audio.channel',
-      androidNotificationChannelName: 'Watered Audio',
-      androidNotificationOngoing: true,
-      androidNotificationIcon: 'mipmap/ic_launcher',
-    );
-    print('✅ [Main] JustAudioBackground initialized successfully');
-  } catch (e, stack) {
-    print('❌ [Main] JustAudioBackground initialization failed: $e');
-    print('📚 [Main] Stack trace: $stack');
-  }
-
+  // 2. Preserve native splash while we do critical async work
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  // 2. Global Error Handling (for red screens)
+  // 1. Initialize Audio Service (No longer in main to avoid redundant init/clashes)
+  // JustAudioBackground.init is now handled EXCLUSIVELY by audioBackgroundInitProvider
+
+  // 4. Global Error Handling (for red screens)
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return Scaffold(
       body: ErrorView(
@@ -75,32 +65,39 @@ Future<void> main() async {
   
   // 4. Initialize Firebase
   try {
+    print('🔥 [Main] Initializing Firebase...');
     if (!Platform.isMacOS) {
-      await Firebase.initializeApp();
+      await Firebase.initializeApp().timeout(const Duration(seconds: 10));
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+      print('✅ [Main] Firebase initialized');
     } else {
       print('ℹ️ Skipping Firebase initialization on macOS');
     }
   } catch (e) {
-    print('Firebase initialization error: $e');
+    print('❌ [Main] Firebase initialization error: $e');
   }
-
+  
   // 5. Initialize other services
+  print('📦 [Main] Initializing ProviderContainer...');
   final container = ProviderContainer();
   try {
-    // Initialize Ads
     if (!Platform.isMacOS) {
-      await container.read(adServiceProvider).initialize();
+      print('📢 [Main] Initializing AdService...');
+      await container.read(adServiceProvider).initialize().timeout(const Duration(seconds: 5));
+      print('✅ [Main] AdService initialized');
     } else {
       print('ℹ️ Skipping Ads initialization on macOS');
     }
-    // Initialize Notifications
-    await container.read(notificationServiceProvider).initialize();
+
+    print('🔔 [Main] Initializing NotificationService...');
+    await container.read(notificationServiceProvider).initialize().timeout(const Duration(seconds: 5));
+    print('✅ [Main] NotificationService initialized');
   } catch (e, stack) {
-    print('Error during service initialization: $e');
+    print('❌ [Main] Error during service initialization: $e');
     print(stack);
   }
 
+  print('🚀 [Main] Starting app...');
   runApp(
     UncontrolledProviderScope(
       container: container,

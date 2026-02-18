@@ -121,11 +121,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                if (wisdom.author != null)
-                  Text(
-                    '- ${wisdom.author}',
-                    style: const TextStyle(color: Colors.white70, fontSize: 16),
-                  ),
+                const SizedBox(height: 16),
+                Text(
+                  "${wisdom.author ?? 'Nima Sedani'}${wisdom.chapterNumber != null ? ', Ch. ${wisdom.chapterNumber}:${wisdom.verseNumber}' : ''}",
+                  style: const TextStyle(color: Colors.white70, fontSize: 16),
+                ),
               ],
             ),
           ),

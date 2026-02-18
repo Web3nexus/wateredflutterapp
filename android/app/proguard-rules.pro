@@ -18,3 +18,6 @@
 
 # Optimization
 -optimizations !code/allocation/variable
+
+# Keep MainActivity
+-keep class com.watered.app.MainActivity { *; }

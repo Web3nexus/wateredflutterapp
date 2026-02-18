@@ -22,11 +22,12 @@ class _RitualDetailScreenState extends ConsumerState<RitualDetailScreen> {
   @override
   void initState() {
     super.initState();
-    // _player = AudioPlayer(); // Use shared instead
-    _player = ref.read(audioPlayerProvider);
-    if (widget.ritual.mediaUrls != null && widget.ritual.mediaUrls!.isNotEmpty) {
-      _initAudio(widget.ritual.mediaUrls!.first);
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _player = await ref.read(audioPlayerProvider.future);
+      if (widget.ritual.mediaUrls != null && widget.ritual.mediaUrls!.isNotEmpty) {
+        _initAudio(widget.ritual.mediaUrls!.first);
+      }
+    });
   }
 
   Future<void> _initAudio(String url) async {
