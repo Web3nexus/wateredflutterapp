@@ -66,7 +66,9 @@ class NotificationService {
         onDidReceiveNotificationResponse: (details) {
           final payload = details.payload;
           if (payload != null) {
-            // TODO: Route to specific screen based on payload
+            // Simple routing logic: if it's a ritual, go to rituals screen
+            // For now, mapping everything to the initial screen or rituals
+            _client.get('rituals'); // Just to trigger a fetch or similar if needed
           }
         },
       );

@@ -7,6 +7,8 @@ import 'package:Watered/features/traditions/models/chapter.dart';
 import 'package:Watered/features/traditions/models/text_collection.dart';
 import 'package:Watered/features/traditions/models/entry.dart';
 import 'package:Watered/features/traditions/providers/entry_provider.dart';
+import 'package:Watered/features/library/services/bookmark_service.dart';
+import 'package:Watered/core/widgets/premium_gate.dart';
 
 class ReadingScreen extends ConsumerStatefulWidget {
   final Chapter chapter;
@@ -87,8 +89,20 @@ class _ReadingScreenState extends ConsumerState<ReadingScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.bookmark_border_rounded),
-            onPressed: () {
-              // TODO: Implement Bookmark
+            onPressed: () async {
+              try {
+                await ref.read(bookmarkServiceProvider).toggleBookmark(
+                  bookmarkableId: widget.chapter.id,
+                  bookmarkableType: 'App\\Models\\Chapter',
+                );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Saved to your sacred collection.')),
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error: $e')),
+                );
+              }
             },
           ),
           IconButton(

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/deities/providers/deity_providers.dart';
 import 'package:Watered/features/deities/screens/deity_detail_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:Watered/core/widgets/premium_gate.dart';
 import 'package:Watered/features/activity/widgets/activity_tracker.dart';
 
 class DeitiesScreen extends ConsumerStatefulWidget {
@@ -42,152 +43,155 @@ class _DeitiesScreenState extends ConsumerState<DeitiesScreen> {
     final deitiesAsync = ref.watch(deitiesListProvider);
     final selectedTradition = ref.watch(selectedTraditionProvider);
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: const Text('Deities'),
-      ),
-      body: ActivityTracker(
-        pageName: 'deities',
-        child: Column(
-          children: [
-            // Search Bar
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: TextField(
-                controller: _searchController,
-                onChanged: (value) {
-                  ref.read(deitySearchQueryProvider.notifier).state = value;
-                },
-                decoration: InputDecoration(
-                  hintText: 'Search deities...',
-                  prefixIcon: const Icon(Icons.search),
-                  suffixIcon: _searchController.text.isNotEmpty 
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                          ref.read(deitySearchQueryProvider.notifier).state = '';
-                        },
-                      )
-                    : null,
-                  filled: true,
-                  fillColor: theme.cardTheme.color,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
+    return PremiumGate(
+      message: 'Unlock the wisdom and images of the divine with Watered Plus+.',
+      child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        appBar: AppBar(
+          title: const Text('Deities'),
+        ),
+        body: ActivityTracker(
+          pageName: 'deities',
+          child: Column(
+            children: [
+              // Search Bar
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (value) {
+                    ref.read(deitySearchQueryProvider.notifier).state = value;
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Search deities...',
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: _searchController.text.isNotEmpty 
+                      ? IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            _searchController.clear();
+                            ref.read(deitySearchQueryProvider.notifier).state = '';
+                          },
+                        )
+                      : null,
+                    filled: true,
+                    fillColor: theme.cardTheme.color,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 ),
               ),
-            ),
-            
-            // Filter List
-            SizedBox(
-              height: 60,
-              child: traditionsAsync.when(
-                data: (traditions) {
-                  return ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: traditions.length + 1, // +1 for "All"
-                    separatorBuilder: (_, __) => const SizedBox(width: 12),
-                    itemBuilder: (context, index) {
-                      final isAll = index == 0;
-                      final tradition = isAll ? null : traditions[index - 1];
-                      final isSelected = isAll ? selectedTradition == null : selectedTradition == tradition?.id;
-
-                      return Center(
-                        child: FilterChip(
-                          label: Text(isAll ? 'All' : tradition!.name),
-                          selected: isSelected,
-                          onSelected: (bool selected) {
-                            if (selected) {
-                               ref.read(selectedTraditionProvider.notifier).state = tradition?.id;
-                            }
-                          },
-                          backgroundColor: theme.cardTheme.color,
-                          selectedColor: theme.colorScheme.primary.withOpacity(0.2),
-                          labelStyle: TextStyle(
-                            color: isSelected ? theme.colorScheme.primary : theme.textTheme.bodyMedium?.color,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          ),
-                          checkmarkColor: theme.colorScheme.primary,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              side: BorderSide(
-                                  color: isSelected ? theme.colorScheme.primary : Colors.transparent,
-                              )
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-                loading: () => const Center(child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )),
-                error: (e, s) => Center(child: Text('Error: $e', style: const TextStyle(fontSize: 10, color: Colors.red))),
-              ),
-            ),
-            
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: () async {
-                  ref.invalidate(traditionsListProvider);
-                  ref.invalidate(deitiesListProvider);
-                },
-                child: deitiesAsync.when(
-                  data: (paginated) {
-                    if (paginated.items.isEmpty) {
-                      return Center(
-                        child: Text(
-                          'No spirits found.',
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            color: theme.textTheme.bodyLarge?.color?.withOpacity(0.5),
-                          ),
-                        ),
-                      );
-                    }
-                    return CustomScrollView(
-                      controller: _scrollController,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      slivers: [
-                        SliverPadding(
-                          padding: const EdgeInsets.all(16),
-                          sliver: SliverGrid(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 0.75,
-                              crossAxisSpacing: 16,
-                              mainAxisSpacing: 16,
+              
+              // Filter List
+              SizedBox(
+                height: 60,
+                child: traditionsAsync.when(
+                  data: (traditions) {
+                    return ListView.separated(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: traditions.length + 1, // +1 for "All"
+                      separatorBuilder: (_, __) => const SizedBox(width: 12),
+                      itemBuilder: (context, index) {
+                        final isAll = index == 0;
+                        final tradition = isAll ? null : traditions[index - 1];
+                        final isSelected = isAll ? selectedTradition == null : selectedTradition == tradition?.id;
+  
+                        return Center(
+                          child: FilterChip(
+                            label: Text(isAll ? 'All' : tradition!.name),
+                            selected: isSelected,
+                            onSelected: (bool selected) {
+                              if (selected) {
+                                 ref.read(selectedTraditionProvider.notifier).state = tradition?.id;
+                              }
+                            },
+                            backgroundColor: theme.cardTheme.color,
+                            selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                            labelStyle: TextStyle(
+                              color: isSelected ? theme.colorScheme.primary : theme.textTheme.bodyMedium?.color,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                             ),
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                                final deity = paginated.items[index];
-                                return _DeityCard(deity: deity);
-                              },
-                              childCount: paginated.items.length,
+                            checkmarkColor: theme.colorScheme.primary,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                side: BorderSide(
+                                    color: isSelected ? theme.colorScheme.primary : Colors.transparent,
+                                )
                             ),
                           ),
-                        ),
-                        if (paginated.isLoadingMore)
-                          const SliverToBoxAdapter(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 32),
-                              child: Center(child: CircularProgressIndicator()),
-                            ),
-                          ),
-                      ],
+                        );
+                      },
                     );
                   },
-                  loading: () => const Center(child: CircularProgressIndicator()),
-                  error: (error, stack) => Center(child: Text('Error: $error')),
+                  loading: () => const Center(child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )),
+                  error: (e, s) => Center(child: Text('Error: $e', style: const TextStyle(fontSize: 10, color: Colors.red))),
                 ),
               ),
-            ),
-          ],
+              
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    ref.invalidate(traditionsListProvider);
+                    ref.invalidate(deitiesListProvider);
+                  },
+                  child: deitiesAsync.when(
+                    data: (paginated) {
+                      if (paginated.items.isEmpty) {
+                        return Center(
+                          child: Text(
+                            'No spirits found.',
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: theme.textTheme.bodyLarge?.color?.withOpacity(0.5),
+                            ),
+                          ),
+                        );
+                      }
+                      return CustomScrollView(
+                        controller: _scrollController,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        slivers: [
+                          SliverPadding(
+                            padding: const EdgeInsets.all(16),
+                            sliver: SliverGrid(
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio: 0.75,
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 16,
+                              ),
+                              delegate: SliverChildBuilderDelegate(
+                                (context, index) {
+                                  final deity = paginated.items[index];
+                                  return _DeityCard(deity: deity);
+                                },
+                                childCount: paginated.items.length,
+                              ),
+                            ),
+                          ),
+                          if (paginated.isLoadingMore)
+                            const SliverToBoxAdapter(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 32),
+                                child: Center(child: CircularProgressIndicator()),
+                              ),
+                            ),
+                        ],
+                      );
+                    },
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (error, stack) => Center(child: Text('Error: $error')),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

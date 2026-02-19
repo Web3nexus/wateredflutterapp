@@ -27,6 +27,7 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
 
   // Fallback sounds removed as per request to use only backend sounds
   // final List<Map<String, String>> _defaultSounds = [];
+  String? _lastTriggeredMinute; // To prevent double triggers in the same minute
 
   @override
   void initState() {
@@ -34,9 +35,13 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
     _now = DateTime.now();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (mounted) {
+        final now = DateTime.now();
         setState(() {
-          _now = DateTime.now();
+          _now = now;
         });
+        
+        // Sound Trigger Logic
+        _checkAndPlayRitualSound(now);
       }
     });
   }
@@ -209,18 +214,6 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
           
           return StatefulBuilder(
             builder: (context, setModalState) {
-              // Use backend sounds only
-              List<Map<String, String>> allSounds = [];
-              
-              sacredSoundsAsync.whenData((sounds) {
-                for (var sound in sounds) {
-                  allSounds.add({
-                    'name': sound.title,
-                    'url': sound.filePath,
-                  });
-                }
-              });
-              
               return Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
@@ -270,47 +263,69 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
                 const SizedBox(height: 16),
                 // Wrap sound list in scrollable container
                 Flexible(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: allSounds.map((sound) {
-                        final isSelected = _selectedSound == sound['name'];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: InkWell(
-                            onTap: () {
-                              setState(() => _selectedSound = sound['name']!);
-                              setModalState(() {});
-                            },
-                            borderRadius: BorderRadius.circular(16),
-                            child: Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: isSelected ? theme.colorScheme.primary.withOpacity(0.1) : Colors.transparent,
-                                border: Border.all(
-                                  color: isSelected ? theme.colorScheme.primary : theme.dividerColor.withOpacity(0.1),
-                                ),
+                  child: sacredSoundsAsync.when(
+                    data: (sounds) {
+                      if (sounds.isEmpty) {
+                        return const Center(child: Text("No sacred sounds found in the temple."));
+                      }
+                      
+                      // Update selected sound if empty or invalid
+                      if (_selectedSound == 'Ancient Chant' || !sounds.any((s) => s.title == _selectedSound)) {
+                        Future.microtask(() {
+                          if (mounted) setState(() => _selectedSound = sounds.first.title);
+                        });
+                      }
+
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: sounds.map((sound) {
+                            final isSelected = _selectedSound == sound.title;
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() => _selectedSound = sound.title);
+                                  setModalState(() {});
+                                },
                                 borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-                                    color: isSelected ? theme.colorScheme.primary : theme.textTheme.bodySmall?.color?.withOpacity(0.4),
-                                    size: 20,
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: isSelected ? theme.colorScheme.primary.withOpacity(0.1) : Colors.transparent,
+                                    border: Border.all(
+                                      color: isSelected ? theme.colorScheme.primary : theme.dividerColor.withOpacity(0.1),
+                                    ),
+                                    borderRadius: BorderRadius.circular(16),
                                   ),
-                                  const SizedBox(width: 12),
-                                  Expanded(child: Text(sound['name']!)),
-                                  IconButton(
-                                    icon: const Icon(Icons.play_circle_outline, size: 24),
-                                    onPressed: () => _previewSound(sound['url']!),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+                                        color: isSelected ? theme.colorScheme.primary : theme.textTheme.bodySmall?.color?.withOpacity(0.4),
+                                        size: 20,
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(child: Text(sound.title)),
+                                      IconButton(
+                                        icon: const Icon(Icons.play_circle_outline, size: 24),
+                                        onPressed: () => _previewSound(sound.filePath),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
+                            );
+                          }).toList(),
+                        ),
+                      );
+                    },
+                    loading: () => const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(32.0),
+                        child: CircularProgressIndicator(),
+                      ),
                     ),
+                    error: (e, ss) => Center(child: Text("Failed to load sounds: $e")),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -348,6 +363,58 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
     } catch (e) {
       print("Error playing preview: $e");
     }
+  }
+
+  void _checkAndPlayRitualSound(DateTime now) {
+    final ritualsAsync = ref.read(ritualsListProvider(null));
+    ritualsAsync.whenData((rituals) {
+      final currentTimeStr = "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+      final currentMinuteKey = "${now.year}-${now.month}-${now.day}-$currentTimeStr";
+
+      if (_lastTriggeredMinute == currentMinuteKey) return;
+
+      for (final ritual in rituals) {
+        if (ritual.timeOfDay == currentTimeStr) {
+          _lastTriggeredMinute = currentMinuteKey;
+          _playRitualAlert(ritual);
+          break;
+        }
+      }
+    });
+  }
+
+  void _playRitualAlert(Ritual ritual) async {
+    final sacredSoundsAsync = ref.read(sacredSoundsProvider);
+    sacredSoundsAsync.whenData((sounds) async {
+      if (sounds.isEmpty) return;
+      
+      // Use the selected sound from settings, or fallback to the first one
+      final sound = sounds.firstWhere(
+        (s) => s.title == _selectedSound,
+        orElse: () => sounds.first,
+      );
+      
+      try {
+        final audioService = ref.read(audioServiceProvider);
+        if (!audioService.isReady) await ref.read(audioPlayerProvider.future);
+        
+        await audioService.stop();
+        await audioService.player.setAudioSource(
+          AudioSource.uri(
+            Uri.parse(sound.filePath),
+            tag: MediaItem(
+              id: sound.filePath,
+              album: "Sacred Ritual",
+              title: ritual.title,
+              artUri: Uri.parse("https://mywatered.com/storage/images/logo_light.png"),
+            ),
+          ),
+        );
+        await audioService.play();
+      } catch (e) {
+        print("Error playing ritual alert: $e");
+      }
+    });
   }
 
   Widget _buildNextRitualCard(BuildContext context, Ritual ritual, {bool isTomorrow = false}) {

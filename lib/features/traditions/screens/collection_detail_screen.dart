@@ -96,7 +96,14 @@ class _CollectionDetailScreenState extends ConsumerState<CollectionDetailScreen>
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          icon: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.3),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.arrow_back_ios_new_rounded, size: 16, color: Colors.white),
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [

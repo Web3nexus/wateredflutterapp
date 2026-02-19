@@ -19,10 +19,9 @@ class _RitualsScreenState extends ConsumerState<RitualsScreen> {
   final List<String> _categories = [
     'All',
     'Cleansing',
-    'Blessing',
+    'Wealth',
     'Protection',
     'Healing',
-    'Divination',
     'Ancestral',
     'Offering'
   ];
