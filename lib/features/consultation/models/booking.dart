@@ -9,7 +9,7 @@ class Booking with _$Booking {
   const factory Booking({
     required int id,
     @JsonKey(name: 'consultation_type_id') required int consultationTypeId,
-    @JsonKey(name: 'scheduled_at') required DateTime scheduledAt,
+    @JsonKey(name: 'start_time') required DateTime scheduledAt,
     required String status,
     String? notes,
     @JsonKey(name: 'consultation_type') ConsultationType? consultationType,

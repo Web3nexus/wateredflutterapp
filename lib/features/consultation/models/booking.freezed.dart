@@ -24,7 +24,7 @@ mixin _$Booking {
   int get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'consultation_type_id')
   int get consultationTypeId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'scheduled_at')
+  @JsonKey(name: 'start_time')
   DateTime get scheduledAt => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
   String? get notes => throw _privateConstructorUsedError;
@@ -48,7 +48,7 @@ abstract class $BookingCopyWith<$Res> {
   $Res call({
     int id,
     @JsonKey(name: 'consultation_type_id') int consultationTypeId,
-    @JsonKey(name: 'scheduled_at') DateTime scheduledAt,
+    @JsonKey(name: 'start_time') DateTime scheduledAt,
     String status,
     String? notes,
     @JsonKey(name: 'consultation_type') ConsultationType? consultationType,
@@ -120,7 +120,7 @@ abstract class _$$BookingImplCopyWith<$Res> implements $BookingCopyWith<$Res> {
   $Res call({
     int id,
     @JsonKey(name: 'consultation_type_id') int consultationTypeId,
-    @JsonKey(name: 'scheduled_at') DateTime scheduledAt,
+    @JsonKey(name: 'start_time') DateTime scheduledAt,
     String status,
     String? notes,
     @JsonKey(name: 'consultation_type') ConsultationType? consultationType,
@@ -185,7 +185,7 @@ class _$BookingImpl implements _Booking {
   const _$BookingImpl({
     required this.id,
     @JsonKey(name: 'consultation_type_id') required this.consultationTypeId,
-    @JsonKey(name: 'scheduled_at') required this.scheduledAt,
+    @JsonKey(name: 'start_time') required this.scheduledAt,
     required this.status,
     this.notes,
     @JsonKey(name: 'consultation_type') this.consultationType,
@@ -200,7 +200,7 @@ class _$BookingImpl implements _Booking {
   @JsonKey(name: 'consultation_type_id')
   final int consultationTypeId;
   @override
-  @JsonKey(name: 'scheduled_at')
+  @JsonKey(name: 'start_time')
   final DateTime scheduledAt;
   @override
   final String status;
@@ -262,7 +262,7 @@ abstract class _Booking implements Booking {
     required final int id,
     @JsonKey(name: 'consultation_type_id')
     required final int consultationTypeId,
-    @JsonKey(name: 'scheduled_at') required final DateTime scheduledAt,
+    @JsonKey(name: 'start_time') required final DateTime scheduledAt,
     required final String status,
     final String? notes,
     @JsonKey(name: 'consultation_type')
@@ -277,7 +277,7 @@ abstract class _Booking implements Booking {
   @JsonKey(name: 'consultation_type_id')
   int get consultationTypeId;
   @override
-  @JsonKey(name: 'scheduled_at')
+  @JsonKey(name: 'start_time')
   DateTime get scheduledAt;
   @override
   String get status;

@@ -7,6 +7,5 @@ final userCountryProvider = FutureProvider<String>((ref) async {
 });
 
 final currencyProvider = Provider<String>((ref) {
-  final countryCode = ref.watch(userCountryProvider).value ?? 'US';
-  return countryCode == 'NG' ? 'NGN' : 'USD';
+  return 'NGN';
 });

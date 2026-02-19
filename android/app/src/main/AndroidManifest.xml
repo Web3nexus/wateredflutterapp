@@ -34,19 +34,20 @@
             </intent-filter>
         </activity>
 
-        <!-- Audio Service (Correct for just_audio_background) -->
+        <!-- Audio Service (Correct for just_audio_background & audio_service) -->
         <service
-            android:name="com.ryanheise.just_audio_background.JustAudioBackgroundService"
+            android:name="com.ryanheise.audioservice.AudioService"
             android:exported="true"
             android:foregroundServiceType="mediaPlayback">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService"/>
+                <action android:name="android.intent.action.MEDIA_BUTTON"/>
             </intent-filter>
         </service>
 
         <!-- Media Button Receiver -->
         <receiver
-            android:name="com.ryanheise.just_audio_background.MediaButtonReceiver"
+            android:name="com.ryanheise.audioservice.MediaButtonReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON"/>

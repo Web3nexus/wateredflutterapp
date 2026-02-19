@@ -16,13 +16,19 @@ class ConsultationScreen extends ConsumerStatefulWidget {
 
 class _ConsultationScreenState extends ConsumerState<ConsultationScreen> {
   String _selectedCategory = 'All';
-  final List<String> _categories = ['All', 'Guidance', 'Emotional', 'Spiritual', 'Ancestral', 'Healing'];
+  final List<String> _categories = ['All', 'Visit the Temple', 'Talk to Lord Uzih'];
   int? _selectedTypeId;
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
+  String? _availabilityError;
   bool _isLoading = false;
   final _notesController = TextEditingController();
   final _phoneController = TextEditingController();
+
+  Map<String, String> get _categoryMap => {
+    'Visit the Temple': 'temple_visit',
+    'Talk to Lord Uzih': 'lord_uzih',
+  };
 
   @override
   void dispose() {
@@ -31,8 +37,45 @@ class _ConsultationScreenState extends ConsumerState<ConsultationScreen> {
     super.dispose();
   }
 
+  List<TimeOfDay> _getAvailableTimes(DateTime date) {
+    final List<TimeOfDay> times = [];
+    final day = date.weekday;
+    int startHour = 10;
+    int endHour = 16;
+
+    final internalCategory = _categoryMap[_selectedCategory] ?? '';
+
+    if (internalCategory == 'temple_visit') {
+      if ([4, 6].contains(day)) {
+        startHour = 7;
+        endHour = 18;
+      }
+    } else if (internalCategory == 'lord_uzih') {
+      if (![2, 3, 5].contains(day)) return [];
+    }
+
+    for (int h = startHour; h < endHour; h++) {
+      times.add(TimeOfDay(hour: h, minute: 0));
+      times.add(TimeOfDay(hour: h, minute: 30));
+    }
+    
+    if (internalCategory == 'temple_visit' && [4, 6].contains(day)) {
+        times.add(const TimeOfDay(hour: 18, minute: 0));
+    } else {
+        times.add(const TimeOfDay(hour: 16, minute: 0));
+    }
+    
+    return times;
+  }
+
   Future<void> _submit() async {
     final user = ref.read(authProvider).user;
+    
+    if (_availabilityError != null) {
+       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(_availabilityError!)));
+       return;
+    }
+
     if (_selectedTypeId == null || _selectedDate == null || _selectedTime == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please select a type, date, and time.')),
@@ -89,6 +132,11 @@ class _ConsultationScreenState extends ConsumerState<ConsultationScreen> {
         } else {
           throw 'Could not launch payment URL';
         }
+      } else if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Booking confirmed successfully!')),
+          );
+          Navigator.of(context).pop();
       }
     } catch (e) {
       if (mounted) {
@@ -104,7 +152,7 @@ class _ConsultationScreenState extends ConsumerState<ConsultationScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final typesAsync = ref.watch(consultationTypesProvider(_selectedCategory == 'All' ? null : _selectedCategory));
+    final typesAsync = ref.watch(consultationTypesProvider(_categoryMap[_selectedCategory]));
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -133,6 +181,7 @@ class _ConsultationScreenState extends ConsumerState<ConsultationScreen> {
                         setState(() {
                           _selectedCategory = cat;
                           _selectedTypeId = null; // Reset selection when category changes
+                          _availabilityError = null;
                         });
                       },
                       backgroundColor: theme.cardTheme.color,
@@ -143,6 +192,28 @@ class _ConsultationScreenState extends ConsumerState<ConsultationScreen> {
                 },
               ),
             ),
+            const SizedBox(height: 12),
+            if (_selectedCategory == 'Visit the Temple')
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: theme.colorScheme.primary.withOpacity(0.2)),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline, size: 20, color: theme.colorScheme.primary),
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Text(
+                        'Visitors may not meet Lord Uzih the priest during temple visits.',
+                        style: TextStyle(fontSize: 13, fontStyle: FontStyle.italic),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             const SizedBox(height: 24),
             Text('Select Consultation Type', style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
@@ -161,13 +232,15 @@ class _ConsultationScreenState extends ConsumerState<ConsultationScreen> {
                   return DropdownMenuItem<int>(
                     value: type.id,
                     child: Text(
-                      '${type.name} - \$${type.price}',
+                      '${type.name} - ₦${NumberFormat('#,###').format(type.price)}',
                       style: TextStyle(color: theme.textTheme.bodyLarge?.color),
                     ),
                   );
                 }).toList(),
                 onChanged: (value) {
-                  setState(() => _selectedTypeId = value);
+                  setState(() {
+                    _selectedTypeId = value;
+                  });
                 },
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
@@ -201,33 +274,67 @@ class _ConsultationScreenState extends ConsumerState<ConsultationScreen> {
               ),
               trailing: const Icon(Icons.calendar_today),
               onTap: () async {
-                 final date = await showDatePicker(
+                  final date = await showDatePicker(
                     context: context,
                     initialDate: DateTime.now().add(const Duration(days: 1)),
                     firstDate: DateTime.now(),
                     lastDate: DateTime.now().add(const Duration(days: 90)),
-                 );
-                 if (date != null) setState(() => _selectedDate = date);
+                    selectableDayPredicate: (DateTime day) {
+                      final internalCategory = _categoryMap[_selectedCategory] ?? '';
+                      if (internalCategory == 'lord_uzih') {
+                        return [2, 3, 5].contains(day.weekday);
+                      }
+                      return true;
+                    },
+                  );
+                  if (date != null) {
+                    setState(() {
+                      _selectedDate = date;
+                      _selectedTime = null;
+                    });
+                  }
               },
             ),
             const SizedBox(height: 12),
-             ListTile(
-              tileColor: theme.cardTheme.color,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              title: Text(
-                _selectedTime == null 
-                  ? 'Pick Time' 
-                  : _selectedTime!.format(context),
+            if (_selectedDate != null) ...[
+              const SizedBox(height: 12),
+              Text('Available Times', style: theme.textTheme.bodySmall?.copyWith(color: Colors.white60)),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: _getAvailableTimes(_selectedDate!).map((time) {
+                  final isSelected = _selectedTime == time;
+                  return InkWell(
+                    onTap: () => setState(() => _selectedTime = time),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isSelected ? theme.colorScheme.primary : theme.cardTheme.color,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: isSelected ? Colors.transparent : Colors.white10),
+                      ),
+                      child: Text(
+                        time.format(context),
+                        style: TextStyle(
+                          color: isSelected ? Colors.black : Colors.white,
+                          fontSize: 12,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
-              trailing: const Icon(Icons.access_time),
-              onTap: () async {
-                 final time = await showTimePicker(
-                    context: context,
-                    initialTime: const TimeOfDay(hour: 10, minute: 0),
-                 );
-                 if (time != null) setState(() => _selectedTime = time);
-              },
-            ),
+            ],
+            if (_availabilityError != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0, left: 4.0),
+                child: Text(
+                  _availabilityError!,
+                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                ),
+              ),
             const SizedBox(height: 32),
 
             Text('Notes', style: theme.textTheme.titleMedium),

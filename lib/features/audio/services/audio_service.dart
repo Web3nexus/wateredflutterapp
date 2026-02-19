@@ -74,28 +74,33 @@ class AudioService {
   Stream<bool> get playingStream => _player?.playingStream ?? const Stream.empty();
 
   Future<void> loadAudio(Audio audio) async {
-    if (_player == null) {
-      print('⚠️ [AudioService] Player not ready, waiting...');
-      await _ref.read(audioPlayerProvider.future);
+    // Always get a fresh player reference — never rely on the captured _player
+    // which may be stale if the provider rebuilt after initialization.
+    AudioPlayer resolvedPlayer;
+    if (_player != null) {
+      resolvedPlayer = _player!;
+    } else {
+      print('⚠️ [AudioService] Player not ready, awaiting initialization...');
+      resolvedPlayer = await _ref.read(audioPlayerProvider.future);
     }
-    
+
     try {
-      print('🎵 [AudioService] Loading audio: ${audio.title}');
+      print('🎵 [AudioService] Loading audio: ${audio.title} | URL: ${audio.audioUrl}');
       final String rawUrl = audio.audioUrl?.trim() ?? '';
       
       if (rawUrl.isEmpty) {
-        throw Exception('Audio URL is empty');
+        throw Exception('Audio URL is empty or null for "${audio.title}"');
       }
 
       final uri = Uri.tryParse(rawUrl);
       if (uri == null || !uri.hasScheme) {
-        throw Exception('Invalid or non-absolute audio URL: "$rawUrl"');
+        throw Exception('Invalid audio URL: "$rawUrl"');
       }
       
       final String mediaId = 'audio_${audio.id}_${DateTime.now().millisecondsSinceEpoch}';
 
-      print('🔄 [AudioService] Setting audio source for $mediaId...');
-      await player.setAudioSource(
+      print('🔄 [AudioService] Setting audio source: $rawUrl');
+      await resolvedPlayer.setAudioSource(
         AudioSource.uri(
           uri,
           tag: MediaItem(
@@ -109,16 +114,12 @@ class AudioService {
           ),
         ),
       ).timeout(
-        const Duration(seconds: 20),
-        onTimeout: () => throw Exception('Loading timed out'),
+        const Duration(seconds: 30),
+        onTimeout: () => throw Exception('Audio loading timed out after 30s — check network or URL'),
       );
-      print('✅ [AudioService] Audio source loaded');
+      print('✅ [AudioService] Audio source loaded successfully');
     } catch (e, stackTrace) {
       print('❌ [AudioService] Error loading audio: $e');
-      // Special check for LateInitializationError
-      if (e.toString().contains('LateInitializationError')) {
-        print('🚨 [AudioService] Background handler is STILL NOT READY. This is a critical initialization failure.');
-      }
       print(stackTrace);
       rethrow;
     }

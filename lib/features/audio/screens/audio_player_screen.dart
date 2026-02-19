@@ -34,13 +34,13 @@ class _AudioPlayerScreenState extends ConsumerState<AudioPlayerScreen> {
   }
 
   Future<void> _initPlayer() async {
-    final audioService = ref.read(audioServiceProvider);
-    
     // Safety check: Wait for player to be instantiated if it isn't yet
-    if (!audioService.isReady) {
+    if (!ref.read(audioServiceProvider).isReady) {
       print('⏳ [AudioScreen] Waiting for AudioService to be ready...');
       await ref.read(audioPlayerProvider.future);
     }
+    // Re-read after await to get the updated service instance with player set
+    final audioService = ref.read(audioServiceProvider);
     
     // Check if streamable before loading
     if (!audioService.isStreamable(widget.audio.audioUrl ?? '')) {

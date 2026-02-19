@@ -159,19 +159,21 @@ class _AudioCard extends ConsumerWidget {
         borderRadius: BorderRadius.circular(24),
         onTap: () async {
           try {
-            // 0️⃣ Ensure player is ready
-            if (!audioService.isReady) {
+            // 0️⃣ Ensure player is ready — re-read after await to avoid stale reference
+            if (!ref.read(audioServiceProvider).isReady) {
               await ref.read(audioPlayerProvider.future);
             }
+            // Always re-read after any async gap to get the current service instance
+            final svc = ref.read(audioServiceProvider);
 
             // 1️⃣ Load audio FIRST
-            if (!audioService.isAudioLoaded(audio.id)) {
-              await audioService.loadAudio(audio);
+            if (!svc.isAudioLoaded(audio.id)) {
+              await svc.loadAudio(audio);
             }
 
             // 2️⃣ Start playback
-            if (!audioService.isPlaying) {
-              await audioService.play();
+            if (!svc.isPlaying) {
+              await svc.play();
             }
 
             // 3️⃣ Update current audio AFTER successful load/play
@@ -190,9 +192,10 @@ class _AudioCard extends ConsumerWidget {
             print("Playback error: $e");
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Failed to play audio. Please try again.'),
+                SnackBar(
+                  content: Text('Playback error: ${e.toString()}'),
                   backgroundColor: Colors.red,
+                  duration: const Duration(seconds: 6),
                 ),
               );
             }
