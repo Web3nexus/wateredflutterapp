@@ -114,6 +114,11 @@ class _LibraryTabContent extends ConsumerWidget {
                           offset: const Offset(0, 8),
                         ),
                       ],
+                      image: const DecorationImage(
+                        image: AssetImage('assets/images/deities_bg.jpg'),
+                        fit: BoxFit.cover,
+                        opacity: 0.2,
+                      ),
                     ),
                     child: Stack(
                       children: [

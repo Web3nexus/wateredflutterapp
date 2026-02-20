@@ -1,14 +1,20 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    id("com.google.gms.google-services")
 }
+
+println("DEBUG TOP: flutter.compileSdkVersion = ${flutter.compileSdkVersion}")
+println("DEBUG TOP: flutter.minSdkVersion = ${flutter.minSdkVersion}")
+println("DEBUG TOP: flutter.targetSdkVersion = ${flutter.targetSdkVersion}")
+println("DEBUG TOP: flutter.ndkVersion = ${flutter.ndkVersion}")
 
 android {
     namespace = "com.watered.app"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    compileSdk = 36 // flutter.compileSdkVersion
+    buildToolsVersion = "36.1.0"
+    ndkVersion = "27.0.12077973" // flutter.ndkVersion
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
@@ -25,8 +31,8 @@ android {
         applicationId = "com.watered.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion // Manually set to 21 or higher for desugaring if needed, but 21 is safe
-        targetSdk = flutter.targetSdkVersion
+        minSdk = flutter.minSdkVersion // flutter.minSdkVersion
+        targetSdk = 36 // flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         multiDexEnabled = true

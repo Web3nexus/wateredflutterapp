@@ -11,6 +11,7 @@ import 'package:Watered/core/widgets/error_view.dart';
 import 'package:Watered/core/widgets/loading_view.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:Watered/core/widgets/premium_gate.dart';
 
 class NimaSedaniScreen extends ConsumerStatefulWidget {
   const NimaSedaniScreen({super.key});
@@ -187,9 +188,11 @@ class _NimaSedaniScreenState extends ConsumerState<NimaSedaniScreen> {
           ),
         ],
       ),
-      body: ActivityTracker(
-        pageName: 'nima_sedani',
-        child: booksAsync.when(
+      body: PremiumGate(
+        message: "Unlock the full depth of Nima Sedani's sacred teachings.",
+        child: ActivityTracker(
+          pageName: 'nima_sedani',
+          child: booksAsync.when(
         data: (books) {
           if (books.isEmpty) {
             return Center(
@@ -389,7 +392,8 @@ class _NimaSedaniScreenState extends ConsumerState<NimaSedaniScreen> {
           onRetry: () => ref.invalidate(textCollectionListProvider),
         ),
       ),
-      ),
+    ),
+    ),
     );
   }
 

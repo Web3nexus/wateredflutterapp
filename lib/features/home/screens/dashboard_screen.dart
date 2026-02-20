@@ -123,7 +123,7 @@ class DashboardScreen extends ConsumerWidget {
               
               // Daily Wisdom Card
               Text(
-                'DAILY WISDOM',
+                'DAILY SEDANI',
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.2,

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/rituals/models/ritual.dart';
 import 'package:Watered/features/rituals/providers/ritual_providers.dart';
@@ -541,7 +542,7 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          isTomorrow ? "until tomorrow at ${ritual.timeOfDay}" : "until ${ritual.timeOfDay}",
+                          isTomorrow ? "until tomorrow at ${_formatTime(ritual.timeOfDay)}" : "until ${_formatTime(ritual.timeOfDay)}",
                           style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 13),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -636,7 +637,7 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
               ),
             ),
             Text(
-              ritual.timeOfDay ?? "",
+              _formatTime(ritual.timeOfDay),
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: theme.textTheme.bodyLarge?.color?.withOpacity(isPast ? 0.4 : 0.8),
@@ -646,5 +647,17 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
         ),
       ),
     );
+  }
+
+  String _formatTime(String? timeStr) {
+    if (timeStr == null || timeStr.isEmpty) return "";
+    try {
+      final parts = timeStr.split(':');
+      final time = TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+      final dt = DateTime(0, 0, 0, time.hour, time.minute);
+      return DateFormat('h:mm a').format(dt);
+    } catch (e) {
+      return timeStr;
+    }
   }
 }

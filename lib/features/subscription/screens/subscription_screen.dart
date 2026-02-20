@@ -126,9 +126,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     
     try {
       // Dynamic amount from backend, fallback to hardcoded defaults
-      int amount = planId.contains('monthly') 
-          ? (settings?.premiumMonthlyAmount ?? 999) 
-          : (settings?.premiumYearlyAmount ?? 9999);
+      final int amount = planId.contains('monthly')
+          ? (settings?.premiumMonthlyAmount ?? 500000) 
+          : (settings?.premiumYearlyAmount ?? 5000000);
       
       await FlutterPaystackPlus.openPaystackPopup(
         publicKey: publicKey,
@@ -218,7 +218,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 const SizedBox(height: 48),
                 _PlanCard(
                   title: 'Monthly Plan',
-                  price: settings?.premiumMonthlyPrice ?? '\$9.99 / month',
+                  price: settings?.premiumMonthlyPrice ?? '₦5,000 / month',
                   features: const ['Complete Sacred Library', 'Daily Audio Teachings', 'Community Access', 'Unlimited Rituals'],
                   onTap: () => _subscribe(context, 'monthly_premium'),
                   isLoading: _isLoading,
@@ -226,7 +226,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 const SizedBox(height: 16),
                 _PlanCard(
                   title: 'Yearly Plan',
-                  price: settings?.premiumYearlyPrice ?? '\$99.99 / year',
+                  price: settings?.premiumYearlyPrice ?? '₦50,000 / year',
                   features: const ['Everything in Monthly', '2 Months Free', 'Exclusive Yearly Content', 'Priority Support'],
                   isBestValue: true,
                   onTap: () => _subscribe(context, 'yearly_premium'),

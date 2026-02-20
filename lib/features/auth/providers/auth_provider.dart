@@ -1,11 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/core/network/api_client.dart';
-import 'package:Watered/features/auth/models/user.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:Watered/features/auth/models/user.dart' as app_user;
 import 'package:Watered/features/auth/services/auth_service.dart';
 
 // State wrapper
 class AuthState {
-  final User? user;
+  final app_user.User? user;
   final bool isLoading;
   final String? error;
 
@@ -13,7 +14,7 @@ class AuthState {
 
   bool get isAuthenticated => user != null;
   
-  AuthState copyWith({User? user, bool? isLoading, String? error}) {
+  AuthState copyWith({app_user.User? user, bool? isLoading, String? error}) {
     return AuthState(
       user: user ?? this.user,
       isLoading: isLoading ?? this.isLoading,
@@ -136,6 +137,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> reloadUser() async {
      try {
+       // Refresh Firebase user state (important for email verification status)
+       await firebase_auth.FirebaseAuth.instance.currentUser?.reload();
+       
        final user = await _authService.getUser();
        state = state.copyWith(user: user);
      } catch (e) {
@@ -143,7 +147,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
      }
   }
 
-  void updateUser(User user) {
+  void updateUser(app_user.User user) {
     state = state.copyWith(user: user);
   }
 }

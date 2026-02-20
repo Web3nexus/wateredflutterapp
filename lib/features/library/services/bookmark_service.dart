@@ -66,4 +66,13 @@ class BookmarkService {
       throw 'Failed to remove bookmark.';
     }
   }
+
+  Future<void> toggleBookmark({
+    required String bookmarkableType,
+    required int bookmarkableId,
+  }) async {
+    // Current simple implementation: Always add. 
+    // Backend should handle uniqueness via database constraints or controller logic.
+    await addBookmark(type: bookmarkableType, id: bookmarkableId);
+  }
 }

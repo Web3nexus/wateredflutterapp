@@ -23,7 +23,8 @@ class _RitualsScreenState extends ConsumerState<RitualsScreen> {
     'Protection',
     'Healing',
     'Ancestral',
-    'Offering'
+    'Offering',
+    'Invocations'
   ];
 
   @override

@@ -217,25 +217,32 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           child: _buildSocialButton(
                             onPressed: authState.isLoading ? null : () async {
                               final success = await ref.read(authProvider.notifier).signInWithGoogle();
-                              if (success && mounted) Navigator.of(context).pop();
+                              if (success && mounted) {
+                                // No need to pop, RootGate handles it
+                              }
                             },
-                            icon: Icons.g_mobiledata,
+                            logoPath: 'assets/images/google_logo.png',
                             label: 'Google',
                             theme: theme,
                           ),
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: _buildSocialButton(
-                            onPressed: authState.isLoading ? null : () async {
-                              final success = await ref.read(authProvider.notifier).signInWithApple();
-                              if (success && mounted) Navigator.of(context).pop();
-                            },
-                            icon: Icons.apple,
-                            label: 'Apple',
-                            theme: theme,
+                        if (Platform.isIOS || Platform.isMacOS) ...[
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _buildSocialButton(
+                              onPressed: authState.isLoading ? null : () async {
+                                final success = await ref.read(authProvider.notifier).signInWithApple();
+                                if (success && mounted) {
+                                  // No need to pop, RootGate handles it
+                                }
+                              },
+                              icon: Icons.apple,
+                              iconColor: isDark ? Colors.white : Colors.black,
+                              label: 'Apple',
+                              theme: theme,
+                            ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
                     const SizedBox(height: 24),
@@ -367,7 +374,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Widget _buildSocialButton({
     required VoidCallback? onPressed,
-    required IconData icon,
+    String? logoPath,
+    IconData? icon,
+    Color? iconColor,
     required String label,
     required ThemeData theme,
   }) {
@@ -376,16 +385,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 14),
         side: BorderSide(color: theme.dividerColor.withOpacity(0.1)),
-        backgroundColor: theme.cardTheme.color,
+        backgroundColor: Colors.white, //Branded buttons often lookup better on white
+        foregroundColor: Colors.black,
+        elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
       ),
-      icon: Icon(icon, color: theme.textTheme.bodyLarge?.color, size: 24),
+      icon: logoPath != null 
+          ? Image.asset(logoPath, height: 24)
+          : Icon(icon, color: iconColor, size: 24),
       label: Text(
         label,
-        style: TextStyle(
-          color: theme.textTheme.bodyLarge?.color,
+        style: const TextStyle(
+          color: Colors.black,
           fontSize: 14,
           fontWeight: FontWeight.w600,
           fontFamily: 'Outfit',

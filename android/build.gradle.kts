@@ -19,6 +19,17 @@ subprojects {
     project.evaluationDependsOn(":app")
 }
 
+subprojects {
+    val buildToolsOverride = "36.1.0"
+    if (project.state.executed) {
+        project.extensions.findByType<com.android.build.gradle.BaseExtension>()?.buildToolsVersion = buildToolsOverride
+    } else {
+        project.afterEvaluate {
+            project.extensions.findByType<com.android.build.gradle.BaseExtension>()?.buildToolsVersion = buildToolsOverride
+        }
+    }
+}
+
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }

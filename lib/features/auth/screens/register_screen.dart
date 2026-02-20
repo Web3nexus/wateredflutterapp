@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/auth/providers/auth_provider.dart';
@@ -46,8 +47,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             backgroundColor: Theme.of(context).colorScheme.primary,
           ),
         );
-        // Pop back to login or root, which will then redirect based on auth state
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        // No need to navigate manually, RootGate will transition to Dashboard
       } else {
         final error = ref.read(authProvider).error;
         String displayError = 'Registration failed. Please try again.';
@@ -187,6 +187,86 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       },
                     ),
                     const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: authState.isLoading ? null : _submit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: isDark ? Colors.black : Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: authState.isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text(
+                              'SIGN UP',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Expanded(child: Divider(color: theme.dividerColor.withOpacity(0.1))),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            'OR',
+                            style: TextStyle(
+                              color: theme.textTheme.bodySmall?.color?.withOpacity(0.5),
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Expanded(child: Divider(color: theme.dividerColor.withOpacity(0.1))),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildSocialButton(
+                            onPressed: authState.isLoading ? null : () async {
+                              final success = await ref.read(authProvider.notifier).signInWithGoogle();
+                              if (success && mounted) {
+                                // RootGate handles it
+                              }
+                            },
+                            logoPath: 'assets/images/google_logo.png',
+                            label: 'Google',
+                            theme: theme,
+                          ),
+                        ),
+                        if (Platform.isIOS || Platform.isMacOS) ...[
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _buildSocialButton(
+                              onPressed: authState.isLoading ? null : () async {
+                                final success = await ref.read(authProvider.notifier).signInWithApple();
+                                if (success && mounted) {
+                                  // RootGate handles it
+                                }
+                              },
+                              icon: Icons.apple,
+                              iconColor: isDark ? Colors.white : Colors.black,
+                              label: 'Apple',
+                              theme: theme,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 24),
                     Wrap(
                       alignment: WrapAlignment.center,
                       crossAxisAlignment: WrapCrossAlignment.center,
@@ -249,38 +329,46 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: authState.isLoading ? null : _submit,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.primary,
-                        foregroundColor: isDark ? Colors.black : Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: authState.isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text(
-                              'SIGN UP',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1,
-                              ),
-                            ),
-                    ),
                   ],
                 ),
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSocialButton({
+    required VoidCallback? onPressed,
+    String? logoPath,
+    IconData? icon,
+    Color? iconColor,
+    required String label,
+    required ThemeData theme,
+  }) {
+    return OutlinedButton.icon(
+      onPressed: onPressed,
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        side: BorderSide(color: theme.dividerColor.withOpacity(0.1)),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      icon: logoPath != null 
+          ? Image.asset(logoPath, height: 24)
+          : Icon(icon, color: iconColor, size: 24),
+      label: Text(
+        label,
+        style: const TextStyle(
+          color: Colors.black,
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          fontFamily: 'Outfit',
         ),
       ),
     );

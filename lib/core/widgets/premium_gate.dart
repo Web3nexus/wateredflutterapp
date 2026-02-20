@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/auth/providers/auth_provider.dart';
 import 'package:Watered/features/subscription/screens/subscription_screen.dart';
+import 'package:Watered/features/home/providers/tab_provider.dart';
 
 class PremiumGate extends ConsumerWidget {
   final Widget child;
@@ -29,14 +30,14 @@ class PremiumGate extends ConsumerWidget {
   }
 }
 
-class _LockedOverlay extends StatelessWidget {
+class _LockedOverlay extends ConsumerWidget {
   final String message;
   final Widget child;
 
   const _LockedOverlay({required this.message, required this.child});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final premiumBlue = const Color(0xFF0077BE);
     
     return Stack(
@@ -134,7 +135,14 @@ class _LockedOverlay extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () {
+                    if (Navigator.of(context).canPop()) {
+                      Navigator.of(context).pop();
+                    } else {
+                      // If we are in a tab view and can't pop, switch back to home tab
+                      ref.read(tabIndexProvider.notifier).state = 0;
+                    }
+                  },
                   child: Text(
                     'MAYBE LATER',
                     style: TextStyle(

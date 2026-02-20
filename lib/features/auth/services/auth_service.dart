@@ -1,61 +1,51 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:Watered/core/network/api_client.dart';
 import 'package:Watered/features/auth/models/auth_response.dart';
-import 'package:Watered/features/auth/models/user.dart';
+import 'package:Watered/features/auth/models/user.dart' as app_user;
 
 final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService(ref.read(apiClientProvider));
 });
 
-
-
 class AuthService {
   final ApiClient _client;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   AuthService(this._client);
 
   Future<AuthResponse> login({required String email, required String password}) async {
     try {
-      final response = await _client.post('login', data: {
-        'email': email,
-        'password': password,
-        'device_name': 'flutter_app', // Required for Sanctum
+      // 1. Authenticate with Firebase
+      final userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      final firebaseUser = userCredential.user;
+      if (firebaseUser == null) throw 'Firebase login failed';
+
+      // 2. Sync with custom backend to get token and full app user data
+      final idToken = await firebaseUser.getIdToken();
+      final response = await _client.post('social-login', data: {
+        'email': firebaseUser.email,
+        'name': firebaseUser.displayName ?? 'User',
+        'provider': 'firebase_email',
+        'provider_id': firebaseUser.uid,
+        'id_token': idToken,
+        'device_name': 'flutter_app',
       });
       
       return AuthResponse.fromJson(response.data);
-    } on DioException catch (e) {
-      // Handle 401 Unauthorized (invalid credentials)
-      if (e.response?.statusCode == 401) {
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found' || e.code == 'wrong-password' || e.code == 'invalid-credential') {
         throw 'Invalid email or password.';
       }
-      
-      // Handle 422 Validation Error
-      if (e.response?.statusCode == 422) {
-        final errors = e.response?.data['errors'];
-        if (errors != null && errors is Map) {
-          // Return the first validation error message
-          final firstError = errors.values.first;
-          if (firstError is List && firstError.isNotEmpty) {
-            throw firstError.first.toString();
-          }
-        }
-        throw 'Invalid credentials. Please check your email and password.';
-      }
-      
-      // Handle network errors
-      if (e.type == DioExceptionType.connectionTimeout || 
-          e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.connectionError) {
-        throw 'Network error. Please check your internet connection.';
-      }
-      
-      // Generic error
-      throw 'Login failed. Please try again later.';
+      throw e.message ?? 'Login failed. Please try again.';
     } catch (e) {
-      // Catch any other errors
       if (e is String) rethrow;
       throw 'An unexpected error occurred. Please try again.';
     }
@@ -68,66 +58,42 @@ class AuthService {
     required String passwordConfirmation,
   }) async {
     try {
-      final response = await _client.post('register', data: {
-        'name': name,
+      // 1. Create user in Firebase
+      final userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      final firebaseUser = userCredential.user;
+      if (firebaseUser == null) throw 'Firebase registration failed';
+
+      // Update display name
+      await firebaseUser.updateDisplayName(name);
+
+      // 2. Sync with custom backend
+      final idToken = await firebaseUser.getIdToken();
+      final response = await _client.post('social-login', data: {
         'email': email,
-        'password': password,
-        'password_confirmation': passwordConfirmation,
+        'name': name,
+        'provider': 'firebase_email',
+        'provider_id': firebaseUser.uid,
+        'id_token': idToken,
         'device_name': 'flutter_app',
       });
       
+      // 3. Send verification email via Firebase
+      await firebaseUser.sendEmailVerification();
+      
       return AuthResponse.fromJson(response.data);
-    } on DioException catch (e) {
-      // Handle 422 Validation Error
-      if (e.response?.statusCode == 422) {
-        final errors = e.response?.data['errors'];
-        if (errors != null && errors is Map) {
-          // Check for specific field errors
-          if (errors.containsKey('email')) {
-            final emailErrors = errors['email'];
-            if (emailErrors is List && emailErrors.isNotEmpty) {
-              final errorMsg = emailErrors.first.toString().toLowerCase();
-              if (errorMsg.contains('taken') || errorMsg.contains('already')) {
-                throw 'This email is already registered. Please login instead.';
-              }
-              throw emailErrors.first.toString();
-            }
-          }
-          
-          if (errors.containsKey('password')) {
-            final passwordErrors = errors['password'];
-            if (passwordErrors is List && passwordErrors.isNotEmpty) {
-              throw passwordErrors.first.toString();
-            }
-          }
-          
-          if (errors.containsKey('name')) {
-            final nameErrors = errors['name'];
-            if (nameErrors is List && nameErrors.isNotEmpty) {
-              throw nameErrors.first.toString();
-            }
-          }
-          
-          // Return the first validation error if no specific field matched
-          final firstError = errors.values.first;
-          if (firstError is List && firstError.isNotEmpty) {
-            throw firstError.first.toString();
-          }
-        }
-        throw 'Please check your information and try again.';
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        throw 'This email is already registered. Please login instead.';
       }
-      
-      // Handle network errors
-      if (e.type == DioExceptionType.connectionTimeout || 
-          e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.connectionError) {
-        throw 'Network error. Please check your internet connection.';
+      if (e.code == 'weak-password') {
+        throw 'The password provided is too weak.';
       }
-      
-      // Generic error
-      throw 'Registration failed. Please try again later.';
+      throw e.message ?? 'Registration failed. Please try again.';
     } catch (e) {
-      // Catch any other errors
       if (e is String) rethrow;
       throw 'An unexpected error occurred. Please try again.';
     }
@@ -135,6 +101,7 @@ class AuthService {
 
   Future<void> logout() async {
     try {
+      await _auth.signOut();
       await _client.post('logout');
     } catch (_) {
       // Ignore logout errors
@@ -146,60 +113,97 @@ class AuthService {
   Future<AuthResponse> signInWithGoogle() async {
     try {
       final googleSignIn = GoogleSignIn();
-      final account = await googleSignIn.signIn();
+      final googleUser = await googleSignIn.signIn();
       
-      if (account == null) throw 'Sign in cancelled';
+      if (googleUser == null) throw 'Sign in cancelled';
 
+      final googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // 1. Sign in to Firebase
+      final userCredential = await _auth.signInWithCredential(credential);
+      final firebaseUser = userCredential.user;
+
+      if (firebaseUser == null) throw 'Firebase Google sign in failed';
+
+      // 2. Sync with custom backend
+      final idToken = await firebaseUser.getIdToken();
       final response = await _client.post('social-login', data: {
-        'email': account.email,
-        'name': account.displayName ?? 'Google User',
+        'email': firebaseUser.email,
+        'name': firebaseUser.displayName ?? 'Google User',
         'provider': 'google',
-        'provider_id': account.id,
+        'provider_id': firebaseUser.uid,
+        'id_token': idToken,
         'device_name': 'flutter_app',
       });
 
       return AuthResponse.fromJson(response.data);
     } catch (e) {
-      throw 'Google sign in failed: $e';
+      if (e is String) rethrow;
+      throw 'Google sign in failed. Please try again.';
     }
   }
 
   Future<AuthResponse> signInWithApple() async {
     try {
-      final credential = await SignInWithApple.getAppleIDCredential(
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
           AppleIDAuthorizationScopes.fullName,
         ],
       );
 
+      // Firebase Apple Sign-In
+      final OAuthProvider oAuthProvider = OAuthProvider('apple.com');
+      final AuthCredential credential = oAuthProvider.credential(
+        idToken: appleCredential.identityToken,
+        accessToken: appleCredential.authorizationCode,
+      );
+
+      final userCredential = await _auth.signInWithCredential(credential);
+      final firebaseUser = userCredential.user;
+
+      if (firebaseUser == null) throw 'Firebase Apple sign in failed';
+
+      final idToken = await firebaseUser.getIdToken();
       final response = await _client.post('social-login', data: {
-        'email': credential.email ?? '', // Apple might not provide email on subsequent logins
-        'name': '${credential.givenName ?? ''} ${credential.familyName ?? ''}'.trim() == '' 
+        'email': firebaseUser.email ?? appleCredential.email ?? '',
+        'name': firebaseUser.displayName ?? '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}'.trim() == '' 
             ? 'Apple User' 
-            : '${credential.givenName ?? ''} ${credential.familyName ?? ''}',
+            : '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}',
         'provider': 'apple',
-        'provider_id': credential.userIdentifier,
+        'provider_id': firebaseUser.uid,
+        'id_token': idToken,
         'device_name': 'flutter_app',
       });
 
       return AuthResponse.fromJson(response.data);
     } catch (e) {
-      throw 'Apple sign in failed: $e';
+      if (e is String) rethrow;
+      throw 'Apple sign in failed. Please try again.';
     }
   }
 
   Future<void> resendVerificationEmail() async {
     try {
-      await _client.post('email/resend');
+      final user = _auth.currentUser;
+      if (user != null) {
+        await user.sendEmailVerification();
+      } else {
+        // Fallback to backend if firebase user is not found session-wise
+        await _client.post('email/resend');
+      }
     } catch (e) {
       throw 'Failed to resend verification email: $e';
     }
   }
 
-  Future<User> getUser() async {
+  Future<app_user.User> getUser() async {
     final response = await _client.get('user');
-    return User.fromJson(response.data);
+    return app_user.User.fromJson(response.data);
   }
 
   Future<void> forgotPassword(String email) async {

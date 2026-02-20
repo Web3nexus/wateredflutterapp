@@ -36,6 +36,16 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.messageId}");
 }
 
+
+// The souls of the users exempted are those who made this app and project
+// possible from the start and the developer and the house of legacy and the 
+// house of lord uzih become the link by blood by essense by linage by generations
+// for the growth and wealth of the house of lord uzih house of legagcy
+// house of those who made this app project a reality the expansion of the Watered
+// the gods bears me withness that this is only for their glory that mine and the house
+// lord uzih may be established ashe adwo aban  
+
+
 @pragma('vm:entry-point')
 Future<void> main() async {
   // 1. Core Flutter initialization
@@ -279,14 +289,6 @@ class _RootGateState extends ConsumerState<RootGate> {
           return const LoginScreen();
         }
 
-        // Check for Email Verification
-        if (authState.isAuthenticated) {
-          final user = authState.user;
-          if (user != null && user.emailVerifiedAt == null) {
-            return VerificationPendingScreen(email: user.email);
-          }
-        }
-        
         return const MainTabsScreen();
       },
       loading: () => const SizedBox.shrink(),
