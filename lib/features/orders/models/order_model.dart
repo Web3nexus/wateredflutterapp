@@ -1,3 +1,5 @@
+import 'package:Watered/features/orders/models/order_form_field_model.dart';
+
 class Order {
   final int id;
   final String title;
@@ -9,6 +11,7 @@ class Order {
   final String? imageUrl;
   final int orderLevel;
   final bool isActive;
+  final List<OrderFormField>? formFields;
 
   Order({
     required this.id,
@@ -21,6 +24,7 @@ class Order {
     this.imageUrl,
     required this.orderLevel,
     required this.isActive,
+    this.formFields,
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
@@ -35,6 +39,11 @@ class Order {
       imageUrl: json['image_url'],
       orderLevel: json['order_level'] ?? 1,
       isActive: json['is_active'] == 1 || json['is_active'] == true,
+      formFields: json['form_fields'] != null
+          ? (json['form_fields'] as List)
+              .map((f) => OrderFormField.fromJson(f))
+              .toList()
+          : null,
     );
   }
 }

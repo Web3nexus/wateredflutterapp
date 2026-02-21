@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Watered/features/orders/models/order_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:Watered/features/orders/screens/order_detail_screen.dart';
 
 class OrderCard extends StatelessWidget {
   final Order order;
@@ -39,14 +40,20 @@ class OrderCard extends StatelessWidget {
       }
     } else if (order.actionType == 'internal_route' && order.ctaLink != null) {
       Navigator.of(context).pushNamed(order.ctaLink!);
+    } else if (order.actionType == 'application_form') {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => OrderDetailScreen(orderId: order.id),
+        ),
+      );
     } else {
-      // application_form or unhandled
+      // unhandled
       if (context.mounted) {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
             title: Text('Apply for ${order.title}'),
-            content: const Text('The application form is currently being updated. Please check back later or contact the temple.'),
+            content: const Text('This path is currently not accepting direct applications. Please contact the temple.'),
             actions: [
               TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Close'))
             ],
@@ -93,7 +100,7 @@ class OrderCard extends StatelessWidget {
                 ),
                 errorWidget: (context, url, error) => Container(
                   color: theme.colorScheme.surfaceContainerHighest,
-                  child: const Icon(Icons.image_not_supported, opacity: 0.5),
+                  child: const Icon(Icons.image_not_supported, color: Colors.grey),
                 ),
               ),
             ),
