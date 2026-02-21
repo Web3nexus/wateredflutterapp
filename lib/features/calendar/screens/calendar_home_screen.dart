@@ -10,7 +10,7 @@ class CalendarHomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final todayAsync = ref.watch(kemeticTodayProvider);
+    final todayAsync = ref.watch(wateredTodayProvider);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -91,7 +91,7 @@ class CalendarHomeScreen extends ConsumerWidget {
   }
 
   Widget _buildTodayContent(BuildContext context, WidgetRef ref, Map<String, dynamic> data) {
-    final kemetic = data['kemetic_date'];
+    final wateredDate = data['kemetic_date'];
     final dayDetails = data['day_details'] != null 
         ? CalendarDay.fromJson(data['day_details']) 
         : null;
@@ -101,7 +101,7 @@ class CalendarHomeScreen extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildDateCard(context, kemetic),
+        _buildDateCard(context, wateredDate),
         const SizedBox(height: 24),
         if (dayDetails != null) ...[
           _buildSectionHeader(context, 'TODAY\'S REFLECTION'),
@@ -176,7 +176,7 @@ class CalendarHomeScreen extends ConsumerWidget {
       );
   }
 
-  Widget _buildDateCard(BuildContext context, Map<String, dynamic> kemetic) {
+  Widget _buildDateCard(BuildContext context, Map<String, dynamic> wateredDate) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -204,7 +204,7 @@ class CalendarHomeScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            '${kemetic['month_name']}'.toUpperCase(),
+            '${wateredDate['month_name']}'.toUpperCase(),
             style: TextStyle(
               fontSize: 24,
               fontFamily: 'Cinzel',
@@ -215,7 +215,7 @@ class CalendarHomeScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'DAY ${kemetic['day_number']}',
+            'DAY ${wateredDate['day_number']}',
             style: TextStyle(
               fontSize: 40,
               fontWeight: FontWeight.w900,
@@ -224,7 +224,7 @@ class CalendarHomeScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 4),
           Text(
-             'KEMETIC YEAR ${kemetic['year'] ?? ''} • ${kemetic['season'] ?? ''}',
+             'WATERED YEAR ${wateredDate['year'] ?? ''} • ${wateredDate['season'] ?? ''}',
             style: TextStyle(
               fontSize: 12,
               color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5),

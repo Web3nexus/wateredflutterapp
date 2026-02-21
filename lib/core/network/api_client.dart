@@ -20,9 +20,13 @@ class ApiClient {
   final FlutterSecureStorage _secureStorage;
   late final Dio _dio;
   
-  // Updated to use Laravel Herd domain for simulator access
-  // Updated to use Live Production URL
-  static const String baseUrl = 'https://mywatered.com/api/v1/';
+  // Environment configuration
+  static const bool isProduction = true; // Toggle this for production
+  
+  static const String localBaseUrl = 'http://wateredbackend.test/api/v1/';
+  static const String prodBaseUrl = 'https://mywatered.com/api/v1/';
+  
+  static const String baseUrl = isProduction ? prodBaseUrl : localBaseUrl;
   static const String tokenKey = 'auth_token';
 
   ApiClient({

@@ -71,6 +71,12 @@ mixin _$GlobalSettings {
   String? get contactEmail => throw _privateConstructorUsedError;
   @JsonKey(name: 'contact_phone')
   String? get contactPhone => throw _privateConstructorUsedError;
+  @JsonKey(name: 'premium_title')
+  String? get premiumTitle => throw _privateConstructorUsedError;
+  @JsonKey(name: 'premium_subtitle')
+  String? get premiumSubtitle => throw _privateConstructorUsedError;
+  @JsonKey(name: 'premium_features')
+  List<String>? get premiumFeatures => throw _privateConstructorUsedError;
 
   /// Serializes this GlobalSettings to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -115,6 +121,9 @@ abstract class $GlobalSettingsCopyWith<$Res> {
     @JsonKey(name: 'premium_yearly_amount') int? premiumYearlyAmount,
     @JsonKey(name: 'contact_email') String? contactEmail,
     @JsonKey(name: 'contact_phone') String? contactPhone,
+    @JsonKey(name: 'premium_title') String? premiumTitle,
+    @JsonKey(name: 'premium_subtitle') String? premiumSubtitle,
+    @JsonKey(name: 'premium_features') List<String>? premiumFeatures,
   });
 }
 
@@ -158,6 +167,9 @@ class _$GlobalSettingsCopyWithImpl<$Res, $Val extends GlobalSettings>
     Object? premiumYearlyAmount = freezed,
     Object? contactEmail = freezed,
     Object? contactPhone = freezed,
+    Object? premiumTitle = freezed,
+    Object? premiumSubtitle = freezed,
+    Object? premiumFeatures = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -261,6 +273,18 @@ class _$GlobalSettingsCopyWithImpl<$Res, $Val extends GlobalSettings>
                 ? _value.contactPhone
                 : contactPhone // ignore: cast_nullable_to_non_nullable
                       as String?,
+            premiumTitle: freezed == premiumTitle
+                ? _value.premiumTitle
+                : premiumTitle // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            premiumSubtitle: freezed == premiumSubtitle
+                ? _value.premiumSubtitle
+                : premiumSubtitle // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            premiumFeatures: freezed == premiumFeatures
+                ? _value.premiumFeatures
+                : premiumFeatures // ignore: cast_nullable_to_non_nullable
+                      as List<String>?,
           )
           as $Val,
     );
@@ -302,6 +326,9 @@ abstract class _$$GlobalSettingsImplCopyWith<$Res>
     @JsonKey(name: 'premium_yearly_amount') int? premiumYearlyAmount,
     @JsonKey(name: 'contact_email') String? contactEmail,
     @JsonKey(name: 'contact_phone') String? contactPhone,
+    @JsonKey(name: 'premium_title') String? premiumTitle,
+    @JsonKey(name: 'premium_subtitle') String? premiumSubtitle,
+    @JsonKey(name: 'premium_features') List<String>? premiumFeatures,
   });
 }
 
@@ -344,6 +371,9 @@ class __$$GlobalSettingsImplCopyWithImpl<$Res>
     Object? premiumYearlyAmount = freezed,
     Object? contactEmail = freezed,
     Object? contactPhone = freezed,
+    Object? premiumTitle = freezed,
+    Object? premiumSubtitle = freezed,
+    Object? premiumFeatures = freezed,
   }) {
     return _then(
       _$GlobalSettingsImpl(
@@ -447,6 +477,18 @@ class __$$GlobalSettingsImplCopyWithImpl<$Res>
             ? _value.contactPhone
             : contactPhone // ignore: cast_nullable_to_non_nullable
                   as String?,
+        premiumTitle: freezed == premiumTitle
+            ? _value.premiumTitle
+            : premiumTitle // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        premiumSubtitle: freezed == premiumSubtitle
+            ? _value.premiumSubtitle
+            : premiumSubtitle // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        premiumFeatures: freezed == premiumFeatures
+            ? _value._premiumFeatures
+            : premiumFeatures // ignore: cast_nullable_to_non_nullable
+                  as List<String>?,
       ),
     );
   }
@@ -482,8 +524,12 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
     @JsonKey(name: 'premium_yearly_amount') this.premiumYearlyAmount,
     @JsonKey(name: 'contact_email') this.contactEmail,
     @JsonKey(name: 'contact_phone') this.contactPhone,
+    @JsonKey(name: 'premium_title') this.premiumTitle,
+    @JsonKey(name: 'premium_subtitle') this.premiumSubtitle,
+    @JsonKey(name: 'premium_features') final List<String>? premiumFeatures,
   }) : _supportedLanguages = supportedLanguages,
-       _adsScreens = adsScreens;
+       _adsScreens = adsScreens,
+       _premiumFeatures = premiumFeatures;
 
   factory _$GlobalSettingsImpl.fromJson(Map<String, dynamic> json) =>
       _$$GlobalSettingsImplFromJson(json);
@@ -578,10 +624,26 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
   @override
   @JsonKey(name: 'contact_phone')
   final String? contactPhone;
+  @override
+  @JsonKey(name: 'premium_title')
+  final String? premiumTitle;
+  @override
+  @JsonKey(name: 'premium_subtitle')
+  final String? premiumSubtitle;
+  final List<String>? _premiumFeatures;
+  @override
+  @JsonKey(name: 'premium_features')
+  List<String>? get premiumFeatures {
+    final value = _premiumFeatures;
+    if (value == null) return null;
+    if (_premiumFeatures is EqualUnmodifiableListView) return _premiumFeatures;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'GlobalSettings(primaryColor: $primaryColor, secondaryColor: $secondaryColor, defaultLanguage: $defaultLanguage, supportedLanguages: $supportedLanguages, maintenanceMode: $maintenanceMode, isAdsEnabled: $isAdsEnabled, adUnitIdAndroid: $adUnitIdAndroid, adUnitIdIos: $adUnitIdIos, adsScreens: $adsScreens, notificationSoundPath: $notificationSoundPath, alarmSoundPath: $alarmSoundPath, siteName: $siteName, siteDescription: $siteDescription, logoPath: $logoPath, privacyPolicy: $privacyPolicy, termsOfService: $termsOfService, paystackPublicKey: $paystackPublicKey, premiumMonthlyId: $premiumMonthlyId, premiumYearlyId: $premiumYearlyId, premiumMonthlyPrice: $premiumMonthlyPrice, premiumYearlyPrice: $premiumYearlyPrice, premiumMonthlyAmount: $premiumMonthlyAmount, premiumYearlyAmount: $premiumYearlyAmount, contactEmail: $contactEmail, contactPhone: $contactPhone)';
+    return 'GlobalSettings(primaryColor: $primaryColor, secondaryColor: $secondaryColor, defaultLanguage: $defaultLanguage, supportedLanguages: $supportedLanguages, maintenanceMode: $maintenanceMode, isAdsEnabled: $isAdsEnabled, adUnitIdAndroid: $adUnitIdAndroid, adUnitIdIos: $adUnitIdIos, adsScreens: $adsScreens, notificationSoundPath: $notificationSoundPath, alarmSoundPath: $alarmSoundPath, siteName: $siteName, siteDescription: $siteDescription, logoPath: $logoPath, privacyPolicy: $privacyPolicy, termsOfService: $termsOfService, paystackPublicKey: $paystackPublicKey, premiumMonthlyId: $premiumMonthlyId, premiumYearlyId: $premiumYearlyId, premiumMonthlyPrice: $premiumMonthlyPrice, premiumYearlyPrice: $premiumYearlyPrice, premiumMonthlyAmount: $premiumMonthlyAmount, premiumYearlyAmount: $premiumYearlyAmount, contactEmail: $contactEmail, contactPhone: $contactPhone, premiumTitle: $premiumTitle, premiumSubtitle: $premiumSubtitle, premiumFeatures: $premiumFeatures)';
   }
 
   @override
@@ -642,7 +704,15 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
             (identical(other.contactEmail, contactEmail) ||
                 other.contactEmail == contactEmail) &&
             (identical(other.contactPhone, contactPhone) ||
-                other.contactPhone == contactPhone));
+                other.contactPhone == contactPhone) &&
+            (identical(other.premiumTitle, premiumTitle) ||
+                other.premiumTitle == premiumTitle) &&
+            (identical(other.premiumSubtitle, premiumSubtitle) ||
+                other.premiumSubtitle == premiumSubtitle) &&
+            const DeepCollectionEquality().equals(
+              other._premiumFeatures,
+              _premiumFeatures,
+            ));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -674,6 +744,9 @@ class _$GlobalSettingsImpl implements _GlobalSettings {
     premiumYearlyAmount,
     contactEmail,
     contactPhone,
+    premiumTitle,
+    premiumSubtitle,
+    const DeepCollectionEquality().hash(_premiumFeatures),
   ]);
 
   /// Create a copy of GlobalSettings
@@ -721,6 +794,9 @@ abstract class _GlobalSettings implements GlobalSettings {
     @JsonKey(name: 'premium_yearly_amount') final int? premiumYearlyAmount,
     @JsonKey(name: 'contact_email') final String? contactEmail,
     @JsonKey(name: 'contact_phone') final String? contactPhone,
+    @JsonKey(name: 'premium_title') final String? premiumTitle,
+    @JsonKey(name: 'premium_subtitle') final String? premiumSubtitle,
+    @JsonKey(name: 'premium_features') final List<String>? premiumFeatures,
   }) = _$GlobalSettingsImpl;
 
   factory _GlobalSettings.fromJson(Map<String, dynamic> json) =
@@ -801,6 +877,15 @@ abstract class _GlobalSettings implements GlobalSettings {
   @override
   @JsonKey(name: 'contact_phone')
   String? get contactPhone;
+  @override
+  @JsonKey(name: 'premium_title')
+  String? get premiumTitle;
+  @override
+  @JsonKey(name: 'premium_subtitle')
+  String? get premiumSubtitle;
+  @override
+  @JsonKey(name: 'premium_features')
+  List<String>? get premiumFeatures;
 
   /// Create a copy of GlobalSettings
   /// with the given fields replaced by the non-null parameter values.

@@ -32,6 +32,9 @@ class GlobalSettings with _$GlobalSettings {
     @JsonKey(name: 'premium_yearly_amount') int? premiumYearlyAmount,
     @JsonKey(name: 'contact_email') String? contactEmail,
     @JsonKey(name: 'contact_phone') String? contactPhone,
+    @JsonKey(name: 'premium_title') String? premiumTitle,
+    @JsonKey(name: 'premium_subtitle') String? premiumSubtitle,
+    @JsonKey(name: 'premium_features') List<String>? premiumFeatures,
   }) = _GlobalSettings;
 
   factory GlobalSettings.fromJson(Map<String, dynamic> json) =>

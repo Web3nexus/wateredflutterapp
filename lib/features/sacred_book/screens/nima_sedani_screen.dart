@@ -188,11 +188,9 @@ class _NimaSedaniScreenState extends ConsumerState<NimaSedaniScreen> {
           ),
         ],
       ),
-      body: PremiumGate(
-        message: "Unlock the full depth of Nima Sedani's sacred teachings.",
-        child: ActivityTracker(
-          pageName: 'nima_sedani',
-          child: booksAsync.when(
+      body: ActivityTracker(
+        pageName: 'nima_sedani',
+        child: booksAsync.when(
         data: (books) {
           if (books.isEmpty) {
             return Center(
@@ -392,7 +390,6 @@ class _NimaSedaniScreenState extends ConsumerState<NimaSedaniScreen> {
           onRetry: () => ref.invalidate(textCollectionListProvider),
         ),
       ),
-    ),
     ),
     );
   }

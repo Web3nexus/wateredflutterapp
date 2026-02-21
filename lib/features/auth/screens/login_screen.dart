@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/features/auth/providers/auth_provider.dart';
@@ -47,16 +48,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         String displayError = 'Login failed. Please try again.';
         
         if (error != null) {
-          // Try to parse Laravel validation errors or specific messages
-          if (error.contains('Invalid email or password')) {
+          if (error.contains('Invalid email or password') || error.contains('invalid-credential')) {
             displayError = 'Invalid email or password.';
+          } else if (error.contains('user-not-found')) {
+            displayError = 'No account found. Please sign up if this is your first time using the current version.';
           } else if (error.contains('The email field is required')) {
             displayError = 'Please enter your email.';
           } else if (error.contains('network') || error.contains('connection')) {
             displayError = 'Network error. Please check your connection.';
           } else {
-            // Check for specific backend message if it's a JSON string
-            displayError = 'Invalid email or password.';
+            displayError = 'Login failed. If you have an account from our old version, please Sign Up to migrate.';
           }
         }
 

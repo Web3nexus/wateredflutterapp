@@ -19,29 +19,28 @@ class AuthService {
 
   Future<AuthResponse> login({required String email, required String password}) async {
     try {
-      // 1. Authenticate with Firebase
-      final userCredential = await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      // 1. Attempt to authenticate with Firebase
+      UserCredential? userCredential;
+      try {
+        userCredential = await _auth.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+      } on FirebaseAuthException catch (e) {
+        // If user not found in Firebase, they might be an old user in our database
+        if (e.code == 'user-not-found' || e.code == 'invalid-credential') {
+          return await _handleLegacyLogin(email: email, password: password);
+        }
+        rethrow;
+      }
 
       final firebaseUser = userCredential.user;
       if (firebaseUser == null) throw 'Firebase login failed';
 
-      // 2. Sync with custom backend to get token and full app user data
-      final idToken = await firebaseUser.getIdToken();
-      final response = await _client.post('social-login', data: {
-        'email': firebaseUser.email,
-        'name': firebaseUser.displayName ?? 'User',
-        'provider': 'firebase_email',
-        'provider_id': firebaseUser.uid,
-        'id_token': idToken,
-        'device_name': 'flutter_app',
-      });
-      
-      return AuthResponse.fromJson(response.data);
+      // 2. Sync with custom backend
+      return await _syncFirebaseUserWithBackend(firebaseUser);
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found' || e.code == 'wrong-password' || e.code == 'invalid-credential') {
+      if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
         throw 'Invalid email or password.';
       }
       throw e.message ?? 'Login failed. Please try again.';
@@ -49,6 +48,61 @@ class AuthService {
       if (e is String) rethrow;
       throw 'An unexpected error occurred. Please try again.';
     }
+  }
+
+  Future<AuthResponse> _handleLegacyLogin({required String email, required String password}) async {
+    try {
+      // 1. Attempt legacy login via our Laravel backend
+      final response = await _client.post('login', data: {
+        'email': email,
+        'password': password,
+        'device_name': 'flutter_app_migration',
+      });
+
+      // If Laravel login succeeds, we migrate them to Firebase
+      final legacyAuthResponse = AuthResponse.fromJson(response.data);
+      
+      // 2. Create the user in Firebase with their existing credentials
+      final userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      
+      final firebaseUser = userCredential.user;
+      if (firebaseUser == null) throw 'Failed to migrate account to Firebase';
+
+      // Set their name in Firebase
+      await firebaseUser.updateDisplayName(legacyAuthResponse.user.name);
+
+      // 3. Sync the new Firebase user back to our backend to link the accounts
+      return await _syncFirebaseUserWithBackend(firebaseUser);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw 'Invalid email or password.';
+      }
+      rethrow;
+    } catch (e) {
+      if (e is FirebaseAuthException && e.code == 'email-already-in-use') {
+        // This is a weird state: email exists in Firebase but login failed earlier? 
+        // Likely wrong password for existing Firebase account.
+        throw 'Invalid email or password.';
+      }
+      rethrow;
+    }
+  }
+
+  Future<AuthResponse> _syncFirebaseUserWithBackend(User firebaseUser) async {
+    final idToken = await firebaseUser.getIdToken();
+    final response = await _client.post('social-login', data: {
+      'email': firebaseUser.email,
+      'name': firebaseUser.displayName ?? 'User',
+      'provider': 'firebase_email',
+      'provider_id': firebaseUser.uid,
+      'id_token': idToken,
+      'device_name': 'flutter_app',
+    });
+    
+    return AuthResponse.fromJson(response.data);
   }
 
   Future<AuthResponse> register({
@@ -70,21 +124,13 @@ class AuthService {
       // Update display name
       await firebaseUser.updateDisplayName(name);
 
-      // 2. Sync with custom backend
-      final idToken = await firebaseUser.getIdToken();
-      final response = await _client.post('social-login', data: {
-        'email': email,
-        'name': name,
-        'provider': 'firebase_email',
-        'provider_id': firebaseUser.uid,
-        'id_token': idToken,
-        'device_name': 'flutter_app',
-      });
+      // 2. Sync with custom backend (will link to existing account if email matches)
+      final authResponse = await _syncFirebaseUserWithBackend(firebaseUser);
       
       // 3. Send verification email via Firebase
       await firebaseUser.sendEmailVerification();
       
-      return AuthResponse.fromJson(response.data);
+      return authResponse;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
         throw 'This email is already registered. Please login instead.';
@@ -171,9 +217,9 @@ class AuthService {
       final idToken = await firebaseUser.getIdToken();
       final response = await _client.post('social-login', data: {
         'email': firebaseUser.email ?? appleCredential.email ?? '',
-        'name': firebaseUser.displayName ?? '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}'.trim() == '' 
+        'name': firebaseUser.displayName ?? (('${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}'.trim() == '') 
             ? 'Apple User' 
-            : '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}',
+            : '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}'),
         'provider': 'apple',
         'provider_id': firebaseUser.uid,
         'id_token': idToken,

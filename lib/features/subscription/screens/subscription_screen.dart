@@ -130,12 +130,14 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           ? (settings?.premiumMonthlyAmount ?? 500000) 
           : (settings?.premiumYearlyAmount ?? 5000000);
       
+      final String reference = 'sub_${DateTime.now().millisecondsSinceEpoch}';
+
       await FlutterPaystackPlus.openPaystackPopup(
         publicKey: publicKey,
         context: context,
         customerEmail: user?.email ?? 'customer@example.com',
         amount: amount.toString(), // amount from settings is already in kobo/cents
-        reference: 'sub_${DateTime.now().millisecondsSinceEpoch}',
+        reference: reference,
         onClosed: () {
           setState(() => _isLoading = false);
           _showError('Payment closed');
@@ -144,7 +146,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           try {
             await ref.read(subscriptionServiceProvider).verifyPaystackPayment(
               planId: planId,
-              reference: 'sub_${DateTime.now().millisecondsSinceEpoch}',
+              reference: reference,
             );
             ref.refresh(subscriptionStatusProvider);
             _showSuccess('Paystack payment successful!');
@@ -205,21 +207,21 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 Icon(Icons.auto_awesome_rounded, size: 64, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(height: 16),
                 Text(
-                  'WATERED PLUS+',
+                  settings?.premiumTitle ?? 'WATERED PLUS+',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontFamily: 'Cinzel', fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 4, color: Theme.of(context).colorScheme.primary),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Unlock the full depth of African spirituality.',
+                Text(
+                  settings?.premiumSubtitle ?? 'Unlock the full depth of African spirituality.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white60, fontSize: 14),
+                  style: const TextStyle(color: Colors.white60, fontSize: 14),
                 ),
                 const SizedBox(height: 48),
                 _PlanCard(
                   title: 'Monthly Plan',
                   price: settings?.premiumMonthlyPrice ?? '₦5,000 / month',
-                  features: const ['Complete Sacred Library', 'Daily Audio Teachings', 'Community Access', 'Unlimited Rituals'],
+                  features: settings?.premiumFeatures ?? const ['Complete Sacred Library', 'Daily Audio Teachings', 'Community Access', 'Unlimited Rituals'],
                   onTap: () => _subscribe(context, 'monthly_premium'),
                   isLoading: _isLoading,
                 ),
@@ -227,7 +229,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 _PlanCard(
                   title: 'Yearly Plan',
                   price: settings?.premiumYearlyPrice ?? '₦50,000 / year',
-                  features: const ['Everything in Monthly', '2 Months Free', 'Exclusive Yearly Content', 'Priority Support'],
+                  features: settings?.premiumFeatures ?? const ['Everything in Monthly', '2 Months Free', 'Exclusive Yearly Content', 'Priority Support'],
                   isBestValue: true,
                   onTap: () => _subscribe(context, 'yearly_premium'),
                   isLoading: _isLoading,

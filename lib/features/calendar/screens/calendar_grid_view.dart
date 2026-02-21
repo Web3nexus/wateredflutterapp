@@ -47,11 +47,11 @@ class CalendarGridView extends ConsumerWidget {
       body: calendarAsync.when(
         data: (months) {
           // Pre-process months into a map for quick lookup: "MMM d" -> CalendarDay
-          final Map<String, (CalendarDay, CalendarMonth)> kemeticMap = {};
+          final Map<String, (CalendarDay, CalendarMonth)> wateredMap = {};
           for (var m in months) {
             for (var d in m.days ?? []) {
               if (d.gregorianDay != null) {
-                kemeticMap[d.gregorianDay!] = (d, m);
+                wateredMap[d.gregorianDay!] = (d, m);
               }
             }
           }
@@ -69,7 +69,7 @@ class CalendarGridView extends ConsumerWidget {
                   viewMonth, 
                   firstWeekday, 
                   daysInMonth, 
-                  kemeticMap, 
+                  wateredMap, 
                   allEvents
                 ),
               ),
@@ -157,7 +157,7 @@ class CalendarGridView extends ConsumerWidget {
     int month,
     int firstWeekday,
     int daysInMonth,
-    Map<String, (CalendarDay, CalendarMonth)> kemeticMap,
+    Map<String, (CalendarDay, CalendarMonth)> wateredMap,
     List<Event> allEvents,
   ) {
     final totalCells = firstWeekday + daysInMonth;
@@ -181,13 +181,13 @@ class CalendarGridView extends ConsumerWidget {
         final currentDT = DateTime(year, month, dayNum);
         final dateKey = DateFormat('MMM d').format(currentDT); // e.g., "Feb 16"
         
-        final kemeticData = kemeticMap[dateKey];
+        final wateredData = wateredMap[dateKey];
         final dayEvents = allEvents.where((e) {
           final eStart = e.startTime;
           return eStart.year == year && eStart.month == month && eStart.day == dayNum;
         }).toList();
 
-        return _buildGregorianDayCell(context, theme, dayNum, currentDT, kemeticData, dayEvents);
+        return _buildGregorianDayCell(context, theme, dayNum, currentDT, wateredData, dayEvents);
       },
     );
   }
@@ -197,12 +197,12 @@ class CalendarGridView extends ConsumerWidget {
     ThemeData theme, 
     int gDay, 
     DateTime currentDT,
-    (CalendarDay, CalendarMonth)? kemeticData, 
+    (CalendarDay, CalendarMonth)? wateredData, 
     List<Event> dayEvents
   ) {
     final isToday = DateUtils.isSameDay(DateTime.now(), currentDT);
     final hasEvents = dayEvents.isNotEmpty;
-    final kDay = kemeticData?.$1;
+    final kDay = wateredData?.$1;
     final isSacred = kDay?.isSacred ?? false;
 
     return GestureDetector(

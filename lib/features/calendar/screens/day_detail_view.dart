@@ -150,7 +150,7 @@ class DayDetailView extends StatelessWidget {
                       ),
                       const SizedBox(height: 32),
                     ],
-                    Text('SACRED KNOWLEDGE', 
+                    Text('WATERED KNOWLEDGE', 
                       style: TextStyle(
                         fontSize: 10, 
                         fontWeight: FontWeight.bold, 

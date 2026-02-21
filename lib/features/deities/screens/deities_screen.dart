@@ -202,7 +202,7 @@ class _DeitiesScreenState extends ConsumerState<DeitiesScreen> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        const Text(
+                                        Text(
                                           'THE DIVINE',
                                           style: TextStyle(
                                             color: Colors.white,
@@ -210,6 +210,13 @@ class _DeitiesScreenState extends ConsumerState<DeitiesScreen> {
                                             fontSize: 24,
                                             fontFamily: 'Cinzel',
                                             letterSpacing: 2,
+                                            shadows: [
+                                              Shadow(
+                                                color: Colors.black.withOpacity(0.5),
+                                                blurRadius: 10,
+                                                offset: const Offset(0, 2),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         const SizedBox(height: 8),
@@ -218,6 +225,13 @@ class _DeitiesScreenState extends ConsumerState<DeitiesScreen> {
                                           style: TextStyle(
                                             color: Colors.white.withOpacity(0.9),
                                             fontSize: 14,
+                                            shadows: [
+                                              Shadow(
+                                                color: Colors.black.withOpacity(0.5),
+                                                blurRadius: 8,
+                                                offset: const Offset(0, 1),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],

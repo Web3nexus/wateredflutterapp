@@ -16,6 +16,7 @@ import 'package:Watered/features/subscription/screens/subscription_screen.dart';
 import 'package:Watered/features/reminders/screens/reminders_screen.dart';
 import 'package:Watered/features/profile/screens/settings_screen.dart';
 import 'package:Watered/features/profile/screens/help_support_screen.dart';
+import 'package:Watered/features/orders/screens/orders_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Watered/core/theme/theme_provider.dart';
 import 'package:Watered/features/profile/screens/edit_profile_screen.dart';
@@ -248,6 +249,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   List<Widget> _getFilteredMenuItems(BuildContext context, bool isDark, WidgetRef ref) {
     // 1. Define the items in the generic map format
     final List<Map<String, dynamic>> items = [
+      {'icon': Icons.military_tech_outlined, 'title': 'Orders', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const OrdersScreen()))},
       {'icon': Icons.spa_outlined, 'title': 'Rituals', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RitualsScreen()))},
       {'icon': Icons.record_voice_over_outlined, 'title': 'Incantations', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const IncantationsScreen()))},
       {'icon': Icons.headphones_rounded, 'title': 'Audio Teachings', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AudioFeedScreen()))},

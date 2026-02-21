@@ -7,7 +7,7 @@ final fullCalendarProvider = FutureProvider<List<CalendarMonth>>((ref) async {
   return ref.watch(calendarServiceProvider).getFullCalendar();
 });
 
-final kemeticTodayProvider = FutureProvider<Map<String, dynamic>>((ref) async {
+final wateredTodayProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   return ref.watch(calendarServiceProvider).getToday();
 });
 

@@ -76,7 +76,7 @@ class DeityDetailScreen extends ConsumerWidget {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            deity.origin!,
+                            'Origin: ${deity.origin!}',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: theme.colorScheme.primary,
                               fontWeight: FontWeight.bold,

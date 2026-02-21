@@ -5,8 +5,8 @@ import 'package:Watered/features/config/providers/app_boot_provider.dart';
 import 'package:Watered/features/config/providers/global_settings_provider.dart';
 import 'package:Watered/features/auth/providers/auth_provider.dart';
 import 'package:Watered/features/home/screens/dashboard_screen.dart';
-import 'package:Watered/features/traditions/screens/library_screen.dart';
 import 'package:Watered/features/audio/screens/audio_feed_screen.dart';
+import 'package:Watered/features/deities/screens/deities_screen.dart';
 import 'package:Watered/features/audio/widgets/mini_player.dart';
 import 'package:Watered/features/profile/screens/profile_screen.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -298,7 +298,6 @@ class _RootGateState extends ConsumerState<RootGate> {
 }
 
 
-
 class MainTabsScreen extends ConsumerStatefulWidget {
   const MainTabsScreen({super.key});
 
@@ -309,8 +308,8 @@ class MainTabsScreen extends ConsumerStatefulWidget {
 class _MainTabsScreenState extends ConsumerState<MainTabsScreen> {
   final List<Widget> _screens = [
     const DashboardScreen(),
-    const LibraryScreen(),
-      const NimaSedaniScreen(),
+    const DeitiesScreen(),
+    const NimaSedaniScreen(),
     const RitualsScreen(),
     const ProfileGate(),
   ];

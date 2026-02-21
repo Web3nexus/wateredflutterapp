@@ -39,6 +39,11 @@ _$GlobalSettingsImpl _$$GlobalSettingsImplFromJson(Map<String, dynamic> json) =>
       premiumYearlyAmount: (json['premium_yearly_amount'] as num?)?.toInt(),
       contactEmail: json['contact_email'] as String?,
       contactPhone: json['contact_phone'] as String?,
+      premiumTitle: json['premium_title'] as String?,
+      premiumSubtitle: json['premium_subtitle'] as String?,
+      premiumFeatures: (json['premium_features'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$$GlobalSettingsImplToJson(
@@ -69,4 +74,7 @@ Map<String, dynamic> _$$GlobalSettingsImplToJson(
   'premium_yearly_amount': instance.premiumYearlyAmount,
   'contact_email': instance.contactEmail,
   'contact_phone': instance.contactPhone,
+  'premium_title': instance.premiumTitle,
+  'premium_subtitle': instance.premiumSubtitle,
+  'premium_features': instance.premiumFeatures,
 };
