@@ -58,7 +58,7 @@ class CalendarGridView extends ConsumerWidget {
 
           return Column(
             children: [
-              _buildMonthNavigator(ref, theme, viewMonth, viewYear),
+              _buildMonthNavigator(ref, theme, viewMonth, viewYear, months),
               const SizedBox(height: 20),
               _buildWeekdayHeader(theme),
               Expanded(
@@ -82,8 +82,15 @@ class CalendarGridView extends ConsumerWidget {
     );
   }
 
-  Widget _buildMonthNavigator(WidgetRef ref, ThemeData theme, int month, int year) {
-    final monthName = DateFormat('MMMM').format(DateTime(year, month));
+  Widget _buildMonthNavigator(WidgetRef ref, ThemeData theme, int month, int year, List<CalendarMonth> months) {
+    final gMonthName = DateFormat('MMMM').format(DateTime(year, month));
+    
+    // Find the corresponding watered month
+    final wateredMonth = months.firstWhere(
+      (m) => m.number == month, 
+      orElse: () => months.first
+    );
+    
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: Row(
@@ -100,17 +107,22 @@ class CalendarGridView extends ConsumerWidget {
               }
             },
           ),
-          Column(
-            children: [
-              Text(
-                monthName.toUpperCase(),
-                style: const TextStyle(fontSize: 24, fontFamily: 'Cinzel', fontWeight: FontWeight.bold, letterSpacing: 2),
-              ),
-              Text(
-                '$year',
-                style: TextStyle(color: theme.colorScheme.primary, fontSize: 14, fontWeight: FontWeight.bold),
-              ),
-            ],
+          Expanded(
+            child: Column(
+              children: [
+                Text(
+                  '${gMonthName.toUpperCase()} (${wateredMonth.customName?.toUpperCase() ?? ''})',
+                  style: const TextStyle(fontSize: 18, fontFamily: 'Cinzel', fontWeight: FontWeight.bold, letterSpacing: 1),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  '$year • ${wateredMonth.deities ?? ''}',
+                  style: TextStyle(color: theme.colorScheme.primary, fontSize: 12, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
           ),
           IconButton(
             icon: const Icon(Icons.chevron_right),

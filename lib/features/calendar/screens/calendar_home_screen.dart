@@ -204,13 +204,13 @@ class CalendarHomeScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            '${wateredDate['month_name']}'.toUpperCase(),
+            '${wateredDate['month_name']} (${wateredDate['custom_month_name']})'.toUpperCase(),
             style: TextStyle(
-              fontSize: 24,
+              fontSize: 20,
               fontFamily: 'Cinzel',
               color: Theme.of(context).textTheme.headlineMedium?.color,
               fontWeight: FontWeight.bold,
-              letterSpacing: 3,
+              letterSpacing: 2,
             ),
           ),
           const SizedBox(height: 4),
