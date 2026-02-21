@@ -11,7 +11,7 @@ class OrdersService {
 
   Future<List<Order>> getOrders() async {
     try {
-      final response = await _apiClient.get('/v1/orders');
+      final response = await _apiClient.get('orders');
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['data'];
         return data.map((json) => Order.fromJson(json)).toList();
