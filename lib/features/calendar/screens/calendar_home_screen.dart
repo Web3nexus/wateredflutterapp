@@ -224,7 +224,7 @@ class CalendarHomeScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 4),
           Text(
-             'WATERED YEAR ${wateredDate['year'] ?? ''} • ${wateredDate['season'] ?? ''}',
+             'YEAR ${wateredDate['year'] ?? ''} • ${wateredDate['season'] ?? ''}',
             style: TextStyle(
               fontSize: 12,
               color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5),
