@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Watered/core/network/api_client.dart';
 import 'package:Watered/features/orders/models/order_model.dart';
 import 'package:Watered/features/orders/services/order_application_service.dart';
 import 'package:Watered/features/orders/screens/application_form_screen.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:provider/provider.dart';
 
-class OrderDetailScreen extends StatefulWidget {
+class OrderDetailScreen extends ConsumerStatefulWidget {
   final int orderId;
 
   const OrderDetailScreen({super.key, required this.orderId});
 
   @override
-  State<OrderDetailScreen> createState() => _OrderDetailScreenState();
+  ConsumerState<OrderDetailScreen> createState() => _OrderDetailScreenState();
 }
 
-class _OrderDetailScreenState extends State<OrderDetailScreen> {
+class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
   late OrderApplicationService _orderService;
   Order? _order;
   bool _isLoading = true;
@@ -25,7 +25,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _orderService = OrderApplicationService(context.read<ApiClient>());
+    _orderService = OrderApplicationService(ref.read(apiClientProvider));
     _loadOrder();
   }
 

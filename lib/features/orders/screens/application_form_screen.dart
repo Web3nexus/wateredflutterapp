@@ -3,18 +3,18 @@ import 'package:Watered/core/network/api_client.dart';
 import 'package:Watered/features/orders/models/order_model.dart';
 import 'package:Watered/features/orders/models/order_form_field_model.dart';
 import 'package:Watered/features/orders/services/order_application_service.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ApplicationFormScreen extends StatefulWidget {
+class ApplicationFormScreen extends ConsumerStatefulWidget {
   final Order order;
 
   const ApplicationFormScreen({super.key, required this.order});
 
   @override
-  State<ApplicationFormScreen> createState() => _ApplicationFormScreenState();
+  ConsumerState<ApplicationFormScreen> createState() => _ApplicationFormScreenState();
 }
 
-class _ApplicationFormScreenState extends State<ApplicationFormScreen> {
+class _ApplicationFormScreenState extends ConsumerState<ApplicationFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final Map<int, dynamic> _answers = {};
   bool _isSubmitting = false;
@@ -24,7 +24,7 @@ class _ApplicationFormScreenState extends State<ApplicationFormScreen> {
   @override
   void initState() {
     super.initState();
-    _orderService = OrderApplicationService(context.read<ApiClient>());
+    _orderService = OrderApplicationService(ref.read(apiClientProvider));
   }
 
   Future<void> _submit() async {

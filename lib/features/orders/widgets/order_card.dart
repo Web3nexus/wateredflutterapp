@@ -68,119 +68,125 @@ class OrderCard extends StatelessWidget {
     final theme = Theme.of(context);
     final isClosed = order.status == 'closed';
 
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.cardTheme.color,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: theme.colorScheme.primary.withOpacity(0.1)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(theme.brightness == Brightness.dark ? 0.3 : 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Optional Image Banner
-          if (order.imageUrl != null && order.imageUrl!.isNotEmpty)
-            SizedBox(
-              height: 160,
-              width: double.infinity,
-              child: CachedNetworkImage(
-                imageUrl: order.imageUrl!,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Shimmer.fromColors(
-                  baseColor: theme.colorScheme.surfaceContainerHighest,
-                  highlightColor: theme.scaffoldBackgroundColor,
-                  child: Container(color: Colors.white),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  color: theme.colorScheme.surfaceContainerHighest,
-                  child: const Icon(Icons.image_not_supported, color: Colors.grey),
+    return InkWell(
+      onTap: () => _handleAction(context),
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        decoration: BoxDecoration(
+          color: theme.cardTheme.color,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: theme.colorScheme.primary.withOpacity(0.1)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(theme.brightness == Brightness.dark ? 0.3 : 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Optional Image Banner
+            if (order.imageUrl != null && order.imageUrl!.isNotEmpty)
+              SizedBox(
+                height: 160,
+                width: double.infinity,
+                child: CachedNetworkImage(
+                  imageUrl: order.imageUrl!,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Shimmer.fromColors(
+                    baseColor: theme.colorScheme.surfaceContainerHighest,
+                    highlightColor: theme.scaffoldBackgroundColor,
+                    child: Container(color: Colors.white),
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    color: theme.colorScheme.surfaceContainerHighest,
+                    child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                  ),
                 ),
               ),
-            ),
-          
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header (Status Badge and Title)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        order.title,
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          fontFamily: 'Cinzel',
-                          fontWeight: FontWeight.bold,
+            
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header (Status Badge and Title)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          order.title,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontFamily: 'Cinzel',
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: _getStatusColor(order.status).withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: _getStatusColor(order.status).withOpacity(0.5)),
-                      ),
-                      child: Text(
-                        _formatStatus(order.status),
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: _getStatusColor(order.status),
-                          letterSpacing: 0.5,
+                      const SizedBox(width: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: _getStatusColor(order.status).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: _getStatusColor(order.status).withOpacity(0.5)),
+                        ),
+                        child: Text(
+                          _formatStatus(order.status),
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: _getStatusColor(order.status),
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ),
+                    ],
+                  ),
+                  
+                  const SizedBox(height: 12),
+                  
+                  // Description
+                  if (order.description != null && order.description!.isNotEmpty) ...[
+                    Text(
+                      order.description!,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.textTheme.bodyMedium?.color?.withOpacity(0.8),
+                        height: 1.5,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
+                    const SizedBox(height: 20),
                   ],
-                ),
-                
-                const SizedBox(height: 12),
-                
-                // Description
-                if (order.description != null && order.description!.isNotEmpty) ...[
-                  Text(
-                    order.description!,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.textTheme.bodyMedium?.color?.withOpacity(0.8),
-                      height: 1.5,
+                  
+                  // CTA Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: isClosed ? null : () => _handleAction(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isClosed ? theme.colorScheme.surfaceContainerHighest : theme.colorScheme.primary,
+                        foregroundColor: isClosed ? theme.textTheme.bodyMedium?.color?.withOpacity(0.5) : theme.colorScheme.onPrimary,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        elevation: isClosed ? 0 : 2,
+                      ),
+                      child: Text(
+                        order.ctaText,
+                        style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 20),
                 ],
-                
-                // CTA Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: isClosed ? null : () => _handleAction(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: isClosed ? theme.colorScheme.surfaceContainerHighest : theme.colorScheme.primary,
-                      foregroundColor: isClosed ? theme.textTheme.bodyMedium?.color?.withOpacity(0.5) : theme.colorScheme.onPrimary,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      elevation: isClosed ? 0 : 2,
-                    ),
-                    child: Text(
-                      order.ctaText,
-                      style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
