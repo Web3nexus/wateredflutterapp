@@ -249,7 +249,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   List<Widget> _getFilteredMenuItems(BuildContext context, bool isDark, WidgetRef ref) {
     // 1. Define the items in the generic map format
     final List<Map<String, dynamic>> items = [
-      {'icon': Icons.military_tech_outlined, 'title': 'Orders', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const OrdersScreen()))},
       {'icon': Icons.spa_outlined, 'title': 'Rituals', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RitualsScreen()))},
       {'icon': Icons.record_voice_over_outlined, 'title': 'Incantations', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const IncantationsScreen()))},
       {'icon': Icons.headphones_rounded, 'title': 'Audio Teachings', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AudioFeedScreen()))},
@@ -260,6 +259,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       {'icon': Icons.bookmark_border_rounded, 'title': 'My Collection', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UserLibraryScreen()))},
       {'icon': Icons.map_outlined, 'title': 'Temple Discovery', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TempleScreen()))},
       {'icon': Icons.calendar_month_outlined, 'title': 'Book Consultation', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ConsultationScreen()))},
+      {'icon': Icons.military_tech_outlined, 'title': 'Orders', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const OrdersScreen()))},
       // Special item for Dark Mode
       {'icon': isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded, 'title': 'Dark Mode', 'type': 'toggle'},
       {'icon': Icons.star_border_rounded, 'title': 'Premium Access', 'onTap': () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SubscriptionScreen()))},
