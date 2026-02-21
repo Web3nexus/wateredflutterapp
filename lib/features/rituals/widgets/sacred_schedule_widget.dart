@@ -25,6 +25,8 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
   // final AudioPlayer _audioPlayer = AudioPlayer(); // Removed local instance
   bool _notificationsEnabled = true;
   String _selectedSound = 'Ancient Chant';
+  String? _currentlyPlayingUrl;
+  StreamSubscription<PlayerState>? _playerStateSubscription;
 
   // Fallback sounds removed as per request to use only backend sounds
   // final List<Map<String, String>> _defaultSounds = [];
@@ -45,11 +47,28 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
         _checkAndPlayRitualSound(now);
       }
     });
+
+    // Initialize audio listener
+    Future.microtask(() => _setupAudioListener());
+  }
+
+  void _setupAudioListener() {
+    final audioService = ref.read(audioServiceProvider);
+    _playerStateSubscription = audioService.player.playerStateStream.listen((state) {
+      if (state.processingState == ProcessingState.completed) {
+        if (mounted && _currentlyPlayingUrl != null) {
+          setState(() {
+            _currentlyPlayingUrl = null;
+          });
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
     _timer?.cancel();
+    _playerStateSubscription?.cancel();
     // _audioPlayer.dispose(); // Do not dispose shared player
     super.dispose();
   }
@@ -308,7 +327,12 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
                                       const SizedBox(width: 12),
                                       Expanded(child: Text(sound.title)),
                                       IconButton(
-                                        icon: const Icon(Icons.play_circle_outline, size: 24),
+                                        icon: Icon(
+                                          _currentlyPlayingUrl == sound.filePath
+                                              ? Icons.pause_circle_outline
+                                              : Icons.play_circle_outline,
+                                          size: 24,
+                                        ),
                                         onPressed: () => _previewSound(sound.filePath),
                                       ),
                                     ],
@@ -342,12 +366,22 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
 
   void _previewSound(String url) async {
     try {
+      final audioService = ref.read(audioServiceProvider);
+      
+      // If clicking the currently playing sound, pause it
+      if (_currentlyPlayingUrl == url && audioService.player.playing) {
+        await audioService.pause();
+        setState(() {
+          _currentlyPlayingUrl = null;
+        });
+        return;
+      }
+
       // Ensure the player is initialized before using AudioService
-      if (!ref.read(audioServiceProvider).isReady) {
+      if (!audioService.isReady) {
         await ref.read(audioPlayerProvider.future);
       }
-      // Re-read after await to get the updated AudioService instance with player set
-      final audioService = ref.read(audioServiceProvider);
+
       await audioService.stop();
       await audioService.player.setAudioSource(
         AudioSource.uri(
@@ -360,9 +394,17 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
           ),
         ),
       );
+      
+      setState(() {
+        _currentlyPlayingUrl = url;
+      });
+      
       await audioService.play();
     } catch (e) {
       print("Error playing preview: $e");
+      setState(() {
+        _currentlyPlayingUrl = null;
+      });
     }
   }
 
