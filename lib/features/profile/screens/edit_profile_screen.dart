@@ -153,18 +153,100 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 validator: (v) => v == null || v.isEmpty ? 'Name is required' : null,
               ),
               const SizedBox(height: 24),
-              _buildTextField(
+                _buildTextField(
                 controller: _emailController,
                 label: 'Email Address',
                 icon: Icons.email_outlined,
                 keyboardType: TextInputType.emailAddress,
                 validator: (v) => v == null || !v.contains('@') ? 'Valid email is required' : null,
               ),
+              const SizedBox(height: 48),
+              const Divider(),
+              const SizedBox(height: 24),
+              Text(
+                'Danger Zone',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: Colors.redAccent,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Once you delete your account, there is no going back. All your data, including bookmarks, appointments, and subscriptions, will be permanently removed.',
+                style: theme.textTheme.bodySmall?.copyWith(color: theme.textTheme.bodySmall?.color?.withOpacity(0.6)),
+              ),
+              const SizedBox(height: 24),
+              OutlinedButton.icon(
+                onPressed: _isLoading ? null : _confirmDelete,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.redAccent,
+                  side: const BorderSide(color: Colors.redAccent),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                icon: const Icon(Icons.delete_forever_outlined),
+                label: const Text('DELETE ACCOUNT', style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+              const SizedBox(height: 48),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _confirmDelete() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Account?'),
+        content: const Text(
+          'Are you absolutely sure? This action cannot be undone and all your data will be permanently deleted.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('CANCEL'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
+            child: const Text('DELETE PERMANENTLY'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      _deleteAccount();
+    }
+  }
+
+  Future<void> _deleteAccount() async {
+    setState(() => _isLoading = true);
+    try {
+      await ref.read(profileServiceProvider).deleteAccount();
+      if (mounted) {
+        // Log out locally to clear state and redirect to login
+        await ref.read(authProvider.notifier).logout();
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Your account has been deleted.')),
+          );
+          // RootGate will handle the redirection since isAuthenticated will be false
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to delete account: $e'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   Widget _buildTextField({

@@ -40,4 +40,8 @@ class ProfileService {
     final response = await _client.get('profile');
     return User.fromJson(response.data['user']);
   }
+
+  Future<void> deleteAccount() async {
+    await _client.delete('profile');
+  }
 }
