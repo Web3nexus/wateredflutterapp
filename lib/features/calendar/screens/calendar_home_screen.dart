@@ -177,84 +177,121 @@ class CalendarHomeScreen extends ConsumerWidget {
   }
 
   Widget _buildDateCard(BuildContext context, Map<String, dynamic> wateredDate) {
+    final weekday = DateTime.now().weekday;
+    final isThursday = weekday == DateTime.thursday;
+    final isSaturday = weekday == DateTime.saturday;
+    final isSpecial = isThursday || isSaturday;
+    final theme = Theme.of(context);
+    final primaryColor = isThursday ? Colors.deepOrange : (isSaturday ? Colors.amber : theme.colorScheme.primary);
+
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.04),
+        color: isSpecial ? primaryColor.withOpacity(0.08) : Colors.white.withOpacity(0.04),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: isSpecial ? primaryColor.withOpacity(0.3) : Colors.white.withOpacity(0.1)),
+        gradient: isSpecial ? LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            primaryColor.withOpacity(0.15),
+            primaryColor.withOpacity(0.02),
+          ],
+        ) : null,
       ),
-      child: Column(
+      child: Stack(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          if (isSpecial)
+            Positioned(
+              right: -20,
+              top: -20,
+              child: Opacity(
+                opacity: 0.1,
+                child: Icon(
+                  isThursday ? Icons.people_alt_rounded : Icons.auto_awesome_rounded,
+                  size: 120,
+                  color: primaryColor,
+                ),
+              ),
+            ),
+          Column(
             children: [
-              Icon(Icons.calendar_today, size: 14, color: Theme.of(context).colorScheme.primary),
-              const SizedBox(width: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.calendar_today, size: 14, color: primaryColor),
+                  const SizedBox(width: 8),
+                  Text(
+                    'TODAY: ${DateFormat('EEEE, MMMM dd').format(DateTime.now())}'.toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: primaryColor,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
               Text(
-                'TODAY: ${DateFormat('EEEE, MMMM dd').format(DateTime.now())}'.toUpperCase(),
+                '${wateredDate['month_name']} (${wateredDate['custom_month_name']})'.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontFamily: 'Cinzel',
+                  color: theme.textTheme.headlineMedium?.color,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 2,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'DAY ${wateredDate['day_number']}',
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.w900,
+                  color: primaryColor,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                 'YEAR ${wateredDate['year'] ?? ''} • ${wateredDate['season'] ?? ''}',
                 style: TextStyle(
                   fontSize: 12,
+                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5),
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
-                  letterSpacing: 1.2,
+                  letterSpacing: 1.5,
                 ),
               ),
+              if (isSpecial) ...[
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: primaryColor.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: primaryColor.withOpacity(0.5)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(isThursday ? Icons.history_edu_rounded : Icons.workspace_premium_rounded, 
+                        color: primaryColor, size: 16),
+                      const SizedBox(width: 8),
+                      Text(
+                        isThursday ? "ANCESTRAL DAY" : "DAY OF THE GODS",
+                        style: TextStyle(
+                          color: primaryColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ],
           ),
-          const SizedBox(height: 16),
-          Text(
-            '${wateredDate['month_name']} (${wateredDate['custom_month_name']})'.toUpperCase(),
-            style: TextStyle(
-              fontSize: 20,
-              fontFamily: 'Cinzel',
-              color: Theme.of(context).textTheme.headlineMedium?.color,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 2,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'DAY ${wateredDate['day_number']}',
-            style: TextStyle(
-              fontSize: 40,
-              fontWeight: FontWeight.w900,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-             'YEAR ${wateredDate['year'] ?? ''} • ${wateredDate['season'] ?? ''}',
-            style: TextStyle(
-              fontSize: 12,
-              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5),
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.5,
-            ),
-          ),
-          if (DateTime.now().weekday == DateTime.thursday || DateTime.now().weekday == DateTime.saturday) ...[
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              decoration: BoxDecoration(
-                color: (DateTime.now().weekday == DateTime.thursday ? Colors.deepOrange : Colors.amber).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: (DateTime.now().weekday == DateTime.thursday ? Colors.deepOrange : Colors.amber).withOpacity(0.5)
-                ),
-              ),
-              child: Text(
-                DateTime.now().weekday == DateTime.thursday ? "ANCESTRAL DAY" : "DAY OF THE GODS",
-                style: TextStyle(
-                  color: DateTime.now().weekday == DateTime.thursday ? Colors.deepOrange : Colors.amber,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 10,
-                  letterSpacing: 1.2,
-                ),
-              ),
-            ),
-          ],
-
         ],
       ),
     );
