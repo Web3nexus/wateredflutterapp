@@ -251,6 +251,9 @@ class DashboardScreen extends ConsumerWidget {
                    }),
                 ],
               ),
+              const SizedBox(height: 32),
+              const SacredScheduleWidget(),
+
 
               ref.watch(eventsListProvider(EventFilter(filter: 'upcoming'))).when(
                 data: (events) {
@@ -330,7 +333,7 @@ class DashboardScreen extends ConsumerWidget {
               const SizedBox(height: 32),
 
               // Sacred Rituals Reminder Widget
-              const SacredScheduleWidget(),
+
 
               const SizedBox(height: 32),
               
