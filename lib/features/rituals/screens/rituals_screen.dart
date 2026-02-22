@@ -81,7 +81,8 @@ class _RitualsScreenState extends ConsumerState<RitualsScreen> {
             ),
             ritualsAsync.when(
               data: (rituals) {
-                final filteredRituals = rituals;
+                // Filter out sacred daily rituals from the main list as they are permanent on home
+                final filteredRituals = rituals.where((r) => !r.isSacredDaily).toList();
 
                 if (filteredRituals.isEmpty) {
                   return Center(

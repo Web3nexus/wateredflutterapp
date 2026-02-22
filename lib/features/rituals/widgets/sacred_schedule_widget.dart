@@ -80,9 +80,9 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
 
     return ritualsAsync.when(
       data: (rituals) {
-        // Filter rituals that have a valid timeOfDay and sort them
+        // Filter for permanent sacred daily rituals only
         final dailyRituals = rituals
-            .where((r) => r.timeOfDay != null)
+            .where((r) => r.isSacredDaily)
             .toList()
           ..sort((a, b) => a.timeOfDay!.compareTo(b.timeOfDay!));
 
@@ -632,7 +632,7 @@ class _SacredScheduleWidgetState extends ConsumerState<SacredScheduleWidget> {
     final isNext = !isPast; // Simplified for this list
 
     return Opacity(
-      opacity: isPast ? 0.4 : 1.0,
+      opacity: 1.0, // Permanent on home, no fading
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),

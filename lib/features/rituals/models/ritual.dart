@@ -8,6 +8,7 @@ class Ritual {
   final String? category;
   final String? timeOfDay;
   final int? traditionId;
+  final bool isSacredDaily;
 
   Ritual({
     required this.id,
@@ -18,6 +19,7 @@ class Ritual {
     this.category,
     this.timeOfDay,
     this.traditionId,
+    this.isSacredDaily = false,
   });
 
   factory Ritual.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class Ritual {
       category: json['category']?.toString(),
       timeOfDay: json['time_of_day']?.toString(),
       traditionId: json['tradition_id'] is num ? (json['tradition_id'] as num).toInt() : null,
+      isSacredDaily: json['is_sacred_daily'] == true || json['is_sacred_daily'] == 1,
     );
   }
 
