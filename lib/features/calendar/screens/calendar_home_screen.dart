@@ -232,6 +232,29 @@ class CalendarHomeScreen extends ConsumerWidget {
               letterSpacing: 1.5,
             ),
           ),
+          if (DateTime.now().weekday == DateTime.thursday || DateTime.now().weekday == DateTime.saturday) ...[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              decoration: BoxDecoration(
+                color: (DateTime.now().weekday == DateTime.thursday ? Colors.deepOrange : Colors.amber).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: (DateTime.now().weekday == DateTime.thursday ? Colors.deepOrange : Colors.amber).withOpacity(0.5)
+                ),
+              ),
+              child: Text(
+                DateTime.now().weekday == DateTime.thursday ? "ANCESTRAL DAY" : "DAY OF THE GODS",
+                style: TextStyle(
+                  color: DateTime.now().weekday == DateTime.thursday ? Colors.deepOrange : Colors.amber,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 10,
+                  letterSpacing: 1.2,
+                ),
+              ),
+            ),
+          ],
+
         ],
       ),
     );

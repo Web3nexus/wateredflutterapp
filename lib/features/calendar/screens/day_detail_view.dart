@@ -80,6 +80,11 @@ class DayDetailView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 32),
+                    if (gregorianDate?.weekday == DateTime.thursday)
+                      _buildSpiritualDayTag(context, "ANCESTRAL DAY", Colors.deepOrange),
+                    if (gregorianDate?.weekday == DateTime.saturday)
+                      _buildSpiritualDayTag(context, "DAY OF THE GODS", Colors.amber),
+
                     if (events != null && events!.isNotEmpty) ...[
                       Text('EVENTS', 
                         style: TextStyle(
@@ -176,6 +181,33 @@ class DayDetailView extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildSpiritualDayTag(BuildContext context, String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withOpacity(0.5)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.auto_awesome, color: color, size: 16),
+          const SizedBox(width: 8),
+          Text(
+            text,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              letterSpacing: 1.2,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
