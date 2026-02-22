@@ -277,16 +277,31 @@ class _RootGateState extends ConsumerState<RootGate> {
     // When we have data or error, ensure native splash is removed
     FlutterNativeSplash.remove();
 
-    // 2. Show Error Screen if boot failed
+    // 2. Clear Navigator stack when authentication state changes to authenticated
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (next.isAuthenticated && (previous == null || !previous.isAuthenticated)) {
+        print('🔐 Auth status changed to Authenticated. Clearing navigator stack...');
+        final navigator = ref.read(navigationServiceProvider).navigatorKey.currentState;
+        if (navigator != null && navigator.canPop()) {
+          navigator.popUntil((route) => route.isFirst);
+        }
+      }
+    });
+
+    // 3. Show Error Screen if boot failed
     return bootState.when(
       data: (status) {
         if (status == BootStatus.maintenance) {
           return const Scaffold(body: Center(child: Text('Under Maintenance')));
         }
 
-        // Check for Email Verification
         if (!authState.isAuthenticated) {
           return const LoginScreen();
+        }
+
+        // 4. Check for Email Verification (except for social logins if preferred, but usually required)
+        if (authState.user?.emailVerifiedAt == null) {
+          return VerificationPendingScreen(email: authState.user?.email ?? '');
         }
 
         return const MainTabsScreen();
